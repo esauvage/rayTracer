@@ -5,9 +5,9 @@ Boule::Boule(const Vec3f& position, float rayon)
 {
 }
 
-float Boule::distance(const Vec3f& origin, const Vec3f& direction, float minDist) const
+float Boule::distance(const Rayon3f& r, float minDist) const
 {
-	Vec3f p(origin - _pos);
+	Vec3f p(r.origin() - _pos);
 	if (minDist > 0)
 	{
 		if (p.x() > minDist + _r)
@@ -17,7 +17,7 @@ float Boule::distance(const Vec3f& origin, const Vec3f& direction, float minDist
 		if (p.z() > minDist + _r)
 			return -1;
 	}
-	const auto b = (p.dot(direction));
+	const auto b = (p.dot(r.direction()));
 	const auto c = (p.dot(p) - _r * _r);
 	const auto q = b * b - c;
 	if (q >= 0)
@@ -30,9 +30,9 @@ float Boule::distance(const Vec3f& origin, const Vec3f& direction, float minDist
 	return -1;
 }
 
-float Boule::distanceMax(const Vec3f & origin, const Vec3f & direction, float minDist) const
+float Boule::distanceMax(const Rayon3f & r, float minDist) const
 {
-	Vec3f p(origin - _pos);
+	Vec3f p(r.origin() - _pos);
 	if (minDist > 0)
 	{
 		if (p.x() > minDist + _r)
@@ -42,7 +42,7 @@ float Boule::distanceMax(const Vec3f & origin, const Vec3f & direction, float mi
 		if (p.z() > minDist + _r)
 			return -1;
 	}
-	const auto b = (p.dot(direction));
+	const auto b = (p.dot(r.direction()));
 	const auto c = (p.dot(p) - _r * _r);
 	const auto q = b * b - c;
 	if (q >= 0)

@@ -7,7 +7,7 @@ class Horizon : public Shape
 {
 public:
 	Horizon(float hauteur);
-	virtual float distance(const Vec3f & origin, const Vec3f & direction, float minDist = -1) const;
+	virtual float distance(const Rayon3f & r, float minDist = -1) const;
 	virtual float distanceMin(const Vec3f & origin) const;
 	virtual Vec3f normal(const Vec3f & p) const;
 private:

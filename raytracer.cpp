@@ -169,12 +169,12 @@ pair<float, Shape *> RayTracer::nearestShape(const Rayon3f &rayon)
 	{
 		float d;
 		if (o == rayon.milieu())// && o->material->transparence)
-			d = o->distanceMax(rayon.origin(), rayon.direction(), minDist);
+			d = o->distanceMax(rayon, minDist);
 		else
 		{
 			if ((o == rayon.milieu()) || (o->distanceMin(rayon.origin()) > minDist))
 				continue;
-			d = o->distance(rayon.origin(), rayon.direction(), minDist);
+			d = o->distance(rayon, minDist);
 		}
 		if (d <= 0)
 			continue;
@@ -187,9 +187,9 @@ pair<float, Shape *> RayTracer::nearestShape(const Rayon3f &rayon)
 	return pair<float, Shape *> {minDist, minShape};
 }
 
-void RayTracer::distToShape(float * r, Shape * s, Vec3f origin, Vec3f direction)
+void RayTracer::distToShape(float * r, Shape * s, const Rayon3f &rayon)
 {
-	*r = s->distance(origin, direction, -1);
+	*r = s->distance(rayon, -1);
 }
 
 Vec3f RayTracer::sky(const Vec3f& rayon)

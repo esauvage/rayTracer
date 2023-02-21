@@ -5,10 +5,10 @@ Horizon::Horizon(float hauteur)
 {
 }
 
-float Horizon::distance(const Vec3f& origin, const Vec3f& direction, float minDist) const
+float Horizon::distance(const Rayon3f& r, float minDist) const
 {
 	(void)minDist;
-	return (_hauteur-origin.z())/direction.z();
+	return (_hauteur-r.origin().z())/r.direction().z();
 }
 
 float Horizon::distanceMin(const Vec3f &origin) const

@@ -16,7 +16,7 @@ public:
 private:
 	pair<float, Shape *> nearestShape(const Rayon3f &rayon);
 	Vec3f rayonRefracte(Vec3f normal, Vec3f incident, float n1, float n2);
-	void distToShape(float *r, Shape *s, Vec3f origin, Vec3f direction);
+	void distToShape(float *r, Shape *s, const Rayon3f &rayon);
 	Vec3f pixelColor(Rayon3f rayon);
 	Vec3f sky(const Vec3f& rayon);
 	void fillImage(std::ofstream &out, int rowBegin, int nbRows, int width, int height);

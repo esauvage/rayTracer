@@ -1,12 +1,12 @@
 #ifndef RAYON_H
 #define RAYON_H
 
-#include "shape.h"
+//#include "shape.h"
 #include <Eigen/Geometry>
 
 template<typename Type, int Size>
 using Vec  = Eigen::Matrix<Type, Size, 1>;
-
+class Shape;
 template <typename Type, int Size>class Rayon
 {
 public:
