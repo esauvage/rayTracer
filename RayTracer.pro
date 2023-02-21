@@ -11,7 +11,7 @@ QMAKE_CXXFLAGS_DEBUG += -pg -O3
 QMAKE_LFLAGS_DEBUG += -pg -O3
 
 INCLUDEPATH += C:\Users\etien\Documents\projets\eigen\
-    G:\EtienneArea\Personnel\cgf\eigen-3.3.8
+    G:\Github\eigen
 
 TEMPLATE = app
 

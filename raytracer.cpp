@@ -9,10 +9,9 @@
 #include <thread>
 
 #include "parser.h"
-#include "boule.h"
 #include "rayon.h"
 
-const double M_PI = 3.141592653589793238463;    //value of pi
+//const double M_PI = 3.141592653589793238463;    //value of pi
 
 int depth = 0;
 int max_depth = 0;
@@ -44,7 +43,6 @@ void RayTracer::generateFile(const string &outFile, const pair <int, int> size, 
 	std::cout << "Input file read." << std::endl;
 	const int width {size.first};
 	const int height {size.second};
-	char *img = (char *)malloc(width * height * 3* sizeof(char));
     const int num_threads = 4;
     std::thread t[num_threads];
 
@@ -72,12 +70,11 @@ void RayTracer::generateFile(const string &outFile, const pair <int, int> size, 
 			  << chrono::duration_cast<std::chrono::milliseconds>(end - start).count()
 			  << "ms.\n";
 	cout << "max light depth : " << max_depth << endl;
-	free(img);
 }
 
 Vec3f RayTracer::pixelColor(Rayon3f rayon)
 {
-	if (depth > 12)
+    if (depth > 2)
 		return {0, 0, 0};//rayon.milieu->material->col * (1./255.);
 	depth++;
 	max_depth = std::max(max_depth, depth);
