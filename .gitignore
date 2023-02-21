@@ -1,2 +1,6 @@
 
 *.ppm
+*.exe
+*.obj
+*.pdb
+*.ppm

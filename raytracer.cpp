@@ -110,8 +110,8 @@ Vec3f RayTracer::pixelColor(Rayon3f rayon)
 
 			coef += max<float>(s, 0); // Partie diffusion
 			Vec3f RLight = lPos - normale * (s) * 2;
-//			const auto dot = max<float>(0., rayon.direction % RLight);
-//            coef += pow(dot, 20) * 0.2f; //Partie spéculaire
+			const auto dot = max<float>(0., rayon.direction().dot(RLight));
+			coef += pow(dot, 20) * 0.2f; //Partie spéculaire
 		}
 		couleur = couleur + ((minShape->material->col * (1.f/255.f)).cwiseProduct(l->col) * (coef /static_cast<float>(softShadow)));
 	}
@@ -213,7 +213,7 @@ void RayTracer::fillImage(ofstream &out, int rowBegin, int nbRows, int width, in
         for (float j = 0, y = -width/2.f*coef; j < width; ++j, y+=coef)
 		{
 			Vec3f pixel{0, 0, 0};
-			const int antiAliasing {1};
+			const int antiAliasing {16};
 			for (auto k = 0; k < antiAliasing; k++)
 			{
 				depth = 0;
