@@ -5,6 +5,38 @@ Boule::Boule(const Vec3f& position, float rayon)
 {
 }
 
+bool Boule::touche(const Rayon3f& r, double t_min, double t_max, hit_record& rec) const
+{
+	auto oc = r.origin() - _pos;
+	auto a = r.direction().squaredNorm();
+	auto half_b = oc.dot(r.direction());
+	auto c = oc.squaredNorm() - _r*_r;
+
+	auto discriminant = half_b*half_b - a*c;
+	if (discriminant < 0)
+	{
+		return false;
+	}
+	auto sqrtd = sqrt(discriminant);
+
+	// Find the nearest root that lies in the acceptable range.
+	auto root = (-half_b - sqrtd) / a;
+	if (root < t_min || t_max < root)
+	{
+		root = (-half_b + sqrtd) / a;
+		if (root < t_min || t_max < root)
+			return false;
+	}
+
+	rec.t = root;
+	rec.p = r.at(rec.t);
+	Vec3f outwardNormal = (rec.p - _pos) / _r;
+	rec.setFaceNormal(r, outwardNormal);
+
+	return true;
+}
+
+
 float Boule::distance(const Rayon3f& r, float minDist) const
 {
 	Vec3f p(r.origin() - _pos);

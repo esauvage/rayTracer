@@ -7,10 +7,9 @@
 
 #include "tokenStream.h"
 #include "primitive_factory.h"
-#include "boule.h"
-#include "horizon.h"
-#include "triangle.h"
-#include "scene.h"
+
+using namespace std;
+
 static Material m[3] {{Vec3f{250, 250, 250}, 0.4, 1.75, 0.8}, {Vec3f{250, 250, 250}, 0.4, 1.5, 0.6},
 				{Vec3f{250, 250, 0}, 0.4, 1.25, 0.4}};
 
@@ -77,10 +76,15 @@ void Parser::readScene(Scene & scene)
 	return;
 }
 
-vector <Shape *> Parser::prim(bool get)
+Parser::Parser(istream &is):_ts(is)
+{
+
+}
+
+vector <shared_ptr<Shape> > Parser::prim(bool get)
 {
 	map <string, Material>matieres;
-	vector <Shape *> shapes;
+	vector <shared_ptr<Shape> > shapes;
 	while (true)
 	{
 		if (get) 

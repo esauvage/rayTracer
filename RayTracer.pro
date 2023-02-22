@@ -2,7 +2,7 @@ QT += core
 QT -= gui
 #QT -= qt
 
-CONFIG += c++11
+#CONFIG += c++11
 #LIBRARIES = -lm
 TARGET = rayTracer
 CONFIG += console
@@ -26,6 +26,7 @@ SOURCES += \
 	rayon.cpp \
 	raytracer.cpp \
 	scene.cpp \
+	shapelist.cpp \
 	tokenStream.cpp \
 	triangle.cpp
 
@@ -53,6 +54,7 @@ HEADERS += \
 	raytracer.h \
 	scene.h \
 	shape.h\
+	shapelist.h \
 	tokenStream.h \
 	triangle.h
 

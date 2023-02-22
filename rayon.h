@@ -1,16 +1,19 @@
 #ifndef RAYON_H
 #define RAYON_H
 
-//#include "shape.h"
 #include <Eigen/Geometry>
+#include <memory>
 
 template<typename Type, int Size>
 using Vec  = Eigen::Matrix<Type, Size, 1>;
+
 class Shape;
-template <typename Type, int Size>class Rayon
+
+template <typename Type, int Size>
+class Rayon
 {
 public:
-	Rayon(const Vec<Type, Size> & origin, const Vec<Type, Size> & direction, const Shape * milieu);
+	Rayon(const Vec<Type, Size> & origin, const Vec<Type, Size> & direction, const std::shared_ptr<Shape> milieu);
 
 	Vec<Type, Size> at(double t) const;
 
@@ -18,15 +21,16 @@ public:
 
 	Vec<Type, Size> direction() const;
 
-	const Shape *milieu() const;
+	const std::shared_ptr<Shape> milieu() const;
 
 private:
 	Vec<Type, Size> _origin;
 	Vec<Type, Size> _direction;
-	const Shape * _milieu; //indice de réfraction du milieu courant (ie vitesse de la lumière)
+	const std::shared_ptr<Shape> _milieu; //indice de réfraction du milieu courant (ie vitesse de la lumière)
 };
+
 template<typename Type, int Size>
-Rayon<Type, Size>::Rayon(const Vec<Type, Size> &origin, const Vec<Type, Size> &direction, const Shape *milieu)
+Rayon<Type, Size>::Rayon(const Vec<Type, Size> &origin, const Vec<Type, Size> &direction, const std::shared_ptr<Shape>milieu)
 	:_origin{origin}, _direction{direction}, _milieu{milieu}
 {
 
@@ -51,7 +55,7 @@ Vec<Type, Size> Rayon<Type, Size>::direction() const
 }
 
 template<typename Type, int Size>
-const Shape *Rayon<Type, Size>::milieu() const
+const std::shared_ptr<Shape> Rayon<Type, Size>::milieu() const
 {
 	return _milieu;
 }

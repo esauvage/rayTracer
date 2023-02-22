@@ -12,16 +12,16 @@ class RayTracer
 public:
 	RayTracer();
 	~RayTracer();
-	void generateFile(const string& outFile, const pair <int, int> size, const string& inFile);
+	void generateFile(const std::string& outFile, const std::pair <int, int> size, const std::string& inFile);
 private:
-	pair<float, Shape *> nearestShape(const Rayon3f &rayon);
+	std::pair<float, std::shared_ptr<Shape>> nearestShape(const Rayon3f &rayon);
 	Vec3f rayonRefracte(Vec3f normal, Vec3f incident, float n1, float n2);
-	void distToShape(float *r, Shape *s, const Rayon3f &rayon);
+	void distToShape(float *r, std::shared_ptr<Shape>s, const Rayon3f &rayon);
 	Vec3f pixelColor(Rayon3f rayon);
 	Vec3f sky(const Vec3f& rayon);
 	void fillImage(std::ofstream &out, int rowBegin, int nbRows, int width, int height);
 	Scene scene;
-	vector <Shape *>orderedShapes;
+	std::vector <std::shared_ptr<Shape>>orderedShapes;
 };
 
 #endif // RAY_TRACER_H

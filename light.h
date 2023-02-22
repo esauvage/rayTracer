@@ -5,7 +5,7 @@
 
 using Vec3f = Eigen::Vector3f;
 
-class  Light
+class Light
 {
 public:
 	Light(const Vec3f &position, const Vec3f &couleur);

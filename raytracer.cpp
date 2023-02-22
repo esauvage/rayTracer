@@ -11,6 +11,7 @@
 #include "parser.h"
 #include "rayon.h"
 
+using namespace std;
 //const double M_PI = 3.141592653589793238463;    //value of pi
 
 int depth = 0;
@@ -80,7 +81,7 @@ Vec3f RayTracer::pixelColor(Rayon3f rayon)
 	max_depth = std::max(max_depth, depth);
 	auto p = nearestShape(rayon);
 	const float minDist = p.first;
-	Shape * minShape = p.second;
+	shared_ptr<Shape> minShape = p.second;
 	if (!minShape)
 	{
 		depth--;
@@ -132,10 +133,10 @@ Vec3f RayTracer::pixelColor(Rayon3f rayon)
 // 	return (couleur * (1./scene.lights.size()) + recursion * minShape->material->reflectance).borne(Vec3f(1, 1, 1));
 }
 
-pair<float, Shape *> RayTracer::nearestShape(const Rayon3f &rayon)
+pair<float, shared_ptr<Shape>> RayTracer::nearestShape(const Rayon3f &rayon)
 {
 	float minDist = INFINITY;
-	Shape * minShape = nullptr;
+	shared_ptr<Shape> minShape = nullptr;
 //	const int num_threads = scene.shapes.size();
 //	float distances[num_threads];
 //	std::thread t[num_threads];
@@ -162,7 +163,7 @@ pair<float, Shape *> RayTracer::nearestShape(const Rayon3f &rayon)
 //			minDist = d;
 //		}
 //	}
-	for (Shape * o:scene.shapes)
+	for (const auto & o:scene.shapes)
 	{
 		float d;
 		if (o == rayon.milieu())// && o->material->transparence)
@@ -181,10 +182,10 @@ pair<float, Shape *> RayTracer::nearestShape(const Rayon3f &rayon)
 			minDist = d;
 		}
 	}
-	return pair<float, Shape *> {minDist, minShape};
+	return pair<float, shared_ptr<Shape>> {minDist, minShape};
 }
 
-void RayTracer::distToShape(float * r, Shape * s, const Rayon3f &rayon)
+void RayTracer::distToShape(float * r, shared_ptr<Shape>s, const Rayon3f &rayon)
 {
 	*r = s->distance(rayon, -1);
 }

@@ -3,6 +3,8 @@
 #include <map>
 #include <iostream>
 
+using namespace std;
+
 //Extrait les arguments de la ligne de commande en système "clef", "valeur".
 //Une clef n'a de valeur associée que si :
 // - elle commence par '-'

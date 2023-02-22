@@ -5,14 +5,13 @@
 
 #include <string>
 #include <map>
-
-using namespace std;
+#include <memory>
 
 class Shape;
 
 class PrimitiveFactory
 {
 public:
-	static Shape * create(const string& primName, const map< string, Parameter >& params);
+	static std::shared_ptr<Shape> create(const string& primName, const map< string, Parameter >& params);
 };
 #endif //PRIMITIVE_FACTORY
