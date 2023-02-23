@@ -61,7 +61,7 @@ void Parser::readScene(Scene & scene)
 		if (primitive == "cameraRot")
 		{
 			auto parameters = params();
-			scene.cameraRot = Quaternion<float>::fromEuler(parameters["pitch"].number(), parameters["roll"].number(), parameters["yaw"].number());
+			scene.cameraRot = Quaternion<float>::fromEuler(parameters["yaw"].number(), parameters["pitch"].number(), parameters["roll"].number());
 			continue;
 		}
 		auto shapeParam = params();

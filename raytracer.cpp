@@ -75,62 +75,71 @@ void RayTracer::generateFile(const string &outFile, const pair <int, int> size, 
 
 Vec3f RayTracer::pixelColor(Rayon3f rayon)
 {
-    if (depth > 2)
+	if (depth > 4)
 		return {0, 0, 0};//rayon.milieu->material->col * (1./255.);
 	depth++;
-	max_depth = std::max(max_depth, depth);
-	auto p = nearestShape(rayon);
-	const float minDist = p.first;
-	shared_ptr<Shape> minShape = p.second;
-	if (!minShape)
-	{
-		depth--;
-		return sky(rayon.direction());
-// 		return Vec3f{0, 0, 0};
+	hit_record rec;
+	if (scene.touche(rayon, 0, INFINITY, rec)) {
+		return 0.5 * (rec.normal + Vec3f(1,1,1));
 	}
-	const Vec3f impact = rayon.origin() + rayon.direction() * minDist;
-	const Vec3f normale = minShape->normal(impact);
-	const Vec3f reflexion = rayon.direction() - normale * (rayon.direction().dot(normale)) * 2;
-	Vec3f couleur(0, 0, 0);
-	for (auto l:scene.lights)
-	{
-		float coef {0};
-		const int softShadow{8};
-		for (int k = 0; k < softShadow; k++)
-		{
-			const Vec3f lPos((l->pos + (Vec3f(frand() - 0.5f, frand() - 0.5f, frand() - 0.5f) * 0.01f)).normalized());
-			p = nearestShape(Rayon3f(impact, lPos, minShape));
-			if (p.second)
-			{
-				continue;
-			}
-			auto s = lPos.dot(normale);
+//	auto unit_direction = rayon.direction().normalized();
+//	auto t = 0.5*(unit_direction.y() + 1.0);
+	return sky(rayon.direction());
+//	return (1.0-t)*Vec3f(1.0, 1.0, 1.0) + t*Vec3f(0.5, 0.7, 1.0);
 
-			coef += max<float>(s, 0); // Partie diffusion
-			Vec3f RLight = lPos - normale * (s) * 2;
-			const auto dot = max<float>(0., rayon.direction().dot(RLight));
-			coef += pow(dot, 20) * 0.2f; //Partie spéculaire
-		}
-		couleur = couleur + ((minShape->material->col * (1.f/255.f)).cwiseProduct(l->col) * (coef /static_cast<float>(softShadow)));
-	}
-    couleur = couleur * (1.f/scene.lights.size());
-	if (minShape->material->reflectance)
-		couleur = couleur + pixelColor(Rayon3f(impact, reflexion, minShape)) * minShape->material->reflectance;
-//	if (minShape->material->transparence)
+//	max_depth = std::max(max_depth, depth);
+//	auto p = nearestShape(rayon);
+//	const float minDist = p.first;
+//	shared_ptr<Shape> minShape = p.second;
+//	if (!minShape)
 //	{
-//		float indiceRefrac = 1;
-//		if (minShape != rayon.milieu)
-//			indiceRefrac = minShape->material->refraction;
-//		const Vec3f transmission = rayonRefracte(normale, rayon.direction,
-//												   rayon.milieu ? rayon.milieu->material->refraction : 1,
-//												   indiceRefrac);
-//		couleur = couleur * (1. - minShape->material->transparence)
-//				+ pixelColor(Rayon(impact, transmission, minShape)) * minShape->material->transparence;
+//		depth--;
+//		return sky(rayon.direction());
+//// 		return Vec3f{0, 0, 0};
 //	}
-	depth--;
-	return couleur.cwiseMin(Vec3f({1,1,1}));
-//	return couleur.borne({1,1,1});
-// 	return (couleur * (1./scene.lights.size()) + recursion * minShape->material->reflectance).borne(Vec3f(1, 1, 1));
+//	const Vec3f impact = rayon.origin() + rayon.direction() * minDist;
+//	const Vec3f normale = minShape->normal(impact);
+//	const Vec3f reflexion = rayon.direction() - normale * (rayon.direction().dot(normale)) * 2;
+//	Vec3f couleur(0, 0, 0);
+//	for (auto l:scene.lights)
+//	{
+//		float coef {0};
+//		const int softShadow{8};
+//		for (int k = 0; k < softShadow; k++)
+//		{
+//			const Vec3f lPos((l->pos + (Vec3f(frand() - 0.5f, frand() - 0.5f, frand() - 0.5f) * 0.01f)).normalized());
+//			p = nearestShape(Rayon3f(impact, lPos, minShape));
+//			if (p.second)
+//			{
+//				continue;
+//			}
+//			auto s = lPos.dot(normale);
+
+//			coef += max<float>(s, 0); // Partie diffusion
+//			Vec3f RLight = lPos - normale * (s) * 2;
+//			const auto dot = max<float>(0., rayon.direction().dot(RLight));
+//			coef += pow(dot, 20) * 0.2f; //Partie spéculaire
+//		}
+//		couleur = couleur + ((minShape->material->col * (1.f/255.f)).cwiseProduct(l->col) * (coef /static_cast<float>(softShadow)));
+//	}
+//    couleur = couleur * (1.f/scene.lights.size());
+//	if (minShape->material->reflectance)
+//		couleur = couleur + pixelColor(Rayon3f(impact, reflexion, minShape)) * minShape->material->reflectance;
+////	if (minShape->material->transparence)
+////	{
+////		float indiceRefrac = 1;
+////		if (minShape != rayon.milieu)
+////			indiceRefrac = minShape->material->refraction;
+////		const Vec3f transmission = rayonRefracte(normale, rayon.direction,
+////												   rayon.milieu ? rayon.milieu->material->refraction : 1,
+////												   indiceRefrac);
+////		couleur = couleur * (1. - minShape->material->transparence)
+////				+ pixelColor(Rayon(impact, transmission, minShape)) * minShape->material->transparence;
+////	}
+//	depth--;
+//	return couleur.cwiseMin(Vec3f({1,1,1}));
+////	return couleur.borne({1,1,1});
+//// 	return (couleur * (1./scene.lights.size()) + recursion * minShape->material->reflectance).borne(Vec3f(1, 1, 1));
 }
 
 pair<float, shared_ptr<Shape>> RayTracer::nearestShape(const Rayon3f &rayon)
@@ -192,33 +201,34 @@ void RayTracer::distToShape(float * r, shared_ptr<Shape>s, const Rayon3f &rayon)
 
 Vec3f RayTracer::sky(const Vec3f& rayon)
 {
-//	Vec3f unit_direction = rayon.normalized();
-//	auto t = 0.5*(unit_direction.z() + 1.0);
-//	return (1.0-t)*Vec3f(1.0, 1.0, 1.0) + t*Vec3f(0.5, 0.7, 1.0);
+	Vec3f unit_direction = rayon.normalized();
+	auto t = 0.5*(unit_direction.z() + 1.0);
+	return (1.0-t)*Vec3f(1.0, 1.0, 1.0) + t*Vec3f(0.5, 0.7, 1.0);
 //Plus le rayon est vertical, plus le ciel est bleu. Plus il est horizontal, plus il est blanc.
-	float coef {1.f/20.f / rayon.z()};//C'est le sinus du "vertical"
-	return {coef * 0.9f, coef, 1.f};
+//	float coef {1.f/200.f / rayon.y()};//C'est le sinus du "vertical"
+//	return {coef * 0.9f, coef, 1.f};
 }
 
 void RayTracer::fillImage(ofstream &out, int rowBegin, int nbRows, int width, int height)
 {
     const float halfAngle {static_cast<float>(tan(M_PI/6.))};
 	const float coef { halfAngle*2.f/max<float>(width, height)};
-	const Vec3f point{scene.cameraPos};
+	const auto point = scene.cameraPos;
 	Quaternion<float> camRot = scene.cameraRot;
-    for (float i {static_cast<float>(nbRows)}, x {(rowBegin - height/2.f) * coef}; i--; x+=coef)
+	for (float i {static_cast<float>(nbRows)}, y = (rowBegin - height/2.f) * coef; i--; y+=coef)
 	{
-        for (float j = 0, y = -width/2.f*coef; j < width; ++j, y+=coef)
+		for (float j = 0, x = -width/2.f*coef; j < width; ++j, x+=coef)
 		{
 			Vec3f pixel{0, 0, 0};
 			const int antiAliasing {16};
 			for (auto k = 0; k < antiAliasing; k++)
 			{
 				depth = 0;
-				const Vec3f rayon = camRot.rotate(Vec3f(1, -y + (frand() - 0.5f) * coef,
-									-x + (frand() - 0.5f) * coef).normalized());
-				pixel = pixel + pixelColor(Rayon3f(point, rayon, nullptr)) * (1. / antiAliasing);
+				const Vec3f rayon = camRot.rotate(Vec3f(-x + (frand() - 0.5f) * coef, -y + (frand() - 0.5f) * coef, 1));
+//				const auto rayon = Vec3f(-x + (frand() - 0.5f) * coef, -y + (frand() - 0.5f) * coef, 1);
+				pixel += pixelColor(Rayon3f(point, rayon, nullptr));
 			}
+			pixel *= 1. / (float)antiAliasing;
 			Eigen::Vector3<unsigned char> pixelI = (pixel * 255.99).cast<unsigned char>();
 			out << +pixelI.x() << " ";
 			out << +pixelI.y() << " ";

@@ -7,8 +7,8 @@ QT -= gui
 TARGET = rayTracer
 CONFIG += console
 CONFIG -= app_bundle
-QMAKE_CXXFLAGS_DEBUG += -pg -O3
-QMAKE_LFLAGS_DEBUG += -pg -O3
+#QMAKE_CXXFLAGS_DEBUG += -pg -O3
+#QMAKE_LFLAGS_DEBUG += -pg -O3
 
 INCLUDEPATH += C:\Users\etien\Documents\projets\eigen\
     G:\Github\eigen

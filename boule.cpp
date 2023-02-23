@@ -30,7 +30,7 @@ bool Boule::touche(const Rayon3f& r, double t_min, double t_max, hit_record& rec
 
 	rec.t = root;
 	rec.p = r.at(rec.t);
-	Vec3f outwardNormal = (rec.p - _pos) / _r;
+	auto outwardNormal = (rec.p - _pos) / _r;
 	rec.setFaceNormal(r, outwardNormal);
 
 	return true;

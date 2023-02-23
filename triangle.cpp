@@ -7,22 +7,22 @@ Triangle::Triangle(const array <Vec3f, 3> &points)
 
 bool Triangle::touche(const Rayon3f& r, double t_min, double t_max, hit_record& rec) const
 {
-	const Vec3f h {r.direction() ^ _e2};
-	const float a = _e1.dot(h);
+	const auto h = r.direction().cross(_e2);
+	const auto a = _e1.dot(h);
 
 	if (fabs(a) < 0.00001)
 		return false;
 
-	const float f = 1. / a;
-	const Vec3f s {r.origin() - _p[0]};
+	const auto f = 1. / a;
+	const auto s {r.origin() - _p[0]};
 
-	const float u = (s.dot(h)) * f;
+	const auto u = s.dot(h) * f;
 
 	if ((u < 0.0) || (u > 1.0))
 		return false;
 
-	const Vec3f q {s ^ _e1};
-	const float v = f * (r.direction().dot(q));
+	const auto q = s.cross(_e1);
+	const auto v = f * (r.direction().dot(q));
 
 	if ((v < 0.0) || (u + v > 1.0))
 		return false;
@@ -37,22 +37,22 @@ bool Triangle::touche(const Rayon3f& r, double t_min, double t_max, hit_record& 
 float Triangle::distance(const Rayon3f & r, float minDist) const
 {
 	(void)minDist;
-	const Vec3f h {r.direction() ^ _e2};
-	const float a = _e1.dot(h);
+	const auto h = r.direction().cross(_e2);
+	const auto a = _e1.dot(h);
 
 	if (a > -0.00001 && a < 0.00001)
 		return -1;
 
-	const float f = 1. / a;
-	const Vec3f s {r.origin() - _p[0]};
+	const auto f = 1. / a;
+	const auto s = r.origin() - _p[0];
 
-	const float u = (s.dot(h)) * f;
+	const auto u = (s.dot(h)) * f;
 
 	if ((u < 0.0) || (u > 1.0))
 		return -1;
 
-	const Vec3f q {s ^ _e1};
-	const float v = f * (r.direction().dot(q));
+	const auto q = s.cross(_e1);
+	const auto v = f * (r.direction().dot(q));
 
 	if ((v < 0.0) || (u + v > 1.0))
 		return -1;

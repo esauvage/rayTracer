@@ -38,7 +38,7 @@ public:
 };
 
 template<typename T>
-Quaternion<T> Quaternion<T>::fromEuler(T pitch, T roll, T yaw)
+Quaternion<T> Quaternion<T>::fromEuler(T yaw, T pitch, T roll)
 {
 	Quaternion<T> q;
 	const T t0 = std::cos(yaw * 0.5);
