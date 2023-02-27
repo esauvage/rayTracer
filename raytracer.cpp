@@ -224,6 +224,7 @@ void RayTracer::fillImage(ofstream &out, int rowBegin, int nbRows, int width, in
 			for (auto k = 0; k < antiAliasing; k++)
 			{
 				depth = 0;
+//				const Vec3f rayon = camRot.rotate(Vec3f(1, 0, 1));
 				const Vec3f rayon = camRot.rotate(Vec3f(-x + (frand() - 0.5f) * coef, -y + (frand() - 0.5f) * coef, 1));
 //				const auto rayon = Vec3f(-x + (frand() - 0.5f) * coef, -y + (frand() - 0.5f) * coef, 1);
 				pixel += pixelColor(Rayon3f(point, rayon, nullptr));
