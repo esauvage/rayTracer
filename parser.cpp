@@ -9,6 +9,7 @@
 #include "primitive_factory.h"
 
 using namespace std;
+using namespace Eigen;
 
 static Material m[3] {{Vec3f{250, 250, 250}, 0.4, 1.75, 0.8}, {Vec3f{250, 250, 250}, 0.4, 1.5, 0.6},
 				{Vec3f{250, 250, 0}, 0.4, 1.25, 0.4}};
@@ -61,7 +62,9 @@ void Parser::readScene(Scene & scene)
 		if (primitive == "cameraRot")
 		{
 			auto parameters = params();
-			scene.cameraRot = Quaternion<float>::fromEuler(parameters["yaw"].number(), parameters["pitch"].number(), parameters["roll"].number());
+			scene.cameraRot = AngleAxis<float>(parameters["yaw"].number(), Vector3f::UnitZ())
+					* AngleAxis<float>(parameters["pitch"].number(), Vector3f::UnitX())
+					* AngleAxis<float>(parameters["roll"].number(), Vector3f::UnitY());
 			continue;
 		}
 		auto shapeParam = params();

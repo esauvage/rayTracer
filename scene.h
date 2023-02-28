@@ -9,7 +9,7 @@
 
 #include "shape.h"
 #include "light.h"
-#include "quaternion.h"
+//#include "quaternion.h"
 
 class Scene : public Shape
 {
@@ -27,7 +27,7 @@ public:
 	std::vector <Light *> lights;
 	std::map <std::string, Material>materials;
 	Vec3f cameraPos{0, 0, 1};
-	Quaternion<float> cameraRot{1, 0, 0, 0};
+	Eigen::Quaternion<float> cameraRot{1, 0, 0, 0};
 };
 
 #endif

@@ -12,6 +12,7 @@
 #include "rayon.h"
 
 using namespace std;
+using namespace Eigen;
 //const double M_PI = 3.141592653589793238463;    //value of pi
 
 int depth = 0;
@@ -220,12 +221,13 @@ void RayTracer::fillImage(ofstream &out, int rowBegin, int nbRows, int width, in
 		for (float j = 0, x = -width/2.f*coef; j < width; ++j, x+=coef)
 		{
 			Vec3f pixel{0, 0, 0};
-			const int antiAliasing {16};
+			const int antiAliasing {1};
 			for (auto k = 0; k < antiAliasing; k++)
 			{
 				depth = 0;
 //				const Vec3f rayon = camRot.rotate(Vec3f(1, 0, 1));
-				const Vec3f rayon = camRot.rotate(Vec3f(-x + (frand() - 0.5f) * coef, -y + (frand() - 0.5f) * coef, 1));
+				const Vec3f rayon = camRot * Vec3f(x, -y, -1);
+//				const Vec3f rayon = camRot.rotate(Vec3f(x + (frand() - 0.5f) * coef, -y + (frand() - 0.5f) * coef, 1));
 //				const auto rayon = Vec3f(-x + (frand() - 0.5f) * coef, -y + (frand() - 0.5f) * coef, 1);
 				pixel += pixelColor(Rayon3f(point, rayon, nullptr));
 			}

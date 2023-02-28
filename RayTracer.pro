@@ -49,7 +49,6 @@ HEADERS += \
 	parameter.h \
 	parser.h \
 	primitive_factory.h \
-	quaternion.h \
 	rayon.h \
 	raytracer.h \
 	scene.h \
