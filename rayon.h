@@ -5,7 +5,7 @@
 #include <memory>
 
 template<typename Type, int Size>
-using Vec  = Eigen::Matrix<Type, Size, 1>;
+using Vec = Eigen::Matrix<Type, Size, 1>;
 
 class Shape;
 
@@ -13,7 +13,11 @@ template <typename Type, int Size>
 class Rayon
 {
 public:
-	Rayon(const Vec<Type, Size> & origin, const Vec<Type, Size> & direction, const std::shared_ptr<Shape> milieu);
+	Rayon()
+	{
+
+	}
+	Rayon(const Vec<Type, Size> & origin, const Vec<Type, Size> & direction, const std::shared_ptr<Shape> milieu = nullptr);
 
 	Vec<Type, Size> at(double t) const;
 
@@ -26,7 +30,7 @@ public:
 private:
 	Vec<Type, Size> _origin;
 	Vec<Type, Size> _direction;
-	const std::shared_ptr<Shape> _milieu; //indice de réfraction du milieu courant (ie vitesse de la lumière)
+	std::shared_ptr<Shape> _milieu; //indice de réfraction du milieu courant (ie vitesse de la lumière)
 };
 
 template<typename Type, int Size>

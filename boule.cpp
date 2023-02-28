@@ -5,7 +5,7 @@ Boule::Boule(const Vec3f& position, float rayon)
 {
 }
 
-bool Boule::touche(const Rayon3f& r, double t_min, double t_max, hit_record& rec) const
+bool Boule::touche(const Rayon3f& r, double t_min, double t_max, HitRecord& rec) const
 {
 	auto oc = r.origin() - _pos;
 	auto a = r.direction().squaredNorm();
@@ -32,7 +32,7 @@ bool Boule::touche(const Rayon3f& r, double t_min, double t_max, hit_record& rec
 	rec.p = r.at(rec.t);
 	auto outwardNormal = (rec.p - _pos) / _r;
 	rec.setFaceNormal(r, outwardNormal);
-
+	rec.pMaterial = material();
 	return true;
 }
 

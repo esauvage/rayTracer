@@ -18,7 +18,7 @@ public:
 	void clear();
 	void add(shared_ptr<Shape> object);
 
-	virtual bool touche(const Rayon3f& r, double t_min, double t_max, hit_record& rec) const override;
+	virtual bool touche(const Rayon3f& r, double t_min, double t_max, HitRecord& rec) const override;
 
 	std::vector<shared_ptr<Shape>> objects;
 };

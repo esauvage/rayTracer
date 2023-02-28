@@ -20,9 +20,9 @@ void ShapeList::add(std::shared_ptr<Shape> object)
 	objects.push_back(object);
 }
 
-bool ShapeList::touche(const Rayon3f& r, double t_min, double t_max, hit_record& rec) const
+bool ShapeList::touche(const Rayon3f& r, double t_min, double t_max, HitRecord& rec) const
 {
-	hit_record temp_rec;
+	HitRecord temp_rec;
 	bool hit_anything = false;
 	auto closest_so_far = t_max;
 

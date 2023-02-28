@@ -5,7 +5,7 @@ Triangle::Triangle(const array <Vec3f, 3> &points)
 {
 }
 
-bool Triangle::touche(const Rayon3f& r, double t_min, double t_max, hit_record& rec) const
+bool Triangle::touche(const Rayon3f& r, double t_min, double t_max, HitRecord& rec) const
 {
 	const auto h = r.direction().cross(_e2);
 	const auto a = _e1.dot(h);

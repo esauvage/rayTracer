@@ -5,7 +5,7 @@
 #include "rayon.h"
 
 using Rayon3f = Rayon<float, 3>;
-using Vec3f  = Vec<float, 3>;
+using Vec3f = Vec<float, 3>;
 
 class RayTracer
 {

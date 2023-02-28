@@ -16,14 +16,15 @@ INCLUDEPATH += C:\Users\etien\Documents\projets\eigen\
 TEMPLATE = app
 
 SOURCES += \
+	lambertien.cpp \
 	main.cpp \
 	boule.cpp \
 	horizon.cpp \
 	light.cpp \
+	metal.cpp \
 	parameter.cpp \
 	parser.cpp \
 	primitive_factory.cpp \
-	rayon.cpp \
 	raytracer.cpp \
 	scene.cpp \
 	shapelist.cpp \
@@ -44,8 +45,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 HEADERS += \
 	boule.h \
 	horizon.h \
+	lambertien.h \
 	light.h \
 	material.h \
+	metal.h \
 	parameter.h \
 	parser.h \
 	primitive_factory.h \

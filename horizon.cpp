@@ -5,7 +5,7 @@ Horizon::Horizon(float hauteur)
 {
 }
 
-bool Horizon::touche(const Rayon3f& r, double t_min, double t_max, hit_record& rec) const
+bool Horizon::touche(const Rayon3f& r, double t_min, double t_max, HitRecord& rec) const
 {
 	//TODO : vérifier.
 	if (!r.direction().z())

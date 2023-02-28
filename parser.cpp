@@ -4,15 +4,18 @@
 #include <map>
 #include <exception>
 #include <algorithm>
+#include <memory>
 
 #include "tokenStream.h"
 #include "primitive_factory.h"
+#include "lambertien.h"
 
 using namespace std;
 using namespace Eigen;
 
-static Material m[3] {{Vec3f{250, 250, 250}, 0.4, 1.75, 0.8}, {Vec3f{250, 250, 250}, 0.4, 1.5, 0.6},
-				{Vec3f{250, 250, 0}, 0.4, 1.25, 0.4}};
+static shared_ptr<Lambertien> m[3] {make_shared<Lambertien>(Vec3f{250, 250, 250}),
+			make_shared<Lambertien>(Vec3f{250, 0, 250}),
+			make_shared<Lambertien>(Vec3f{250, 250, 0})};
 
 void Parser::readScene(Scene & scene)
 {
@@ -42,8 +45,7 @@ void Parser::readScene(Scene & scene)
 			}
 			const string name = _ts.current().string_value;
 			auto parameters = params();
-			scene.materials[name] = {{parameters["red"].number(), parameters["green"].number(), parameters["blue"].number()},
-				parameters["reflectance"].number(), 1, 0};
+			scene.materials[name] = make_shared<Lambertien>(Vec3f{parameters["red"].number(), parameters["green"].number(), parameters["blue"].number()});
 			continue;
 		}
 		if (primitive == "light")
@@ -62,19 +64,19 @@ void Parser::readScene(Scene & scene)
 		if (primitive == "cameraRot")
 		{
 			auto parameters = params();
-			scene.cameraRot = AngleAxis<float>(parameters["yaw"].number(), Vector3f::UnitZ())
-					* AngleAxis<float>(parameters["pitch"].number(), Vector3f::UnitX())
-					* AngleAxis<float>(parameters["roll"].number(), Vector3f::UnitY());
+			scene.cameraRot = AngleAxis<float>(parameters["roll"].number(), Vector3f::UnitY())
+					* AngleAxis<float>(parameters["yaw"].number(), Vector3f::UnitZ())
+					* AngleAxis<float>(parameters["pitch"].number(), Vector3f::UnitX());
 			continue;
 		}
 		auto shapeParam = params();
 		auto s = PrimitiveFactory::create(primitive, shapeParam);
 		if (shapeParam.find("material") != shapeParam.end())
-			s->material = &scene.materials[shapeParam["material"].text()];
-		scene.shapes.push_back(s);
+			s->setMaterial(scene.materials[shapeParam["material"].text()]);
+		scene.add(s);
 
-		if (s->material == nullptr)
-			s->material = &m[scene.shapes.size()%3];
+		if (s->material() == nullptr)
+			s->setMaterial(m[scene._world.objects.size()%3]);
 	}
 	return;
 }
@@ -86,7 +88,7 @@ Parser::Parser(istream &is):_ts(is)
 
 vector <shared_ptr<Shape> > Parser::prim(bool get)
 {
-	map <string, Material>matieres;
+	map <string, shared_ptr<Material> >matieres;
 	vector <shared_ptr<Shape> > shapes;
 	while (true)
 	{
@@ -115,14 +117,13 @@ vector <shared_ptr<Shape> > Parser::prim(bool get)
 			}
 			const string name = _ts.current().string_value;
 			auto parameters = params();
-			matieres[name] = {{parameters["red"].number(), parameters["green"].number(), parameters["blue"].number()},
-				parameters["reflectance"].number(), 1., 0.};
+			matieres[name] = make_shared<Lambertien>(Vec3f{parameters["red"].number(), parameters["green"].number(), parameters["blue"].number()});
 			continue;
 		}
 		auto shapeParam = params();
 		shapes.push_back(PrimitiveFactory::create(primitive, shapeParam));
-		if ((*shapes.rbegin())->material == nullptr)
-			(*shapes.rbegin())->material = &m[shapes.size()%3];
+		if ((*shapes.rbegin())->material() == nullptr)
+			(*shapes.rbegin())->setMaterial(m[shapes.size()%3]);
 	}
 	return shapes;
 }

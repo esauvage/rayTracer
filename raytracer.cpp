@@ -9,15 +9,14 @@
 #include <thread>
 
 #include "parser.h"
-#include "rayon.h"
 
 using namespace std;
 using namespace Eigen;
 //const double M_PI = 3.141592653589793238463;    //value of pi
+float frand() {return rand()/static_cast<float>(RAND_MAX);}
 
 int depth = 0;
 int max_depth = 0;
-float frand() {return rand()/static_cast<float>(RAND_MAX);}
 
 RayTracer::RayTracer()
 {
@@ -76,17 +75,18 @@ void RayTracer::generateFile(const string &outFile, const pair <int, int> size, 
 
 Vec3f RayTracer::pixelColor(Rayon3f rayon)
 {
-	if (depth > 4)
+	if (depth > 8)
 		return {0, 0, 0};//rayon.milieu->material->col * (1./255.);
 	depth++;
-	hit_record rec;
-	if (scene.touche(rayon, 0, INFINITY, rec)) {
-		return 0.5 * (rec.normal + Vec3f(1,1,1));
+	HitRecord rec;
+	if (scene._world.touche(rayon, 0, INFINITY, rec)) {
+		Rayon3f scattered;
+		Vec3f attenuation;
+		if (rec.pMaterial->scatter(rayon, rec, attenuation, scattered))
+			return attenuation.array() * pixelColor(scattered).array();
+		return Vec3f(0,0,0);
 	}
-//	auto unit_direction = rayon.direction().normalized();
-//	auto t = 0.5*(unit_direction.y() + 1.0);
 	return sky(rayon.direction());
-//	return (1.0-t)*Vec3f(1.0, 1.0, 1.0) + t*Vec3f(0.5, 0.7, 1.0);
 
 //	max_depth = std::max(max_depth, depth);
 //	auto p = nearestShape(rayon);
@@ -173,25 +173,6 @@ pair<float, shared_ptr<Shape>> RayTracer::nearestShape(const Rayon3f &rayon)
 //			minDist = d;
 //		}
 //	}
-	for (const auto & o:scene.shapes)
-	{
-		float d;
-		if (o == rayon.milieu())// && o->material->transparence)
-			d = o->distanceMax(rayon, minDist);
-		else
-		{
-			if ((o == rayon.milieu()) || (o->distanceMin(rayon.origin()) > minDist))
-				continue;
-			d = o->distance(rayon, minDist);
-		}
-		if (d <= 0)
-			continue;
-		if ((d < minDist) || (minDist < 0))
-		{
-			minShape = o;
-			minDist = d;
-		}
-	}
 	return pair<float, shared_ptr<Shape>> {minDist, minShape};
 }
 
@@ -221,17 +202,16 @@ void RayTracer::fillImage(ofstream &out, int rowBegin, int nbRows, int width, in
 		for (float j = 0, x = -width/2.f*coef; j < width; ++j, x+=coef)
 		{
 			Vec3f pixel{0, 0, 0};
-			const int antiAliasing {1};
+			const int antiAliasing {32};
 			for (auto k = 0; k < antiAliasing; k++)
 			{
 				depth = 0;
-//				const Vec3f rayon = camRot.rotate(Vec3f(1, 0, 1));
-				const Vec3f rayon = camRot * Vec3f(x, -y, -1);
-//				const Vec3f rayon = camRot.rotate(Vec3f(x + (frand() - 0.5f) * coef, -y + (frand() - 0.5f) * coef, 1));
-//				const auto rayon = Vec3f(-x + (frand() - 0.5f) * coef, -y + (frand() - 0.5f) * coef, 1);
+				const Vec3f rayon = camRot * Vec3f(x + (frand() - 0.5f) * coef, -y + (frand() - 0.5f) * coef, -1);
 				pixel += pixelColor(Rayon3f(point, rayon, nullptr));
 			}
+			// Divide the color by the number of samples and gamma-correct for gamma=2.0.
 			pixel *= 1. / (float)antiAliasing;
+			pixel = pixel.array().sqrt();
 			Eigen::Vector3<unsigned char> pixelI = (pixel * 255.99).cast<unsigned char>();
 			out << +pixelI.x() << " ";
 			out << +pixelI.y() << " ";
