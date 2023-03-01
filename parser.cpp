@@ -13,9 +13,9 @@
 using namespace std;
 using namespace Eigen;
 
-static shared_ptr<Lambertien> m[3] {make_shared<Lambertien>(Vec3f{250, 250, 250}),
-			make_shared<Lambertien>(Vec3f{250, 0, 250}),
-			make_shared<Lambertien>(Vec3f{250, 250, 0})};
+static shared_ptr<Lambertien> m[3] {make_shared<Lambertien>(Vec3f{0.95, 0.95, 0.95}),
+			make_shared<Lambertien>(Vec3f{0.95, 0, 0.95}),
+			make_shared<Lambertien>(Vec3f{0.95, 0.95, 0})};
 
 void Parser::readScene(Scene & scene)
 {
@@ -45,7 +45,8 @@ void Parser::readScene(Scene & scene)
 			}
 			const string name = _ts.current().string_value;
 			auto parameters = params();
-			scene.materials[name] = make_shared<Lambertien>(Vec3f{parameters["red"].number(), parameters["green"].number(), parameters["blue"].number()});
+			scene.materials[name] = MaterialFactory::create(parameters);
+//			scene.materials[name] = make_shared<Lambertien>(Vec3f{parameters["red"].number(), parameters["green"].number(), parameters["blue"].number()});
 			continue;
 		}
 		if (primitive == "light")
