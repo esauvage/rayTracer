@@ -28,8 +28,11 @@ bool Triangle::touche(const Rayon3f& r, double t_min, double t_max, HitRecord& r
 		return false;
 
 	rec.t = f * (_e2.dot(q));
-	rec.normal = _n;
+	if (rec.t < t_min)
+		return false;
 	rec.p = r.at(rec.t);
+	rec.setFaceNormal(r, _n);
+	rec.pMaterial = material();
 
 	return true;
 }

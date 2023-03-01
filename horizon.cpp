@@ -11,8 +11,11 @@ bool Horizon::touche(const Rayon3f& r, double t_min, double t_max, HitRecord& re
 	if (!r.direction().z())
 		return false;
 	rec.t = (_hauteur-r.origin().z())/r.direction().z();
+	if (rec.t < t_min)
+		return false;
 	rec.p = r.at(rec.t);
-	rec.normal = Vec3f(0, 0, 1);
+	rec.setFaceNormal(r, Vec3f(0, 0, 1));
+	rec.pMaterial = material();
 	return true;
 }
 
