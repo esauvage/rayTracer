@@ -20,9 +20,7 @@ public:
 	Rayon(const Vec<Type, Size> & origin, const Vec<Type, Size> & direction, const std::shared_ptr<Shape> milieu = nullptr);
 
 	Vec<Type, Size> at(double t) const;
-
 	Vec<Type, Size> origin() const;
-
 	Vec<Type, Size> direction() const;
 
 	const std::shared_ptr<Shape> milieu() const;
@@ -32,6 +30,13 @@ private:
 	Vec<Type, Size> _direction;
 	std::shared_ptr<Shape> _milieu; //indice de réfraction du milieu courant (ie vitesse de la lumière)
 };
+
+template<typename Type, int Size>
+std::basic_ostream<char> &operator << (std::basic_ostream<char> & out, const Rayon<Type, Size>r)
+{
+	out << "Origin : " << r.origin() << " Direction " << r.direction();
+	return out;
+}
 
 template<typename Type, int Size>
 Rayon<Type, Size>::Rayon(const Vec<Type, Size> &origin, const Vec<Type, Size> &direction, const std::shared_ptr<Shape>milieu)

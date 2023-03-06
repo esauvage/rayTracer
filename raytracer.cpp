@@ -8,18 +8,20 @@
 #include <cstring>
 #include <thread>
 
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
+
+#include "utils.h"
 #include "parser.h"
 
 using namespace std;
 using namespace Eigen;
-//const double M_PI = 3.141592653589793238463;    //value of pi
-float frand() {return rand()/static_cast<float>(RAND_MAX);}
 
-int depth = 0;
 int max_depth = 0;
 
 RayTracer::RayTracer()
 {
+	srand(time(NULL));
 }
 
 RayTracer::~RayTracer()
@@ -35,17 +37,19 @@ void RayTracer::generateFile(const string &outFile, const pair <int, int> size, 
 	ifstream ifs(inFile);
 	if (!ifs.good())
 	{
-		std::cout << "No valid input file." << std::endl;
+		cout << "No valid input file." << endl;
 		return;
 	}
+//	json data = json::parse(f);
+//	scene = data.get<Scene>();
 	Parser parser(ifs);
 	parser.readScene(scene);
 	ifs.close();
-	std::cout << "Input file read." << std::endl;
+	cout << "Input file read." << endl;
 	const int width {size.first};
 	const int height {size.second};
-    const int num_threads = 4;
-    std::thread t[num_threads];
+//    const int num_threads = 4;
+//    std::thread t[num_threads];
 
     //Launch a group of threads
 //    for (int i = 0; i < num_threads; ++i) {
@@ -57,8 +61,16 @@ void RayTracer::generateFile(const string &outFile, const pair <int, int> size, 
 //        t[i].join();
 //    }
 	ofstream out(outFile);
+	if (!out.good())
+	{
+		cout << "No valid output file." << endl;
+		return;
+	}
 	out << "P3\n" << width << " " << height << " 255\n"; // The PPM Header is issued
+//	fillImage(out, 0, 2, 2, 2);
 	fillImage(out, 0, height, width, height);
+	out.flush();
+	out.close();
 //	FILE * outF = fopen(outFile.c_str(), "w");
 //	fprintf(outF, "P3\n%d %d 255\n", width, height); // The PPM Header is issued
 //	char * buf = img;
@@ -71,76 +83,28 @@ void RayTracer::generateFile(const string &outFile, const pair <int, int> size, 
 			  << chrono::duration_cast<std::chrono::milliseconds>(end - start).count()
 			  << "ms.\n";
 	cout << "max light depth : " << max_depth << endl;
+	ofstream o("scene.json");
+	json j = scene;
+	o << setw(4) << j << endl;
 }
 
-Vec3f RayTracer::pixelColor(Rayon3f rayon)
+Vec3f RayTracer::pixelColor(const Rayon3f &rayon, int depth) const
 {
-	if (depth > 8)
-		return {0, 0, 0};//rayon.milieu->material->col * (1./255.);
-	depth++;
+	if (depth <= 0)
+		return {0, 1, 0};//rayon.milieu->material->col * (1./255.);
 	HitRecord rec;
-	if (scene._world.touche(rayon, 0, INFINITY, rec)) {
+	if (scene._world.touche(rayon, 0, INFINITY, rec))
+	{
 		Rayon3f scattered;
 		Vec3f attenuation;
 		if (rec.pMaterial->scatter(rayon, rec, attenuation, scattered))
-			return attenuation.array() * pixelColor(scattered).array();
-		return Vec3f(0,0,0);
+		{
+			return pixelColor(scattered, depth - 1).cwiseProduct(attenuation);
+		}
+		return Vec3f(0,0,1);
 	}
 	return sky(rayon.direction());
 
-//	max_depth = std::max(max_depth, depth);
-//	auto p = nearestShape(rayon);
-//	const float minDist = p.first;
-//	shared_ptr<Shape> minShape = p.second;
-//	if (!minShape)
-//	{
-//		depth--;
-//		return sky(rayon.direction());
-//// 		return Vec3f{0, 0, 0};
-//	}
-//	const Vec3f impact = rayon.origin() + rayon.direction() * minDist;
-//	const Vec3f normale = minShape->normal(impact);
-//	const Vec3f reflexion = rayon.direction() - normale * (rayon.direction().dot(normale)) * 2;
-//	Vec3f couleur(0, 0, 0);
-//	for (auto l:scene.lights)
-//	{
-//		float coef {0};
-//		const int softShadow{8};
-//		for (int k = 0; k < softShadow; k++)
-//		{
-//			const Vec3f lPos((l->pos + (Vec3f(frand() - 0.5f, frand() - 0.5f, frand() - 0.5f) * 0.01f)).normalized());
-//			p = nearestShape(Rayon3f(impact, lPos, minShape));
-//			if (p.second)
-//			{
-//				continue;
-//			}
-//			auto s = lPos.dot(normale);
-
-//			coef += max<float>(s, 0); // Partie diffusion
-//			Vec3f RLight = lPos - normale * (s) * 2;
-//			const auto dot = max<float>(0., rayon.direction().dot(RLight));
-//			coef += pow(dot, 20) * 0.2f; //Partie spéculaire
-//		}
-//		couleur = couleur + ((minShape->material->col * (1.f/255.f)).cwiseProduct(l->col) * (coef /static_cast<float>(softShadow)));
-//	}
-//    couleur = couleur * (1.f/scene.lights.size());
-//	if (minShape->material->reflectance)
-//		couleur = couleur + pixelColor(Rayon3f(impact, reflexion, minShape)) * minShape->material->reflectance;
-////	if (minShape->material->transparence)
-////	{
-////		float indiceRefrac = 1;
-////		if (minShape != rayon.milieu)
-////			indiceRefrac = minShape->material->refraction;
-////		const Vec3f transmission = rayonRefracte(normale, rayon.direction,
-////												   rayon.milieu ? rayon.milieu->material->refraction : 1,
-////												   indiceRefrac);
-////		couleur = couleur * (1. - minShape->material->transparence)
-////				+ pixelColor(Rayon(impact, transmission, minShape)) * minShape->material->transparence;
-////	}
-//	depth--;
-//	return couleur.cwiseMin(Vec3f({1,1,1}));
-////	return couleur.borne({1,1,1});
-//// 	return (couleur * (1./scene.lights.size()) + recursion * minShape->material->reflectance).borne(Vec3f(1, 1, 1));
 }
 
 pair<float, shared_ptr<Shape>> RayTracer::nearestShape(const Rayon3f &rayon)
@@ -178,10 +142,10 @@ pair<float, shared_ptr<Shape>> RayTracer::nearestShape(const Rayon3f &rayon)
 
 void RayTracer::distToShape(float * r, shared_ptr<Shape>s, const Rayon3f &rayon)
 {
-	*r = s->distance(rayon, -1);
+//	*r = s->distance(rayon, -1);
 }
 
-Vec3f RayTracer::sky(const Vec3f& rayon)
+Vec3f RayTracer::sky(const Vec3f& rayon) const
 {
 	Vec3f unit_direction = rayon.normalized();
 	auto t = 0.5*(unit_direction.z() + 1.0);
@@ -191,33 +155,41 @@ Vec3f RayTracer::sky(const Vec3f& rayon)
 //	return {coef * 0.9f, coef, 1.f};
 }
 
-void RayTracer::fillImage(ofstream &out, int rowBegin, int nbRows, int width, int height)
+ofstream & RayTracer::fillImage(ofstream &out, int rowBegin, int nbRows, int width, int height) const
 {
-    const float halfAngle {static_cast<float>(tan(M_PI/6.))};
-	const float coef { halfAngle*2.f/max<float>(width, height)};
-	const auto point = scene.cameraPos;
-	Quaternion<float> camRot = scene.cameraRot;
-	for (float i {static_cast<float>(nbRows)}, y = (rowBegin - height/2.f) * coef; i--; y+=coef)
+	const int antiAliasing {16};
+//    const float halfAngle {static_cast<float>(tan(M_PI/6.))};
+//	const float coef { halfAngle*2.f/max<float>(width, height)};
+//	const auto point = scene.cameraPos;
+//	Quaternion<float> camRot = scene.cameraRot;
+//	float y = (rowBegin - height/2.f) * coef;
+	for (int i = nbRows; --i;)
+//		for (int i = nbRows; i--; y+=coef)
 	{
-		for (float j = 0, x = -width/2.f*coef; j < width; ++j, x+=coef)
+//		float x = -width/2.f*coef;
+		for (int j = 0; j < width; ++j)//, x+=coef)
 		{
 			Vec3f pixel{0, 0, 0};
-			const int antiAliasing {32};
 			for (auto k = 0; k < antiAliasing; k++)
 			{
-				depth = 0;
-				const Vec3f rayon = camRot * Vec3f(x + (frand() - 0.5f) * coef, -y + (frand() - 0.5f) * coef, -1);
-				pixel += pixelColor(Rayon3f(point, rayon, nullptr));
+//				const Vec3f rayon = camRot * Vec3f(x, -y, -1);
+				auto u = (j + frand()) / (width);
+				auto v = (i + frand()) / (height);
+				auto r = scene.camera().ray(u, v);
+				pixel += pixelColor(r, 16);
+//				const Vec3f rayon = camRot * Vec3f(x + (frand() - 0.5f) * coef, -y + (frand() - 0.5f) * coef, -1);
+//				pixel += pixelColor(Rayon3f(point, rayon), 16);
 			}
 			// Divide the color by the number of samples and gamma-correct for gamma=2.0.
 			pixel *= 1. / (float)antiAliasing;
 			pixel = pixel.array().sqrt();
-			Eigen::Vector3<unsigned char> pixelI = (pixel * 255.99).cast<unsigned char>();
+			Vector3<unsigned char> pixelI = (pixel * 255).cast<unsigned char>();
 			out << +pixelI.x() << " ";
 			out << +pixelI.y() << " ";
 			out << +pixelI.z() << endl;
 		}
 	}
+	return out;
 }
 
 Vec3f RayTracer::rayonRefracte(Vec3f normal, Vec3f incident, float n1, float n2)

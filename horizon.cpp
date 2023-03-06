@@ -1,5 +1,7 @@
 #include "horizon.h"
 
+#include "utils.h"
+
 Horizon::Horizon(float hauteur)
 	:_hauteur(hauteur)
 {
@@ -10,8 +12,8 @@ bool Horizon::touche(const Rayon3f& r, double t_min, double t_max, HitRecord& re
 	//TODO : vérifier.
 	if (!r.direction().z())
 		return false;
-	rec.t = (_hauteur-r.origin().z())/r.direction().z();
-	if (rec.t < t_min)
+	rec.t = (_hauteur-r.origin().z())/r.direction().normalized().z();
+	if (rec.t < t_min || rec.t > t_max)
 		return false;
 	rec.p = r.at(rec.t);
 	rec.setFaceNormal(r, Vec3f(0, 0, 1));

@@ -5,6 +5,7 @@
 #include "triangle.h"
 #include "metal.h"
 #include "lambertien.h"
+#include "dielectrique.h"
 
 using namespace std;
 
@@ -12,8 +13,10 @@ shared_ptr<Shape> PrimitiveFactory::create(const string &primName, const map <st
 {
 	if (primName == "sphere")
 	{
-		return make_shared<Boule>(Vec3f(params.at("x").number(), params.at("y").number(), params.at("z").number()),
+		shared_ptr<Shape> r = make_shared<Boule>(Vec3f(params.at("x").number(), params.at("y").number(), params.at("z").number()),
 						 params.at("radius").number());
+//		r->setNom(params.at("nom").text());
+		return r;
 	}
 	if (primName == "horizon")
 	{
@@ -32,11 +35,16 @@ shared_ptr<Material> MaterialFactory::create(const map <string, Parameter> &para
 {
 	if (params.at("type").text() == "metal")
 	{
-		return make_shared<Metal>(Vec3f(params.at("red").number(), params.at("green").number(), params.at("blue").number()));
+		return make_shared<Metal>(Vec3f(params.at("red").number(), params.at("green").number(), params.at("blue").number()),
+								  params.at("fuzziness").number());
 	}
 	if (params.at("type").text() == "lambertien")
 	{
 		return make_shared<Lambertien>(Vec3f(params.at("red").number(), params.at("green").number(), params.at("blue").number()));
+	}
+	if (params.at("type").text() == "dielectrique")
+	{
+		return make_shared<Dielectrique>(params.at("refraction").number());
 	}
 	return nullptr;
 }

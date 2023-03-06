@@ -11,11 +11,14 @@ CONFIG -= app_bundle
 #QMAKE_LFLAGS_DEBUG += -pg -O3
 
 INCLUDEPATH += C:\Users\etien\Documents\projets\eigen\
-    G:\Github\eigen
+    G:\Github\eigen\
+    C:\Users\etien\Documents\projets\json\single_include
 
 TEMPLATE = app
 
 SOURCES += \
+	camera.cpp \
+	dielectrique.cpp \
 	lambertien.cpp \
 	main.cpp \
 	boule.cpp \
@@ -44,6 +47,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 HEADERS += \
 	boule.h \
+	camera.h \
+	dielectrique.h \
 	horizon.h \
 	lambertien.h \
 	light.h \
@@ -58,5 +63,6 @@ HEADERS += \
 	shape.h\
 	shapelist.h \
 	tokenStream.h \
-	triangle.h
+	triangle.h \
+	utils.h
 

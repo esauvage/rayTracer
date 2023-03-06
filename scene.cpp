@@ -36,3 +36,23 @@ void Scene::add(std::shared_ptr<Shape> object)
 {
 	_world.add(object);
 }
+
+std::map<std::string, std::shared_ptr<Material> > &Scene::materials()
+{
+	return _materials;
+}
+
+std::map<std::string, std::shared_ptr<Material> > Scene::materials() const
+{
+	return _materials;
+}
+
+Camera Scene::camera() const
+{
+	return _camera;
+}
+
+void Scene::setCamera(const Camera &newCamera)
+{
+	_camera = newCamera;
+}

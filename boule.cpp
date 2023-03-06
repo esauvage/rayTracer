@@ -1,5 +1,11 @@
 #include "boule.h"
 
+#include <iostream>
+
+#include "utils.h"
+
+using namespace std;
+
 Boule::Boule(const Vec3f& position, float rayon)
 	:_pos{position}, _r{rayon}
 {
@@ -7,32 +13,38 @@ Boule::Boule(const Vec3f& position, float rayon)
 
 bool Boule::touche(const Rayon3f& r, double t_min, double t_max, HitRecord& rec) const
 {
-	auto oc = r.origin() - _pos;
-	auto a = r.direction().squaredNorm();
-	auto half_b = oc.dot(r.direction());
-	auto c = oc.squaredNorm() - _r*_r;
+	const Vec3f oc = r.origin() - _pos;
+	const auto a = r.direction().squaredNorm();
+	const auto half_b = oc.dot(r.direction());
+	const auto c = oc.squaredNorm() - _r*_r;
 
-	auto discriminant = half_b*half_b - a*c;
+	const auto discriminant = half_b*half_b - a*c;
 	if (discriminant < 0)
 	{
 		return false;
 	}
-	auto sqrtd = sqrt(discriminant);
+	const auto sqrtd = sqrt(discriminant);
 
 	// Find the nearest root that lies in the acceptable range.
 	auto root = (-half_b - sqrtd) / a;
-	if (root < t_min || t_max < root)
+	if (root < t_min || fabs(root - t_min) < 1e-5 || t_max < root)
 	{
 		root = (-half_b + sqrtd) / a;
-		if (root < t_min || t_max < root)
+		if (root < t_min || fabs(root - t_min) < 1e-5 || t_max < root)
 			return false;
 	}
-
 	rec.t = root;
 	rec.p = r.at(rec.t);
-	auto outwardNormal = (rec.p - _pos) / _r;
+	const Vec3f outwardNormal = (rec.p - _pos) / _r;
 	rec.setFaceNormal(r, outwardNormal);
 	rec.pMaterial = material();
+
+	if (root != root)
+	{
+		cout << "Rayon : " << r << endl;
+		cout << a << " discriminant " << discriminant << " half b " << half_b << " oc " << oc << endl;
+		cout << " position : " << _pos << endl;
+	}
 	return true;
 }
 
@@ -85,14 +97,4 @@ float Boule::distanceMax(const Rayon3f & r, float minDist) const
 		return (r2 > 0 && r2 < r1) ? r1 : r2;
 	}
 	return -1;
-}
-
-float Boule::distanceMin(const Vec3f &origin) const
-{
-	return origin.dot(_pos) - _r * _r;
-}
-
-Vec3f Boule::normal(const Vec3f& p) const
-{
-	return (p - _pos).normalized();
 }
