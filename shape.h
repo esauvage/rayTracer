@@ -4,6 +4,9 @@
 #include "material.h"
 #include "rayon.h"
 
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
+
 using Rayon3f = Rayon<float, 3>;
 
 class Material;
@@ -46,4 +49,9 @@ inline void Shape::setNom(const std::string &newNom)
 {
 	_nom = newNom;
 }
+
+inline void to_json(json& j, const Shape& s) {
+	j = json{{"nom", s.nom()}};
+}
+
 #endif // SHAPE

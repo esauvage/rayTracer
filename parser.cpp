@@ -85,7 +85,7 @@ void Parser::readScene(Scene & scene)
 		scene.add(s);
 
 		if (s->material() == nullptr)
-			s->setMaterial(m[scene._world.objects.size()%3]);
+			s->setMaterial(m[scene._world.objects().size()%3]);
 	}
 	return;
 }

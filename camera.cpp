@@ -5,9 +5,9 @@
 using namespace Eigen;
 
 Camera::Camera()
-	:_position(0, 0, 0), _rotation(0, 0, 0, 1), _focalLength(1.), _focusDist(10.), _aspectRatio(4./3.)
+	:_position(0, 0, 0), _rotation(0, 0, 0, 1), _focalLength(1.), _focusDist(7), _aspectRatio(4./3.)
 {
-	_lensRadius = 0.1 / 2.;
+	_lensRadius = 0.5 / 2.;
 	update();
 }
 
@@ -18,7 +18,7 @@ Rayon3f Camera::ray(double u, double v) const
 
 	return Rayon3f(
 		_position + offset,
-		_rotation * (_lower_left_corner + u*_horizontal + v*_vertical - _position - offset));
+		(_lower_left_corner + u*_horizontal + v*_vertical - _position - offset));
 
 //	return Rayon3f(_position, _rotation * (_lower_left_corner + u*_horizontal + v*_vertical - _position));
 }
@@ -52,8 +52,8 @@ void Camera::update()
 	auto viewport_height = 2.0 * h;
 	auto viewport_width = _aspectRatio * viewport_height;
 
-	Vec3f vUp = Vec3f(0, 1, 0);
-	_w = Vec3f(0, 0, -1);
+	Vec3f vUp = _rotation * Vec3f(0, 1, 0);
+	_w = _rotation * Vec3f(0, 0, -1);
 	_u = vUp.cross(_w).normalized();//unit_vector(cross(vup, w));
 	_v = _w.cross(_u);
 

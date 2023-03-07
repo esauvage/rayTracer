@@ -24,6 +24,7 @@ SOURCES += \
 	boule.cpp \
 	horizon.cpp \
 	light.cpp \
+	material.cpp \
 	metal.cpp \
 	parameter.cpp \
 	parser.cpp \

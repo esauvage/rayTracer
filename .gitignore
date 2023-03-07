@@ -5,7 +5,7 @@
 *.pdb
 *.ppm
 Makefile.*
-debug/
+debug\
 *.stash
 *.8-pre1
 *.10-pre1

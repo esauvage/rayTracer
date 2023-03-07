@@ -16,34 +16,17 @@ class Material
 {
 public:
 	Material(const Vec3f &albedo = Vec3f(0., 0., 0.));
-
-	float reflectance;
-	float refraction;
-	float transparence;
 	virtual bool scatter(const Rayon3f& r_in, const HitRecord& rec, Vec3f& attenuation, Rayon3f& scattered) const = 0;
 	Vec3f albedo() const;
+	virtual json &jsonHelper(json& j) const;
 protected:
 	Vec3f reflect(const Vec3f& v, const Vec3f& n) const;
 private:
 	Vec3f _albedo;
 };
 
-inline Vec3f Material::albedo() const
-{
-	return _albedo;
-}
-
-inline Material::Material(const Vec3f &albedo) : _albedo(albedo)
-{
-}
-
-inline Vec3f Material::reflect(const Vec3f& v, const Vec3f& n) const
-{
-	return v - 2*v.dot(n)*n;
-}
-
 inline void to_json(json& j, const Material& m) {
-	j = json{{"albedo", m.albedo()}};
+	j = m.jsonHelper(j);
 }
 
 #endif // MATERIAL_H

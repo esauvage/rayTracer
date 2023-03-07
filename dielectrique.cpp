@@ -34,3 +34,8 @@ Vec3f Dielectrique::refract(const Vec3f& uv, const Vec3f& n, float etai_over_eta
 	auto r_out_parallel = -sqrt(fabs(1.0 - r_out_perp.squaredNorm())) * n;
 	return r_out_perp + r_out_parallel;
 }
+
+float Dielectrique::iRefrac() const
+{
+	return _iRefrac;
+}

@@ -21,3 +21,15 @@ bool Metal::scatter(const Rayon3f &r_in, const HitRecord &rec, Vec3f &attenuatio
 	}
 	return r;
 }
+
+float Metal::fuzz() const
+{
+	return _fuzz;
+}
+
+json &Metal::jsonHelper(json &j) const
+{
+	j = Material::jsonHelper(j);
+//	j["fuzz"] = json{_fuzz};
+	return j;
+}

@@ -17,12 +17,12 @@ ShapeList::ShapeList(std::shared_ptr<Shape> object)
 
 void ShapeList::clear()
 {
-	objects.clear();
+	_objects.clear();
 }
 
 void ShapeList::add(std::shared_ptr<Shape> object)
 {
-	objects.push_back(object);
+	_objects.push_back(object);
 }
 
 bool _prems = true;
@@ -33,7 +33,7 @@ bool ShapeList::touche(const Rayon3f& r, double t_min, double t_max, HitRecord& 
 	auto closest_so_far = t_max;
 
 	int i = 0;
-	for (const auto& object : objects)
+	for (const auto& object : _objects)
 	{
 		if (object->touche(r, t_min, closest_so_far, temp_rec))
 		{
@@ -50,4 +50,9 @@ bool ShapeList::touche(const Rayon3f& r, double t_min, double t_max, HitRecord& 
 	}
 
 	return hit_anything;
+}
+
+std::vector<shared_ptr<Shape> > ShapeList::objects() const
+{
+	return _objects;
 }

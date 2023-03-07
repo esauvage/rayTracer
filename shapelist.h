@@ -6,6 +6,9 @@
 #include <memory>
 #include <vector>
 
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
+
 using std::shared_ptr;
 using std::make_shared;
 
@@ -20,7 +23,13 @@ public:
 
 	virtual bool touche(const Rayon3f& r, double t_min, double t_max, HitRecord& rec) const override;
 
-	std::vector<shared_ptr<Shape>> objects;
+	std::vector<shared_ptr<Shape> > objects() const;
+private:
+	std::vector<shared_ptr<Shape> > _objects;
 };
+
+inline void to_json(json& j, const ShapeList& s) {
+//	j = json{{"objects", s.objects()}};
+}
 
 #endif // SHAPELIST_H
