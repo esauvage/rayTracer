@@ -33,18 +33,21 @@ shared_ptr<Shape> PrimitiveFactory::create(const string &primName, const map <st
 
 shared_ptr<Material> MaterialFactory::create(const map <string, Parameter> &params)
 {
+	shared_ptr<Material> m;
 	if (params.at("type").text() == "metal")
 	{
-		return make_shared<Metal>(Vec3f(params.at("red").number(), params.at("green").number(), params.at("blue").number()),
+		m = make_shared<Metal>(Vec3f(params.at("red").number(), params.at("green").number(), params.at("blue").number()),
 								  params.at("fuzziness").number());
 	}
 	if (params.at("type").text() == "lambertien")
 	{
-		return make_shared<Lambertien>(Vec3f(params.at("red").number(), params.at("green").number(), params.at("blue").number()));
+		m = make_shared<Lambertien>(Vec3f(params.at("red").number(), params.at("green").number(), params.at("blue").number()));
 	}
 	if (params.at("type").text() == "dielectrique")
 	{
-		return make_shared<Dielectrique>(params.at("refraction").number());
+		m = make_shared<Dielectrique>(params.at("refraction").number());
 	}
+	m->setNom(params.at("nom").text());
+	return m;
 	return nullptr;
 }

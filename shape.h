@@ -21,13 +21,15 @@ public:
 	std::shared_ptr<Material> material() const;
 
 	void setMaterial(const std::shared_ptr<Material> &newMaterial);
-
-	std::string nom() const;
-	void setNom(const std::string &newNom);
+	virtual json &jsonHelper(json& j) const
+	{
+		if (_material)
+			j= json{{"material", _material->nom()}};
+		return j;
+	}
 
 private:
 	std::shared_ptr<Material>_material {nullptr};
-	std::string _nom;
 };
 
 inline std::shared_ptr<Material> Shape::material() const
@@ -40,18 +42,9 @@ inline void Shape::setMaterial(const std::shared_ptr<Material> &newMaterial)
 	_material = newMaterial;
 }
 
-inline std::string Shape::nom() const
+inline void to_json(json& j, const Shape& s)
 {
-	return _nom;
-}
-
-inline void Shape::setNom(const std::string &newNom)
-{
-	_nom = newNom;
-}
-
-inline void to_json(json& j, const Shape& s) {
-	j = json{{"nom", s.nom()}};
+	j = s.jsonHelper(j);
 }
 
 #endif // SHAPE

@@ -41,28 +41,9 @@ bool Triangle::touche(const Rayon3f& r, double t_min, double t_max, HitRecord& r
 	return true;
 }
 
-float Triangle::distance(const Rayon3f & r, float minDist) const
+json &Triangle::jsonHelper(json &j) const
 {
-	(void)minDist;
-	const auto h = r.direction().cross(_e2);
-	const auto a = _e1.dot(h);
-
-	if (a > -0.00001 && a < 0.00001)
-		return -1;
-
-	const auto f = 1. / a;
-	const auto s = r.origin() - _p[0];
-
-	const auto u = (s.dot(h)) * f;
-
-	if ((u < 0.0) || (u > 1.0))
-		return -1;
-
-	const auto q = s.cross(_e1);
-	const auto v = f * (r.direction().dot(q));
-
-	if ((v < 0.0) || (u + v > 1.0))
-		return -1;
-
-	return f * (_e2.dot(q));
+	j = Shape::jsonHelper(j);
+	j["points"] = _p;
+	return j;
 }

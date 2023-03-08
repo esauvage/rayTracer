@@ -30,6 +30,6 @@ float Metal::fuzz() const
 json &Metal::jsonHelper(json &j) const
 {
 	j = Material::jsonHelper(j);
-//	j["fuzz"] = json{_fuzz};
+	j["fuzz"] = _fuzz;
 	return j;
 }

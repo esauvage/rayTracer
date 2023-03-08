@@ -12,7 +12,7 @@ class Triangle : public Shape
 public:
 	Triangle(const array< Vec3f, 3>& points);
 	virtual bool touche(const Rayon3f& r, double t_min, double t_max, HitRecord& rec) const;
-	virtual float distance(const Rayon3f & r, float minDist = -1) const;
+	virtual json &jsonHelper(json& j) const;
 private:
 	array< Vec3f, 3 > _p;
 	Vec3f _n;

@@ -12,7 +12,10 @@ CONFIG -= app_bundle
 
 INCLUDEPATH += C:\Users\etien\Documents\projets\eigen\
     G:\Github\eigen\
-    C:\Users\etien\Documents\projets\json\single_include
+    C:\Users\etien\Documents\projets\json\single_include\
+    G:\Github\json\single_include\
+    C:\Users\etien\Documents\projets\CImg\
+    G:\Github\CImg
 
 TEMPLATE = app
 
@@ -67,3 +70,5 @@ HEADERS += \
 	triangle.h \
 	utils.h
 
+
+win32: LIBS += -lGdi32

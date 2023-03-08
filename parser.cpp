@@ -45,6 +45,7 @@ void Parser::readScene(Scene & scene)
 			}
 			const string name = _ts.current().string_value;
 			auto parameters = params();
+			parameters["nom"] = name;
 			scene.materials()[name] = MaterialFactory::create(parameters);
 //			scene.materials[name] = make_shared<Lambertien>(Vec3f{parameters["red"].number(), parameters["green"].number(), parameters["blue"].number()});
 			continue;

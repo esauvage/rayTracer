@@ -2,6 +2,8 @@
 #define RAY_TRACER_H
 
 #include "scene.h"
+#include "CImg.h"
+using namespace cimg_library;
 
 using Rayon3f = Rayon<float, 3>;
 using Vec3f = Vec<float, 3>;
@@ -15,12 +17,11 @@ public:
 private:
 	std::pair<float, std::shared_ptr<Shape>> nearestShape(const Rayon3f &rayon);
 	Vec3f rayonRefracte(Vec3f normal, Vec3f incident, float n1, float n2);
-	void distToShape(float *r, std::shared_ptr<Shape>s, const Rayon3f &rayon);
 	Vec3f pixelColor(const Rayon3f &rayon, int depth) const;
 	Vec3f sky(const Vec3f& rayon) const;
-	std::ofstream & fillImage(std::ofstream &out, int rowBegin, int nbRows, int width, int height) const;
+	void fillImage(int rowBegin, int nbRows, CImg<unsigned char> &img) const;
 	Scene scene;
-	std::vector <std::shared_ptr<Shape>>orderedShapes;
+//	std::vector <std::shared_ptr<Shape>>orderedShapes;
 };
 
 #endif // RAY_TRACER_H

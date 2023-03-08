@@ -39,62 +39,13 @@ bool Boule::touche(const Rayon3f& r, double t_min, double t_max, HitRecord& rec)
 	rec.setFaceNormal(r, outwardNormal);
 	rec.pMaterial = material();
 
-	if (root != root)
-	{
-		cout << "Rayon : " << r << endl;
-		cout << a << " discriminant " << discriminant << " half b " << half_b << " oc " << oc << endl;
-		cout << " position : " << _pos << endl;
-	}
 	return true;
 }
 
-
-float Boule::distance(const Rayon3f& r, float minDist) const
+json &Boule::jsonHelper(json &j) const
 {
-	Vec3f p(r.origin() - _pos);
-	if (minDist > 0)
-	{
-		if (p.x() > minDist + _r)
-			return -1;
-		if (p.y() > minDist + _r)
-			return -1;
-		if (p.z() > minDist + _r)
-			return -1;
-	}
-	const auto b = (p.dot(r.direction()));
-	const auto c = (p.dot(p) - _r * _r);
-	const auto q = b * b - c;
-	if (q >= 0)
-	{
-		const auto sqrtQ = sqrt(q);
-		const float r1 = -b-sqrtQ;
-		const float r2 = -b+sqrtQ;
-		return (r2 > 0 && r2 < r1) ? r2 : r1;
-	}
-	return -1;
-}
-
-float Boule::distanceMax(const Rayon3f & r, float minDist) const
-{
-	Vec3f p(r.origin() - _pos);
-	if (minDist > 0)
-	{
-		if (p.x() > minDist + _r)
-			return -1;
-		if (p.y() > minDist + _r)
-			return -1;
-		if (p.z() > minDist + _r)
-			return -1;
-	}
-	const auto b = (p.dot(r.direction()));
-	const auto c = (p.dot(p) - _r * _r);
-	const auto q = b * b - c;
-	if (q >= 0)
-	{
-		const auto sqrtQ = sqrt(q);
-		const float r1 = -b-sqrtQ;
-		const float r2 = -b+sqrtQ;
-		return (r2 > 0 && r2 < r1) ? r1 : r2;
-	}
-	return -1;
+	j = Shape::jsonHelper(j);
+	j["position"] = _pos;
+	j["rayon"] = _r;
+	return j;
 }

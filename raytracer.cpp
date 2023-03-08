@@ -48,18 +48,19 @@ void RayTracer::generateFile(const string &outFile, const pair <int, int> size, 
 	cout << "Input file read." << endl;
 	const int width {size.first};
 	const int height {size.second};
-//    const int num_threads = 4;
-//    std::thread t[num_threads];
+	CImg<unsigned char> image(width, height, 1, 3, 0);
+	const int num_threads = 4;
+	std::thread t[num_threads];
 
     //Launch a group of threads
-//    for (int i = 0; i < num_threads; ++i) {
-//        char * buf = img + i * width * height * 3 / num_threads;
-//        t[i] = std::thread(&RayTracer::fillImage, this, buf, i * height/num_threads, height/num_threads, width, height);
-//    }
-//    //Join the threads with the main thread
-//    for (int i = 0; i < num_threads; ++i) {
-//        t[i].join();
-//    }
+//	for (int i = 0; i < num_threads; ++i) {
+////		char * buf = img + i * width * height * 3 / num_threads;
+//		t[i] = std::thread(&RayTracer::fillImage, this, i * height/num_threads, height/num_threads, image);
+//	}
+//	//Join the threads with the main thread
+//	for (int i = 0; i < num_threads; ++i) {
+//		t[i].join();
+//	}
 	ofstream out(outFile);
 	if (!out.good())
 	{
@@ -68,7 +69,7 @@ void RayTracer::generateFile(const string &outFile, const pair <int, int> size, 
 	}
 	out << "P3\n" << width << " " << height << " 255\n"; // The PPM Header is issued
 //	fillImage(out, 0, 2, 2, 2);
-	fillImage(out, 0, height, width, height);
+	fillImage(0, height, image);
 	out.flush();
 	out.close();
 //	FILE * outF = fopen(outFile.c_str(), "w");
@@ -83,6 +84,11 @@ void RayTracer::generateFile(const string &outFile, const pair <int, int> size, 
 			  << chrono::duration_cast<std::chrono::milliseconds>(end - start).count()
 			  << "ms.\n";
 	cout << "max light depth : " << max_depth << endl;
+	CImgDisplay main_disp(image,"Click a point");
+	while (!main_disp.is_closed())
+	{
+		main_disp.wait();
+	}
 	ofstream o("scene.json");
 	json j = scene;
 	o << setw(4) << j << endl;
@@ -140,11 +146,6 @@ pair<float, shared_ptr<Shape>> RayTracer::nearestShape(const Rayon3f &rayon)
 	return pair<float, shared_ptr<Shape>> {minDist, minShape};
 }
 
-void RayTracer::distToShape(float * r, shared_ptr<Shape>s, const Rayon3f &rayon)
-{
-//	*r = s->distance(rayon, -1);
-}
-
 Vec3f RayTracer::sky(const Vec3f& rayon) const
 {
 	Vec3f unit_direction = rayon.normalized();
@@ -155,8 +156,10 @@ Vec3f RayTracer::sky(const Vec3f& rayon) const
 //	return {coef * 0.9f, coef, 1.f};
 }
 
-ofstream & RayTracer::fillImage(ofstream &out, int rowBegin, int nbRows, int width, int height) const
+void RayTracer::fillImage(int rowBegin, int nbRows, CImg<unsigned char> &img) const
 {
+	const auto height = img.height();
+	const auto width = img.width();
 	const int antiAliasing {16};
 //    const float halfAngle {static_cast<float>(tan(M_PI/6.))};
 //	const float coef { halfAngle*2.f/max<float>(width, height)};
@@ -172,24 +175,21 @@ ofstream & RayTracer::fillImage(ofstream &out, int rowBegin, int nbRows, int wid
 			Vec3f pixel{0, 0, 0};
 			for (auto k = 0; k < antiAliasing; k++)
 			{
-//				const Vec3f rayon = camRot * Vec3f(x, -y, -1);
 				auto u = (j + frand()) / (width);
 				auto v = (i + frand()) / (height);
 				auto r = scene.camera().ray(u, v);
 				pixel += pixelColor(r, 16);
-//				const Vec3f rayon = camRot * Vec3f(x + (frand() - 0.5f) * coef, -y + (frand() - 0.5f) * coef, -1);
-//				pixel += pixelColor(Rayon3f(point, rayon), 16);
 			}
 			// Divide the color by the number of samples and gamma-correct for gamma=2.0.
 			pixel *= 1. / (float)antiAliasing;
 			pixel = pixel.array().sqrt();
 			Vector3<unsigned char> pixelI = (pixel * 255).cast<unsigned char>();
-			out << +pixelI.x() << " ";
-			out << +pixelI.y() << " ";
-			out << +pixelI.z() << endl;
+			img(j, height - i, 0, 0) = +pixelI.x();
+			img(j, height - i, 0, 1) = +pixelI.y();
+			img(j, height - i, 0, 2) = +pixelI.z();
 		}
 	}
-	return out;
+//	return out;
 }
 
 Vec3f RayTracer::rayonRefracte(Vec3f normal, Vec3f incident, float n1, float n2)

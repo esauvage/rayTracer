@@ -7,7 +7,7 @@ using namespace Eigen;
 Camera::Camera()
 	:_position(0, 0, 0), _rotation(0, 0, 0, 1), _focalLength(1.), _focusDist(7), _aspectRatio(4./3.)
 {
-	_lensRadius = 0.5 / 2.;
+	_lensRadius = 0.25 / 2.;
 	update();
 }
 
@@ -19,8 +19,6 @@ Rayon3f Camera::ray(double u, double v) const
 	return Rayon3f(
 		_position + offset,
 		(_lower_left_corner + u*_horizontal + v*_vertical - _position - offset));
-
-//	return Rayon3f(_position, _rotation * (_lower_left_corner + u*_horizontal + v*_vertical - _position));
 }
 
 Vec3f Camera::position() const

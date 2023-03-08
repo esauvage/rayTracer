@@ -39,3 +39,10 @@ float Dielectrique::iRefrac() const
 {
 	return _iRefrac;
 }
+
+json &Dielectrique::jsonHelper(json &j) const
+{
+	j = Material::jsonHelper(j);
+	j["refractiveIndex"] = _iRefrac;
+	return j;
+}

@@ -35,29 +35,8 @@ private:
 	std::map <std::string, std::shared_ptr<Material> >_materials;
 };
 
-//inline void from_json(const json& j, Scene& scene)
-//{
-//	j.at("camera").get_to(scene.camera);
-//	j.at("materials").get_to(scene.materials);
-//	j.at("world").get_to(scene._world);
-//}
-
-namespace nlohmann {
-	template <typename T>
-	struct adl_serializer<std::shared_ptr<T> > {
-		static void to_json(json& j, const std::shared_ptr<T>& p) {
-			j = json{*p};
-		}
-
-		static void from_json(const json& j, std::shared_ptr<T>& p) {
-				*p = j.get<T>(); // same as above, but with
-								  // adl_serializer<T>::from_json
-			}
-		};
-}
-
 inline void to_json(json& j, const Scene& scene) {
-	j = json{{"camera", scene.camera()}, {"materials", scene.materials()}};//, {"world", scene._world}};
+	j = json{{"camera", scene.camera()}, {"materials", scene.materials()}, {"world", scene._world}};
 }
 
 #endif
