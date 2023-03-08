@@ -20,6 +20,7 @@ using namespace Eigen;
 int max_depth = 0;
 
 RayTracer::RayTracer()
+    :_activeThreads(0)
 {
 	srand(time(NULL));
 }
@@ -49,46 +50,33 @@ void RayTracer::generateFile(const string &outFile, const pair <int, int> size, 
 	const int width {size.first};
 	const int height {size.second};
 	CImg<unsigned char> image(width, height, 1, 3, 0);
-	const int num_threads = 4;
-	std::thread t[num_threads];
-
+    const int num_threads = 8;
+    std::thread t[num_threads + 1];
+    auto threadHeight = height/(num_threads);
+    if (threadHeight * num_threads < height)
+        threadHeight++;
     //Launch a group of threads
-//	for (int i = 0; i < num_threads; ++i) {
-////		char * buf = img + i * width * height * 3 / num_threads;
-//		t[i] = std::thread(&RayTracer::fillImage, this, i * height/num_threads, height/num_threads, image);
-//	}
-//	//Join the threads with the main thread
-//	for (int i = 0; i < num_threads; ++i) {
-//		t[i].join();
-//	}
-	ofstream out(outFile);
-	if (!out.good())
-	{
-		cout << "No valid output file." << endl;
-		return;
-	}
-	out << "P3\n" << width << " " << height << " 255\n"; // The PPM Header is issued
-//	fillImage(out, 0, 2, 2, 2);
-	fillImage(0, height, image);
-	out.flush();
-	out.close();
-//	FILE * outF = fopen(outFile.c_str(), "w");
-//	fprintf(outF, "P3\n%d %d 255\n", width, height); // The PPM Header is issued
-//	char * buf = img;
-//	for (auto i {width * height}; i--;)
-//		fprintf(outF, "%hhu %hhu %hhu\n", buf[0], buf[1], buf[2]);
-//	buf+=3;
-	end = chrono::system_clock::now();
-
-	cout << "finished calculation for "
-			  << chrono::duration_cast<std::chrono::milliseconds>(end - start).count()
-			  << "ms.\n";
-	cout << "max light depth : " << max_depth << endl;
-	CImgDisplay main_disp(image,"Click a point");
-	while (!main_disp.is_closed())
-	{
-		main_disp.wait();
-	}
+    for (int i = 0; i < num_threads; ++i) {
+        _activeThreads++;
+        t[i] = std::thread(&RayTracer::fillImage, this, i * threadHeight, threadHeight, &image);
+    }
+    CImgDisplay main_disp(image, "Generation");
+    t[num_threads] = std::thread(&RayTracer::updateDisplay, this, &main_disp, &image);
+    //Join the threads with the main thread
+    for (int i = 0; i < num_threads; ++i) {
+        t[i].join();
+        _activeThreads--;
+    }
+    t[num_threads].join();
+    end = chrono::system_clock::now();
+    cout << "finished calculation for "
+              << chrono::duration_cast<std::chrono::milliseconds>(end - start).count()
+              << "ms.\n";
+    while (!main_disp.is_closed())
+    {
+        main_disp.wait();
+    }
+    image.save_bmp("test.bmp");
 	ofstream o("scene.json");
 	json j = scene;
 	o << setw(4) << j << endl;
@@ -96,8 +84,31 @@ void RayTracer::generateFile(const string &outFile, const pair <int, int> size, 
 
 Vec3f RayTracer::pixelColor(const Rayon3f &rayon, int depth) const
 {
-	if (depth <= 0)
-		return {0, 1, 0};//rayon.milieu->material->col * (1./255.);
+//    Rayon3f curRay = rayon;
+//    Vec3f curAttenuation(1,1, 1);
+//    for (auto i = depth; --i;)
+//    {
+//        HitRecord rec;
+//        if (scene._world.touche(curRay, 0, INFINITY, rec))
+//        {
+//            Rayon3f scattered;
+//            Vec3f attenuation;
+//            if (rec.pMaterial->scatter(curRay, rec, attenuation, scattered))
+//            {
+//                curRay = scattered;
+//                curAttenuation = curAttenuation.cwiseProduct(attenuation);
+//            }
+//            else
+//                return curAttenuation.cwiseProduct(Vec3f(0,0,1));
+//        }
+//        else
+//        {
+//            return curAttenuation.cwiseProduct(sky(curRay.direction()));
+//        }
+//    }
+//    return curAttenuation;
+    if (depth <= 0)
+        return {0, 1, 0};//rayon.milieu->material->col * (1./255.);
 	HitRecord rec;
 	if (scene._world.touche(rayon, 0, INFINITY, rec))
 	{
@@ -113,39 +124,6 @@ Vec3f RayTracer::pixelColor(const Rayon3f &rayon, int depth) const
 
 }
 
-pair<float, shared_ptr<Shape>> RayTracer::nearestShape(const Rayon3f &rayon)
-{
-	float minDist = INFINITY;
-	shared_ptr<Shape> minShape = nullptr;
-//	const int num_threads = scene.shapes.size();
-//	float distances[num_threads];
-//	std::thread t[num_threads];
-//	for (int i = 0; i < num_threads; ++i) {
-//        distToShape(&distances[i], scene.shapes[i], origin, direction);
-//    }
-	//Launch a group of threads
-//    for (int i = 0; i < num_threads; ++i) {
-//        t[i] = std::thread(&RayTracer::distToShape, this, &distances[i], scene.shapes[i], origin, direction);
-//    }
-//	//Join the threads with the main thread
-//    for (int i = 0; i < num_threads; ++i) {
-//        t[i].join();
-//    }
-//	for (int i = 0; i < num_threads; ++i)
-//	{
-//		float d = distances[i];
-//		if (d <= 0)
-//			continue;
-//		Shape * o = scene.shapes[i];
-//		if ((((d < minDist)) || (minDist < 0)) && (o != excluded))
-//		{
-//			minShape = move(o);
-//			minDist = d;
-//		}
-//	}
-	return pair<float, shared_ptr<Shape>> {minDist, minShape};
-}
-
 Vec3f RayTracer::sky(const Vec3f& rayon) const
 {
 	Vec3f unit_direction = rayon.normalized();
@@ -156,47 +134,36 @@ Vec3f RayTracer::sky(const Vec3f& rayon) const
 //	return {coef * 0.9f, coef, 1.f};
 }
 
-void RayTracer::fillImage(int rowBegin, int nbRows, CImg<unsigned char> &img) const
+void RayTracer::fillImage(int rowBegin, int nbRows, CImg<unsigned char> *img) const
 {
-	const auto height = img.height();
-	const auto width = img.width();
-	const int antiAliasing {16};
-//    const float halfAngle {static_cast<float>(tan(M_PI/6.))};
-//	const float coef { halfAngle*2.f/max<float>(width, height)};
-//	const auto point = scene.cameraPos;
-//	Quaternion<float> camRot = scene.cameraRot;
-//	float y = (rowBegin - height/2.f) * coef;
-	for (int i = nbRows; --i;)
-//		for (int i = nbRows; i--; y+=coef)
-	{
-//		float x = -width/2.f*coef;
-		for (int j = 0; j < width; ++j)//, x+=coef)
-		{
-			Vec3f pixel{0, 0, 0};
-			for (auto k = 0; k < antiAliasing; k++)
-			{
-				auto u = (j + frand()) / (width);
-				auto v = (i + frand()) / (height);
-				auto r = scene.camera().ray(u, v);
-				pixel += pixelColor(r, 16);
-			}
-			// Divide the color by the number of samples and gamma-correct for gamma=2.0.
-			pixel *= 1. / (float)antiAliasing;
-			pixel = pixel.array().sqrt();
-			Vector3<unsigned char> pixelI = (pixel * 255).cast<unsigned char>();
-			img(j, height - i, 0, 0) = +pixelI.x();
-			img(j, height - i, 0, 1) = +pixelI.y();
-			img(j, height - i, 0, 2) = +pixelI.z();
-		}
-	}
-//	return out;
+    const auto height = img->height();
+    const auto width = img->width();
+    const int antiAliasing {64};
+    for (int i = nbRows + 1; --i;)
+    {
+        for (int j = 0; j < width; ++j)//, x+=coef)
+        {
+            Vec3f pixel{0, 0, 0};
+            for (auto k = 0; k < antiAliasing; k++)
+            {
+                auto u = (j + frand()) / (width);
+                auto v = (i + rowBegin + frand()) / (height);
+                auto r = scene.camera().ray(u, v);
+                pixel += pixelColor(r, 16);
+            }
+            // Divide the color by the number of samples and gamma-correct for gamma=2.0.
+            pixel *= 1. / (float)antiAliasing;
+            pixel = pixel.array().sqrt();
+            Vector3<unsigned char> pixelI = (pixel * 255).cast<unsigned char>();
+            (*img)(j, height - rowBegin - i, 0, 0) = +pixelI.x();
+            (*img)(j, height - rowBegin - i, 0, 1) = +pixelI.y();
+            (*img)(j, height - rowBegin - i, 0, 2) = +pixelI.z();
+        }
+    }
 }
 
-Vec3f RayTracer::rayonRefracte(Vec3f normal, Vec3f incident, float n1, float n2)
+void RayTracer::updateDisplay(CImgDisplay *display, CImg<unsigned char> *img) const
 {
-	//from http://raphaello.univ-fcomte.fr/ig/raytracing/lancerderayons.htm
-	const float n = n1/n2;
-	const float a = normal.dot(incident);
-	Vec3f T = normal * (n*a - sqrt(1 - n * n * (1-(a * a)))) - incident * n;
-	return T;
+    while(_activeThreads)
+        display->display(*img);
 }
