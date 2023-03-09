@@ -59,3 +59,14 @@ void Camera::update()
 	_vertical = _focusDist * viewport_height * _v;
 	_lower_left_corner = _position - _horizontal/2. - _vertical/2. - _focusDist * _w;
 }
+
+float Camera::focusDist() const
+{
+	return _focusDist;
+}
+
+void Camera::setFocusDist(float newFocusDist)
+{
+	_focusDist = newFocusDist;
+	update();
+}

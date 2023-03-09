@@ -16,10 +16,7 @@ class Scene
 {
 public:
 	Scene();
-	Scene(std::shared_ptr<Shape> object);
 	~Scene();
-	void clear();
-	void add(std::shared_ptr<Shape> object);
 
 	std::vector <Light *> lights;
 	Camera camera() const;
@@ -38,7 +35,7 @@ private:
 
 inline void to_json(json& j, const Scene& scene)
 {
-    j = json{"camera", scene.camera()};
+	j["camera"] = json(scene.camera());
     j["materials"] = json(scene.materials());
     j["world"] = json(scene.world());
 }

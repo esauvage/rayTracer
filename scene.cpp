@@ -14,27 +14,11 @@ void deleteElems(vector <T *> scene)
 
 Scene::~Scene()
 {
-	clear();
 	deleteElems<Light>(lights);
 }
 
 Scene::Scene()
 {
-}
-
-Scene::Scene(std::shared_ptr<Shape> shape)
-{
-	add(shape);
-}
-
-void Scene::clear()
-{
-	_world.clear();
-}
-
-void Scene::add(std::shared_ptr<Shape> object)
-{
-	_world.add(object);
 }
 
 std::map<std::string, std::shared_ptr<Material> > &Scene::materials()

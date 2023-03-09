@@ -28,6 +28,7 @@ SOURCES += \
 	horizon.cpp \
 	light.cpp \
 	material.cpp \
+	mesh.cpp \
 	metal.cpp \
 	parameter.cpp \
 	parser.cpp \
@@ -57,6 +58,7 @@ HEADERS += \
 	lambertien.h \
 	light.h \
 	material.h \
+	mesh.h \
 	metal.h \
 	parameter.h \
 	parser.h \

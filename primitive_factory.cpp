@@ -4,6 +4,7 @@
 #include "horizon.h"
 #include "triangle.h"
 #include "shapelist.h"
+#include "mesh.h"
 
 #include "metal.h"
 #include "lambertien.h"
@@ -58,7 +59,16 @@ shared_ptr<Shape> PrimitiveFactory::from_json(const json &j, const map<string, s
     {
         r = make_shared<Horizon>(j.at("hauteur").get<float>());
     }
-    if (j.contains("points"))
+	if (j.contains("triangles"))
+	{
+		shared_ptr<Mesh> mesh = make_shared<Mesh>();
+		for (const auto &s : j["triangles"])
+		{
+			mesh->add(PrimitiveFactory::from_json(s, materials));
+		}
+		r = mesh;
+	}
+	if (j.contains("points"))
     {
         array< Vec3f, 3> a;
         int i = 0;

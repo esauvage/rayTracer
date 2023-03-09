@@ -20,6 +20,9 @@ public:
 	Eigen::Quaternion<float> rotation() const;
 	void setRotation(const Eigen::Quaternion<float> &newRotation);
 
+	float focusDist() const;
+	void setFocusDist(float newFocusDist);
+
 private:
 	void update();
 
@@ -36,31 +39,35 @@ private:
 };
 
 namespace nlohmann {
-template <typename T>
-struct adl_serializer<Eigen::Quaternion<T>> {
-	static void to_json(json& j, const Eigen::Quaternion<T>& q) {
-        j = json{q.w(), q.x(), q.y(), q.z()};
-	}
+	template <typename T>
+	struct adl_serializer<Eigen::Quaternion<T>> {
+		static void to_json(json& j, const Eigen::Quaternion<T>& q) {
+			j = json{q.w(), q.x(), q.y(), q.z()};
+		}
 
-	static void from_json(const json& j, Eigen::Quaternion<T>& q) {
-			q = Eigen::Quaternion<T>(j[0].get<T>(), j[1].get<T>(), j[2].get<T>(), j[3].get<T>()); // same as above, but with
-							  // adl_serializer<T>::from_json
+		static void from_json(const json& j, Eigen::Quaternion<T>& q) {
+			q = Eigen::Quaternion<T>(j[0].get<T>(), j[1].get<T>(), j[2].get<T>(), j[3].get<T>());
 		}
 	};
+}
 
 inline void to_json(json& j, const Camera& camera)
 {
-    j = json{{"position", camera.position()}, {"orientation", camera.rotation()}};
+	j = json{{"position", camera.position()}, {"orientation", camera.rotation()}, {"focus", camera.focusDist()}};
 }
 
 inline void from_json(const json& j, Camera& camera)
 {
-	Vec3f position;
-	j.at("position").get_to(position);
+	Vec3f position = Vec3f(j.at("position")[0].get<float>(), j.at("position")[1].get<float>(), j.at("position")[2].get<float>());
+//	j.at("position").get_to(position);
 	camera.setPosition(position);
 	Eigen::Quaternionf rotation;
 	j.at("orientation").get_to(rotation);
     camera.setRotation(rotation);
+	if (j.contains("focus"))
+	{
+		camera.setFocusDist(j.at("focus").get<float>());
+	}
 }
 
 #endif // CAMERA_H

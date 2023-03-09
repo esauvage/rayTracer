@@ -4,13 +4,14 @@
 #include <iostream>
 
 using namespace std;
+using namespace nlohmann;
 
 ShapeList::ShapeList()
 {
 
 }
 
-ShapeList::ShapeList(std::shared_ptr<Shape> object)
+ShapeList::ShapeList(shared_ptr<Shape> object)
 {
 	add(object);
 }
@@ -20,7 +21,7 @@ void ShapeList::clear()
 	_objects.clear();
 }
 
-void ShapeList::add(std::shared_ptr<Shape> object)
+void ShapeList::add(shared_ptr<Shape> object)
 {
 	_objects.push_back(object);
 }
@@ -52,9 +53,4 @@ json &ShapeList::jsonHelper(json &j) const
         j += json(o);
     }
 	return j;
-}
-
-std::vector<shared_ptr<Shape> > ShapeList::objects() const
-{
-	return _objects;
 }

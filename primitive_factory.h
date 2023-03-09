@@ -7,7 +7,7 @@
 #include <map>
 #include <memory>
 #include <nlohmann/json.hpp>
-
+using namespace nlohmann;
 class Shape;
 class Material;
 

@@ -10,7 +10,6 @@ using json = nlohmann::json;
 using Rayon3f = Rayon<float, 3>;
 
 class Material;
-
 class HitRecord;
 
 class Shape

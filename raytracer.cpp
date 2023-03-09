@@ -12,6 +12,7 @@
 using json = nlohmann::json;
 
 #include "utils.h"
+#include "parser.h"
 
 using namespace std;
 using namespace Eigen;
@@ -41,45 +42,45 @@ void RayTracer::generateFile(const string &outFile, const pair <int, int> size, 
 //		cout << "No valid input file." << endl;
 //		return;
 //	}
-//    Parser parser(ifs);
+//	Parser parser(ifs);
 //	parser.readScene(scene);
 //	ifs.close();
-    ifstream i("scene.json");
+	ifstream i(inFile);
 	json data;
 	i >> data;
-    i.close();
 	scene = data.get<Scene>();
+	i.close();
 	cout << "Input file read." << endl;
 	const int width {size.first};
 	const int height {size.second};
 	CImg<unsigned char> image(width, height, 1, 3, 0);
-    const int num_threads = 8;
-    thread t[num_threads + 1];
-    auto threadHeight = height/(num_threads);
-    if (threadHeight * num_threads < height)
-        threadHeight++;
-    //Launch a group of threads
-    for (int i = 0; i < num_threads; ++i) {
-        _activeThreads++;
-        t[i] = thread(&RayTracer::fillImage, this, i * threadHeight, threadHeight, &image);
-    }
-    CImgDisplay main_disp(image, "Generation");
-    t[num_threads] = std::thread(&RayTracer::updateDisplay, this, &main_disp, &image);
-    //Join the threads with the main thread
-    for (int i = 0; i < num_threads; ++i) {
-        t[i].join();
-        _activeThreads--;
-    }
-    t[num_threads].join();
-    end = chrono::system_clock::now();
-    cout << "finished calculation for "
-              << chrono::duration_cast<std::chrono::milliseconds>(end - start).count()
-              << "ms.\n";
-    while (!main_disp.is_closed())
-    {
-        main_disp.wait();
-    }
-    image.save_bmp("test.bmp");
+	const int num_threads = 8;
+	thread t[num_threads + 1];
+	auto threadHeight = height/(num_threads);
+	if (threadHeight * num_threads < height)
+		threadHeight++;
+	//Launch a group of threads
+	for (int i = 0; i < num_threads; ++i) {
+		_activeThreads++;
+		t[i] = thread(&RayTracer::fillImage, this, i * threadHeight, threadHeight, &image);
+	}
+	CImgDisplay main_disp(image, "Generation");
+	t[num_threads] = std::thread(&RayTracer::updateDisplay, this, &main_disp, &image);
+	//Join the threads with the main thread
+	for (int i = 0; i < num_threads; ++i) {
+		t[i].join();
+		_activeThreads--;
+	}
+	t[num_threads].join();
+	end = chrono::system_clock::now();
+	cout << "finished calculation for "
+			  << chrono::duration_cast<std::chrono::milliseconds>(end - start).count()
+			  << "ms.\n";
+	while (!main_disp.is_closed())
+	{
+		main_disp.wait();
+	}
+	image.save_bmp("test.bmp");
 	ofstream o("scene.json");
 	json j = scene;
 	o << setw(4) << j << endl;
@@ -116,11 +117,11 @@ Vec3f RayTracer::pixelColor(const Rayon3f &rayon, int depth) const
         return {0, 1, 0};//rayon.milieu->material->col * (1./255.);
     }
 	HitRecord rec;
-	if (scene._world.touche(rayon, 0, INFINITY, rec))
+	if (scene.world()->touche(rayon, 0, INFINITY, rec))
 	{
 		Rayon3f scattered;
 		Vec3f attenuation;
-		if (rec.pMaterial->scatter(rayon, rec, attenuation, scattered))
+		if (rec.pMaterial && rec.pMaterial->scatter(rayon, rec, attenuation, scattered))
 		{
 			return pixelColor(scattered, depth - 1).cwiseProduct(attenuation);
 		}
@@ -171,5 +172,8 @@ void RayTracer::fillImage(int rowBegin, int nbRows, CImg<unsigned char> *img) co
 void RayTracer::updateDisplay(CImgDisplay *display, CImg<unsigned char> *img) const
 {
     while(_activeThreads)
+	{
         display->display(*img);
+		display->wait(5);
+	}
 }

@@ -10,6 +10,7 @@
 #include "primitive_factory.h"
 #include "lambertien.h"
 #include "scene.h"
+#include "shapelist.h"
 
 using namespace std;
 using namespace Eigen;
@@ -20,6 +21,8 @@ static shared_ptr<Lambertien> m[3] {make_shared<Lambertien>(Vec3f{0.95, 0.95, 0.
 
 void Parser::readScene(Scene & scene)
 {
+	shared_ptr<ShapeList> w = make_shared<ShapeList>();
+	scene.setWorld(w);
 	while (true)
 	{
 		_ts.get();
@@ -47,7 +50,7 @@ void Parser::readScene(Scene & scene)
 			const string name = _ts.current().string_value;
 			auto parameters = params();
 			parameters["nom"] = name;
-//			scene.materials()[name] = MaterialFactory::create(parameters);
+			scene.materials()[name] = MaterialFactory::create(parameters);
 			continue;
 		}
 		if (primitive == "light")
@@ -62,27 +65,27 @@ void Parser::readScene(Scene & scene)
 			auto parameters = params();
 			Camera c = scene.camera();
 			c.setPosition(Vec3f(parameters["x"].number(), parameters["y"].number(), parameters["z"].number()));
-//			scene.setCamera(c);
+			scene.setCamera(c);
 			continue;
 		}
 		if (primitive == "cameraRot")
 		{
 			auto parameters = params();
-//			Camera c = scene.camera();
-//			c.setRotation(AngleAxis<float>(parameters["roll"].number(), Vector3f::UnitY())
-//					* AngleAxis<float>(parameters["yaw"].number(), Vector3f::UnitZ())
-//					* AngleAxis<float>(parameters["pitch"].number(), Vector3f::UnitX()));
-//			scene.setCamera(c);
+			Camera c = scene.camera();
+			c.setRotation(AngleAxis<float>(parameters["roll"].number(), Vector3f::UnitY())
+					* AngleAxis<float>(parameters["yaw"].number(), Vector3f::UnitZ())
+					* AngleAxis<float>(parameters["pitch"].number(), Vector3f::UnitX()));
+			scene.setCamera(c);
 			continue;
 		}
 		auto shapeParam = params();
 		auto s = PrimitiveFactory::create(primitive, shapeParam);
 		if (shapeParam.find("material") != shapeParam.end())
 			s->setMaterial(scene.materials()[shapeParam["material"].text()]);
-		scene.add(s);
+		w->add(s);
 
 		if (s->material() == nullptr)
-			s->setMaterial(m[scene._world.objects().size()%3]);
+			s->setMaterial(scene.materials()[0]);
 	}
 	return;
 }

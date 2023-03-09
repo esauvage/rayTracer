@@ -1,7 +1,5 @@
 #include "boule.h"
 
-#include <iostream>
-
 #include "utils.h"
 
 using namespace std;
