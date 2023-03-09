@@ -3,32 +3,77 @@
 #include "boule.h"
 #include "horizon.h"
 #include "triangle.h"
+#include "shapelist.h"
+
 #include "metal.h"
 #include "lambertien.h"
 #include "dielectrique.h"
 
 using namespace std;
+using namespace nlohmann;
 
 shared_ptr<Shape> PrimitiveFactory::create(const string &primName, const map <string, Parameter> &params)
 {
-	if (primName == "sphere")
-	{
-		shared_ptr<Shape> r = make_shared<Boule>(Vec3f(params.at("x").number(), params.at("y").number(), params.at("z").number()),
-						 params.at("radius").number());
-//		r->setNom(params.at("nom").text());
-		return r;
-	}
-	if (primName == "horizon")
-	{
-		return make_shared<Horizon>(params.at("elevation").number());
-	}
-	if (primName == "triangle")
-	{
-		return make_shared<Triangle>(array< Vec3f, 3>{Vec3f{params.at("x0").number(), params.at("y0").number(), params.at("z0").number()},
-			Vec3f(params.at("x1").number(), params.at("y1").number(), params.at("z1").number()),
-			Vec3f(params.at("x2").number(), params.at("y2").number(), params.at("z2").number())});
-	}
-	return nullptr;
+    if (primName == "sphere")
+    {
+        shared_ptr<Shape> r = make_shared<Boule>(Vec3f(params.at("x").number(), params.at("y").number(), params.at("z").number()),
+                         params.at("radius").number());
+        return r;
+    }
+    if (primName == "horizon")
+    {
+        return make_shared<Horizon>(params.at("elevation").number());
+    }
+    if (primName == "triangle")
+    {
+        return make_shared<Triangle>(array< Vec3f, 3>{Vec3f{params.at("x0").number(), params.at("y0").number(), params.at("z0").number()},
+            Vec3f(params.at("x1").number(), params.at("y1").number(), params.at("z1").number()),
+            Vec3f(params.at("x2").number(), params.at("y2").number(), params.at("z2").number())});
+    }
+    return nullptr;
+}
+
+shared_ptr<Shape> PrimitiveFactory::from_json(const json &j, const map<string, shared_ptr<Material> > &materials)
+{
+    if (j.is_array())
+    {
+        if (j.size() == 1)
+        {
+            return PrimitiveFactory::from_json(j[0], materials);
+        }
+        shared_ptr<ShapeList> r = make_shared<ShapeList>();
+        for (const auto &s : j)
+        {
+            r->add(PrimitiveFactory::from_json(s, materials));
+        }
+        return r;
+    }
+    shared_ptr<Shape> r{nullptr};
+    if (j.contains("rayon"))
+    {
+        r = make_shared<Boule>(Vec3f(j.at("position")[0].get<float>(), j.at("position")[1].get<float>(), j.at("position")[2].get<float>()),
+                j["rayon"].get<float>());
+    }
+    if (j.contains("hauteur"))
+    {
+        r = make_shared<Horizon>(j.at("hauteur").get<float>());
+    }
+    if (j.contains("points"))
+    {
+        array< Vec3f, 3> a;
+        int i = 0;
+        for (auto m : j.at("points"))
+        {
+            a[i] = Vec3f(m[0].get<float>(), m[1].get<float>(), m[2].get<float>());
+            i++;
+        }
+        r = make_shared<Triangle>(a);
+    }
+    if (j.contains("material") && (materials.find(j.at("material").get<string>()) != materials.end()))
+    {
+        r->setMaterial(materials.at(j.at("material").get<string>()));
+    }
+    return r;
 }
 
 shared_ptr<Material> MaterialFactory::create(const map <string, Parameter> &params)

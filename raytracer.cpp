@@ -12,7 +12,6 @@
 using json = nlohmann::json;
 
 #include "utils.h"
-#include "parser.h"
 
 using namespace std;
 using namespace Eigen;
@@ -36,32 +35,33 @@ void RayTracer::generateFile(const string &outFile, const pair <int, int> size, 
 
 	cout << "-----------------------------------------\n";
 	start = chrono::system_clock::now();
-	ifstream ifs(inFile);
-	if (!ifs.good())
-	{
-		cout << "No valid input file." << endl;
-		return;
-	}
-	ifstream i("scene.json");
+//	ifstream ifs(inFile);
+//	if (!ifs.good())
+//	{
+//		cout << "No valid input file." << endl;
+//		return;
+//	}
+//    Parser parser(ifs);
+//	parser.readScene(scene);
+//	ifs.close();
+    ifstream i("scene.json");
 	json data;
 	i >> data;
+    i.close();
 	scene = data.get<Scene>();
-	Parser parser(ifs);
-	parser.readScene(scene);
-	ifs.close();
 	cout << "Input file read." << endl;
 	const int width {size.first};
 	const int height {size.second};
 	CImg<unsigned char> image(width, height, 1, 3, 0);
     const int num_threads = 8;
-    std::thread t[num_threads + 1];
+    thread t[num_threads + 1];
     auto threadHeight = height/(num_threads);
     if (threadHeight * num_threads < height)
         threadHeight++;
     //Launch a group of threads
     for (int i = 0; i < num_threads; ++i) {
         _activeThreads++;
-        t[i] = std::thread(&RayTracer::fillImage, this, i * threadHeight, threadHeight, &image);
+        t[i] = thread(&RayTracer::fillImage, this, i * threadHeight, threadHeight, &image);
     }
     CImgDisplay main_disp(image, "Generation");
     t[num_threads] = std::thread(&RayTracer::updateDisplay, this, &main_disp, &image);
@@ -83,6 +83,7 @@ void RayTracer::generateFile(const string &outFile, const pair <int, int> size, 
 	ofstream o("scene.json");
 	json j = scene;
 	o << setw(4) << j << endl;
+    o.close();
 }
 
 Vec3f RayTracer::pixelColor(const Rayon3f &rayon, int depth) const
@@ -111,7 +112,9 @@ Vec3f RayTracer::pixelColor(const Rayon3f &rayon, int depth) const
 //    }
 //    return curAttenuation;
     if (depth <= 0)
+    {
         return {0, 1, 0};//rayon.milieu->material->col * (1./255.);
+    }
 	HitRecord rec;
 	if (scene._world.touche(rayon, 0, INFINITY, rec))
 	{
@@ -158,9 +161,9 @@ void RayTracer::fillImage(int rowBegin, int nbRows, CImg<unsigned char> *img) co
             pixel *= 1. / (float)antiAliasing;
             pixel = pixel.array().sqrt();
             Vector3<unsigned char> pixelI = (pixel * 255).cast<unsigned char>();
-            (*img)(j, height - rowBegin - i, 0, 0) = +pixelI.x();
-            (*img)(j, height - rowBegin - i, 0, 1) = +pixelI.y();
-            (*img)(j, height - rowBegin - i, 0, 2) = +pixelI.z();
+            (*img)(j, i + rowBegin, 0, 0) = +pixelI.x();
+            (*img)(j, i + rowBegin, 0, 1) = +pixelI.y();
+            (*img)(j, i + rowBegin, 0, 2) = +pixelI.z();
         }
     }
 }

@@ -3,12 +3,12 @@
 
 #include "tokenStream.h"
 #include "parameter.h"
-
-//#include <map>
-//#include <vector>
-#include "scene.h"
+#include <memory>
+#include <vector>
+#include <map>
 
 class Shape;
+class Scene;
 
 class Parser
 {

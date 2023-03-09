@@ -9,6 +9,7 @@
 #include "tokenStream.h"
 #include "primitive_factory.h"
 #include "lambertien.h"
+#include "scene.h"
 
 using namespace std;
 using namespace Eigen;
@@ -67,10 +68,10 @@ void Parser::readScene(Scene & scene)
 		if (primitive == "cameraRot")
 		{
 			auto parameters = params();
-			Camera c = scene.camera();
-			c.setRotation(AngleAxis<float>(parameters["roll"].number(), Vector3f::UnitY())
-					* AngleAxis<float>(parameters["yaw"].number(), Vector3f::UnitZ())
-					* AngleAxis<float>(parameters["pitch"].number(), Vector3f::UnitX()));
+//			Camera c = scene.camera();
+//			c.setRotation(AngleAxis<float>(parameters["roll"].number(), Vector3f::UnitY())
+//					* AngleAxis<float>(parameters["yaw"].number(), Vector3f::UnitZ())
+//					* AngleAxis<float>(parameters["pitch"].number(), Vector3f::UnitX()));
 //			scene.setCamera(c);
 			continue;
 		}

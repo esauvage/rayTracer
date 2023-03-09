@@ -4,11 +4,13 @@
 #include <memory>
 #include <map>
 #include <string>
-#include "shapelist.h"
+#include "shape.h"
 #include "light.h"
 #include "camera.h"
 
 #include "primitive_factory.h"
+
+#include "utils.h"
 
 class Scene
 {
@@ -19,21 +21,26 @@ public:
 	void clear();
 	void add(std::shared_ptr<Shape> object);
 
-	ShapeList _world;
 	std::vector <Light *> lights;
 	Camera camera() const;
 	void setCamera(const Camera &newCamera);
 	std::map<std::string, std::shared_ptr<Material> > &materials();
 	std::map<std::string, std::shared_ptr<Material> > materials() const;
 
+    const std::shared_ptr<Shape> &world() const;
+    void setWorld(const std::shared_ptr<Shape> &newWorld);
+
 private:
 	Camera _camera;
 	std::map <std::string, std::shared_ptr<Material> >_materials;
+    std::shared_ptr<Shape> _world;
 };
 
 inline void to_json(json& j, const Scene& scene)
 {
-	j = json{{"camera", scene.camera()}, {"materials", scene.materials()}, {"world", scene._world}};
+    j = json{"camera", scene.camera()};
+    j["materials"] = json(scene.materials());
+    j["world"] = json(scene.world());
 }
 
 inline void from_json(const json& j, Scene& scene)
@@ -46,6 +53,7 @@ inline void from_json(const json& j, Scene& scene)
 		std::shared_ptr<Material> mat = MaterialFactory::from_json(m);
 		scene.materials()[mat->nom()] = mat;
 	}
+    scene.setWorld(PrimitiveFactory::from_json(j.at("world"), scene.materials()));
 }
 
 #endif

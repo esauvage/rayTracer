@@ -47,7 +47,10 @@ bool ShapeList::touche(const Rayon3f& r, double t_min, double t_max, HitRecord& 
 json &ShapeList::jsonHelper(json &j) const
 {
 	j = Shape::jsonHelper(j);
-	j += json{_objects};
+    for (auto o : _objects)
+    {
+        j += json(o);
+    }
 	return j;
 }
 
