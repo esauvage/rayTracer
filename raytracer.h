@@ -3,10 +3,8 @@
 
 #include <atomic>
 
+#include <CImg.h>
 #include "scene.h"
-#include "CImg.h"
-
-using namespace cimg_library;
 
 using Rayon3f = Rayon<float, 3>;
 using Vec3f = Vec<float, 3>;
@@ -20,8 +18,8 @@ public:
 private:
 	Vec3f pixelColor(const Rayon3f &rayon, int depth) const;
 	Vec3f sky(const Vec3f& rayon) const;
-    void fillImage(int rowBegin, int nbRows, CImg<unsigned char> *img) const;
-    void updateDisplay(CImgDisplay * display, CImg<unsigned char> *img) const;;
+	void fillImage(int rowBegin, int nbRows, cimg_library::CImg<unsigned char> *img) const;
+	void updateDisplay(cimg_library::CImgDisplay * display, cimg_library::CImg<unsigned char> *img) const;
 	Scene scene;
     std::atomic_int _activeThreads;
     bool _computing;

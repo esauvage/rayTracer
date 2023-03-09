@@ -16,6 +16,7 @@ using json = nlohmann::json;
 
 using namespace std;
 using namespace Eigen;
+using namespace cimg_library;
 
 int max_depth = 0;
 
@@ -41,8 +42,10 @@ void RayTracer::generateFile(const string &outFile, const pair <int, int> size, 
 		cout << "No valid input file." << endl;
 		return;
 	}
-//	json data = json::parse(f);
-//	scene = data.get<Scene>();
+	ifstream i("scene.json");
+	json data;
+	i >> data;
+	scene = data.get<Scene>();
 	Parser parser(ifs);
 	parser.readScene(scene);
 	ifs.close();
@@ -138,7 +141,7 @@ void RayTracer::fillImage(int rowBegin, int nbRows, CImg<unsigned char> *img) co
 {
     const auto height = img->height();
     const auto width = img->width();
-    const int antiAliasing {64};
+	const int antiAliasing {16};
     for (int i = nbRows + 1; --i;)
     {
         for (int j = 0; j < width; ++j)//, x+=coef)

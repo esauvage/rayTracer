@@ -1,16 +1,14 @@
 #ifndef SCENE_H
 #define SCENE_H
 
-#include <vector>
 #include <memory>
 #include <map>
 #include <string>
-#include <list>
-#include <nlohmann/json.hpp>
-using json = nlohmann::json;
 #include "shapelist.h"
 #include "light.h"
 #include "camera.h"
+
+#include "primitive_factory.h"
 
 class Scene
 {
@@ -23,8 +21,6 @@ public:
 
 	ShapeList _world;
 	std::vector <Light *> lights;
-	Vec3f cameraPos{0, 0, 1};
-	Eigen::Quaternion<float> cameraRot{0, 0, 0, 1};
 	Camera camera() const;
 	void setCamera(const Camera &newCamera);
 	std::map<std::string, std::shared_ptr<Material> > &materials();
@@ -35,8 +31,21 @@ private:
 	std::map <std::string, std::shared_ptr<Material> >_materials;
 };
 
-inline void to_json(json& j, const Scene& scene) {
+inline void to_json(json& j, const Scene& scene)
+{
 	j = json{{"camera", scene.camera()}, {"materials", scene.materials()}, {"world", scene._world}};
+}
+
+inline void from_json(const json& j, Scene& scene)
+{
+	Camera camera;
+	j.at("camera").get_to(camera);
+	scene.setCamera(camera);
+	for (const auto &m : j.at("materials"))
+	{
+		std::shared_ptr<Material> mat = MaterialFactory::from_json(m);
+		scene.materials()[mat->nom()] = mat;
+	}
 }
 
 #endif

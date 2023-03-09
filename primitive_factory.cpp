@@ -49,5 +49,26 @@ shared_ptr<Material> MaterialFactory::create(const map <string, Parameter> &para
 	}
 	m->setNom(params.at("nom").text());
 	return m;
-	return nullptr;
+}
+
+std::shared_ptr<Material> MaterialFactory::from_json(const json &j)
+{
+	if (!j.contains("albedo"))
+		return MaterialFactory::from_json(j[0]);
+	shared_ptr<Material> m;
+	if (j.contains("fuzz"))
+	{
+		m = make_shared<Metal>(Vec3f(j.at("albedo")[0].get<float>(), j.at("albedo")[1].get<float>(), j.at("albedo")[2].get<float>()),
+								  j.at("fuzz").get<float>());
+	}
+	else if (j.contains("refractiveIndex"))
+	{
+		m = make_shared<Dielectrique>(j.at("refractiveIndex").get<float>());
+	}
+	else
+	{
+		m = make_shared<Lambertien>(Vec3f(j.at("albedo")[0].get<float>(), j.at("albedo")[1].get<float>(), j.at("albedo")[2].get<float>()));
+	}
+	m->setNom(j.at("nom").get<string>());
+	return m;
 }

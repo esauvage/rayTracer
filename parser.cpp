@@ -46,8 +46,7 @@ void Parser::readScene(Scene & scene)
 			const string name = _ts.current().string_value;
 			auto parameters = params();
 			parameters["nom"] = name;
-			scene.materials()[name] = MaterialFactory::create(parameters);
-//			scene.materials[name] = make_shared<Lambertien>(Vec3f{parameters["red"].number(), parameters["green"].number(), parameters["blue"].number()});
+//			scene.materials()[name] = MaterialFactory::create(parameters);
 			continue;
 		}
 		if (primitive == "light")
@@ -62,8 +61,7 @@ void Parser::readScene(Scene & scene)
 			auto parameters = params();
 			Camera c = scene.camera();
 			c.setPosition(Vec3f(parameters["x"].number(), parameters["y"].number(), parameters["z"].number()));
-			scene.setCamera(c);
-			scene.cameraPos = {parameters["x"].number(), parameters["y"].number(), parameters["z"].number()};
+//			scene.setCamera(c);
 			continue;
 		}
 		if (primitive == "cameraRot")
@@ -73,10 +71,7 @@ void Parser::readScene(Scene & scene)
 			c.setRotation(AngleAxis<float>(parameters["roll"].number(), Vector3f::UnitY())
 					* AngleAxis<float>(parameters["yaw"].number(), Vector3f::UnitZ())
 					* AngleAxis<float>(parameters["pitch"].number(), Vector3f::UnitX()));
-			scene.setCamera(c);
-			scene.cameraRot = AngleAxis<float>(parameters["roll"].number(), Vector3f::UnitY())
-					* AngleAxis<float>(parameters["yaw"].number(), Vector3f::UnitZ())
-					* AngleAxis<float>(parameters["pitch"].number(), Vector3f::UnitX());
+//			scene.setCamera(c);
 			continue;
 		}
 		auto shapeParam = params();

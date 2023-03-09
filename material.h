@@ -29,7 +29,8 @@ private:
 	std::string _nom;
 };
 
-inline void to_json(json& j, const Material& m) {
+inline void to_json(json& j, const Material& m)
+{
 	j = m.jsonHelper(j);
 }
 
