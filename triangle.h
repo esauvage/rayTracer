@@ -5,16 +5,14 @@
 
 #include <array>
 
-using namespace std;
-
 class Triangle : public Shape 
 {
 public:
-	Triangle(const array< Vec3f, 3>& points);
+    Triangle(const std::array< Vec3f, 3>& points);
 	virtual bool touche(const Rayon3f& r, double t_min, double t_max, HitRecord& rec) const;
-	virtual json &jsonHelper(json& j) const;
+    virtual json &jsonHelper(json& j) const;
 private:
-	array< Vec3f, 3 > _p;
+    std::array< Vec3f, 3 > _p;
 	Vec3f _n;
 	Vec3f _e1;
 	Vec3f _e2;

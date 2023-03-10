@@ -292,6 +292,7 @@
             ]
         },
         {
+            "material": "mur2",
             "points": [
                 [
 					5.0,

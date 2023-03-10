@@ -15,9 +15,12 @@ public:
 	void add(const Eigen::Vector3i & triangle);
 
 private:
-	std::vector<std::shared_ptr<Shape> > _triangles;
+    bool toucheTriangle(const Eigen::RowVector3i &triangle, const Rayon3f &r, double t_min, double t_max, HitRecord &rec) const;
+    Vec3f centre(const Eigen::Vector3i &triangle) const;
+
+    std::vector<std::shared_ptr<Shape> > _triangles;
 	std::vector<Vec3f > _points;
-	std::vector<Eigen::Vector3i > _iTriangles;
+    std::vector<Eigen::Vector3i > _iTriangles;
 };
 
 #endif // MESH_H
