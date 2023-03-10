@@ -12,6 +12,7 @@
 
 using namespace std;
 using namespace nlohmann;
+using namespace Eigen;
 
 shared_ptr<Shape> PrimitiveFactory::create(const string &primName, const map <string, Parameter> &params)
 {
@@ -62,13 +63,27 @@ shared_ptr<Shape> PrimitiveFactory::from_json(const json &j, const map<string, s
 	if (j.contains("triangles"))
 	{
 		shared_ptr<Mesh> mesh = make_shared<Mesh>();
+		if (j.contains("points"))
+		{
+			for (const auto &point : j["points"])
+			{
+				mesh->add(Vec3f(point[0].get<float>(), point[1].get<float>(), point[2].get<float>()));
+			}
+			if (j.contains("itriangles"))
+			{
+				for (const auto &i : j["itriangles"])
+				{
+					mesh->add(Vector3i(i[0].get<int>(), i[1].get<int>(), i[2].get<int>()));
+				}
+			}
+		}
 		for (const auto &s : j["triangles"])
 		{
 			mesh->add(PrimitiveFactory::from_json(s, materials));
 		}
 		r = mesh;
 	}
-	if (j.contains("points"))
+	else if (j.contains("points"))
     {
         array< Vec3f, 3> a;
         int i = 0;
