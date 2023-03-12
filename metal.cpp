@@ -2,6 +2,10 @@
 
 #include "utils.h"
 
+#include <iostream>
+
+using namespace std;
+
 Metal::Metal(const Vec3f &albedo, float fuzz)
 	: Material(albedo), _fuzz(fuzz)
 {
@@ -10,15 +14,27 @@ Metal::Metal(const Vec3f &albedo, float fuzz)
 
 bool Metal::scatter(const Rayon3f &r_in, const HitRecord &rec, Vec3f &attenuation, Rayon3f &scattered) const
 {
-	const Vec3f reflected = reflect(r_in.direction().normalized(), rec.normal());
-	scattered = Rayon3f(rec.p, reflected + _fuzz*random_in_unit_sphere());
+	if (r_in.direction().squaredNorm() < 1.)
+		return false;
+	if (r_in.direction().hasNaN())
+		return false;
+	if (rec.normal().hasNaN())
+		return false;
+	const Vec3f reflected = reflect(r_in.direction(), rec.normal());
 	attenuation = albedo();
-	bool r = fabs(scattered.direction().dot(rec.normal())) > 1e-5;
+	bool r = false;//fabs(scattered.direction().dot(rec.normal())) > 1e-5;
 	while (!r)
 	{
-		scattered = Rayon3f(rec.p, reflected + _fuzz*random_in_unit_sphere());
+		const Vec3f random = (reflected + _fuzz * random_in_unit_sphere()).normalized();
+		if (random.squaredNorm() != 1.)
+			continue;
+		if (random.hasNaN())
+			continue;
+		scattered = Rayon3f(rec.p, random);
 		r = fabs(scattered.direction().dot(rec.normal())) > 1e-5;
 	}
+//	cout << "Scatter direction : " << scattered.direction().x() << " " << scattered.direction().y() << " " << scattered.direction().z();
+//	cout << "position"  << scattered.origin().x() << " " << scattered.origin().y() << " " << scattered.origin().z() << endl;
 	return r;
 }
 

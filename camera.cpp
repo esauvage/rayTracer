@@ -18,7 +18,7 @@ Rayon3f Camera::ray(double u, double v) const
 
 	return Rayon3f(
 		_position + offset,
-		(_lower_left_corner + u*_horizontal + v*_vertical - _position - offset));
+		(_lower_left_corner + u*_horizontal + v*_vertical - _position - offset).normalized());
 }
 
 Vec3f Camera::position() const

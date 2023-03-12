@@ -17,6 +17,7 @@ class Shape
 public:
 	virtual ~Shape(){}
 	virtual bool touche(const Rayon3f& r, double t_min, double t_max, HitRecord& rec) const = 0;
+	virtual bool boundingBox(double time0, double time1, Eigen::AlignedBox3f& output_box) const {return false;}
 	std::shared_ptr<Material> material() const;
 
 	void setMaterial(const std::shared_ptr<Material> &newMaterial);

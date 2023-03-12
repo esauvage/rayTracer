@@ -24,7 +24,7 @@ bool Lambertien::scatter(const Rayon3f &r_in, const HitRecord &rec, Vec3f &atten
 	{
 		scatter_direction = rec.normal();
 	}
-	scattered = Rayon3f(rec.p, scatter_direction);
+	scattered = Rayon3f(rec.p, scatter_direction.normalized());
 	attenuation = albedo();
 	return true;
 }

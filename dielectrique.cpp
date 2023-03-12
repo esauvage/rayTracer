@@ -11,7 +11,7 @@ bool Dielectrique::scatter(const Rayon3f &r_in, const HitRecord &rec, Vec3f &att
 	attenuation = Vec3f(1.0, 1.0, 1.0);
 	float refraction_ratio = rec.front_face ? (1.0/_iRefrac) : _iRefrac;
 
-	Vec3f unit_direction = r_in.direction().normalized();
+	Vec3f unit_direction = r_in.direction();
 	float cosTheta = fmin(unit_direction.dot(-rec.normal()), 1.0);
 	float sinTheta = sqrt(1.0 - cosTheta*cosTheta);
 
@@ -23,7 +23,7 @@ bool Dielectrique::scatter(const Rayon3f &r_in, const HitRecord &rec, Vec3f &att
 	else
 		direction = refract(unit_direction, rec.normal(), refraction_ratio);
 
-	scattered = Rayon3f(rec.p, direction);
+	scattered = Rayon3f(rec.p, direction.normalized());
 	return true;
 }
 

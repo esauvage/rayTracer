@@ -60,7 +60,7 @@ shared_ptr<Shape> PrimitiveFactory::from_json(const json &j, const map<string, s
     {
         r = make_shared<Horizon>(j.at("hauteur").get<float>());
     }
-	if (j.contains("triangles"))
+	if (j.contains("itriangles") || j.contains("triangles"))
 	{
 		shared_ptr<Mesh> mesh = make_shared<Mesh>();
 		if (j.contains("points"))
@@ -77,10 +77,14 @@ shared_ptr<Shape> PrimitiveFactory::from_json(const json &j, const map<string, s
 				}
 			}
 		}
-		for (const auto &s : j["triangles"])
+		if (j.contains("triangles"))
 		{
-			mesh->add(PrimitiveFactory::from_json(s, materials));
+			for (const auto &s : j["triangles"])
+			{
+				mesh->add(PrimitiveFactory::from_json(s, materials));
+			}
 		}
+		mesh->update();
 		r = mesh;
 	}
 	else if (j.contains("points"))

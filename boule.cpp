@@ -3,6 +3,7 @@
 #include "utils.h"
 
 using namespace std;
+using namespace Eigen;
 
 Boule::Boule(const Vec3f& position, float rayon)
 	:_pos{position}, _r{rayon}
@@ -32,11 +33,19 @@ bool Boule::touche(const Rayon3f& r, double t_min, double t_max, HitRecord& rec)
 			return false;
 	}
 	rec.t = root;
-	rec.p = r.at(rec.t);
+	rec.p = r.pointAt(rec.t);
 	const Vec3f outwardNormal = (rec.p - _pos) / _r;
 	rec.setFaceNormal(r, outwardNormal);
 	rec.pMaterial = material();
 
+	return true;
+}
+
+bool Boule::boundingBox(double time0, double time1, AlignedBox3f &outputBox) const
+{
+	outputBox = AlignedBox3f(
+		_pos - Vec3f(_r, _r, _r),
+		_pos + Vec3f(_r, _r, _r));
 	return true;
 }
 

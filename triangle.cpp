@@ -31,12 +31,13 @@ bool Triangle::touche(const Rayon3f& r, double t_min, double t_max, HitRecord& r
 	if (v < 0 || (fabs(v) < 1e-5) || (u + v > 1.0))
 		return false;
 
-	rec.t = f * (_e2.dot(q));
-	if (rec.t < t_min || fabs(rec.t-t_min) < 1e-5)
+	auto t = f * (_e2.dot(q));
+	if (t < t_min || fabs(t-t_min) < 1e-5)
 		return false;
-	if (rec.t > t_max)
+	if (t > t_max)
 		return false;
-	rec.p = r.at(rec.t);
+	rec.t = t;
+	rec.p = r.pointAt(rec.t);
 	rec.setFaceNormal(r, _n);
 	rec.pMaterial = material();
 

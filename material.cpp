@@ -1,6 +1,5 @@
 #include "material.h"
 
-
 Material::Material(const Vec3f &albedo) : _albedo(albedo)
 {
 }

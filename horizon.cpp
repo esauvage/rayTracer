@@ -15,7 +15,7 @@ bool Horizon::touche(const Rayon3f& r, double t_min, double t_max, HitRecord& re
 	if (t < t_min || fabs(t - t_min) < 1e-5 || t > t_max)
 		return false;
 	rec.t = t;
-	rec.p = r.at(rec.t);
+	rec.p = r.pointAt(rec.t);
 	rec.setFaceNormal(r, Vec3f(0, 0, 1));
 	rec.pMaterial = material();
 	return true;

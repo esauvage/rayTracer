@@ -123,19 +123,22 @@ Vec3f RayTracer::pixelColor(const Rayon3f &rayon, int depth) const
 		Vec3f attenuation;
 		if (rec.pMaterial && rec.pMaterial->scatter(rayon, rec, attenuation, scattered))
 		{
+//			cout << "Scatter direction : " << scattered.direction().x() << " " << scattered.direction().y() << " " << scattered.direction().z();
+//			cout << "position "  << scattered.origin().x() << " " << scattered.origin().y() << " " << scattered.origin().z() << endl;
+//			cout << "attenuation "  << attenuation.x() << " " << attenuation.y() << " " << attenuation.z() << endl;
 			return pixelColor(scattered, depth - 1).cwiseProduct(attenuation);
 		}
-		return Vec3f(0,0,1);
+		return rec.normal()*0.5 + Vec3f(0.5, 0.5, 0.5);
+//		return Vec3f(1,0,0);
 	}
 	return sky(rayon.direction());
-
 }
 
 Vec3f RayTracer::sky(const Vec3f& rayon) const
 {
 	Vec3f unit_direction = rayon.normalized();
 	auto t = 0.5*(unit_direction.z() + 1.0);
-	return (1.0-t)*Vec3f(1.0, 1.0, 1.0) + t*Vec3f(0.5, 0.7, 1.0);
+	return (1.0 - t) * Vec3f(1.0, 1.0, 1.0) + t * Vec3f(0.5, 0.7, 1.0);
 //Plus le rayon est vertical, plus le ciel est bleu. Plus il est horizontal, plus il est blanc.
 //	float coef {1.f/200.f / rayon.y()};//C'est le sinus du "vertical"
 //	return {coef * 0.9f, coef, 1.f};
