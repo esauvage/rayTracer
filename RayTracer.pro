@@ -11,11 +11,11 @@ CONFIG -= app_bundle
 #QMAKE_LFLAGS_DEBUG += -pg -O3
 
 INCLUDEPATH += C:\Users\etien\Documents\projets\eigen\
-    G:\Github\eigen\
+    C:\Users\SauvageE.ANTYCIPSIMU\Documents\GitHub\eigen\
     C:\Users\etien\Documents\projets\json\single_include\
-    G:\Github\json\single_include\
+    C:\Users\SauvageE.ANTYCIPSIMU\Documents\GitHub\json\single_include\
     C:\Users\etien\Documents\projets\CImg\
-    G:\Github\CImg
+    C:\Users\SauvageE.ANTYCIPSIMU\Documents\GitHub\CImg
 
 TEMPLATE = app
 

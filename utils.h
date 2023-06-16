@@ -36,13 +36,14 @@ Eigen::Vector3<T>& dir2vector2(Eigen::Vector3<T>& out, const Eigen::Vector3<T>& 
 	out << cosi.row(0) * cosi.row(1) * in[2],
 		   sine.row(0) * cosi.row(1) * in[2],
 						 sine.row(1) * in[2];
-	return out;
+    out.normalize();
+    return out;
 }
 
 inline Vec3f random_in_unit_sphere()
 {
 	Vec3f p;
-	return dir2vector2(p, Vec3f((frand() - 0.5)*M_PI, (frand() * 2 - 1.)* M_PI, frand()));
+    return dir2vector2(p, Vec3f((frand() * 2)* M_PI, (frand() -0.5)*M_PI, frand()));
 //	while (true)
 //	{
 //		auto p = Vec3f::Random();
@@ -54,7 +55,7 @@ inline Vec3f random_in_unit_sphere()
 inline Vec3f random_unit_vector()
 {
 	Vec3f p;
-	return dir2vector2(p, Vec3f((frand() - 0.5)*M_PI, (frand() * 2 - 1.)* M_PI, 1.));
+    return dir2vector2(p, Vec3f((frand() * 2)* M_PI,(frand() - 0.5)*M_PI,  1.));
 //	return random_in_unit_sphere().normalized();
 }
 

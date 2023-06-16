@@ -12,7 +12,6 @@
 using json = nlohmann::json;
 
 #include "utils.h"
-#include "parser.h"
 
 using namespace std;
 using namespace Eigen;
@@ -54,34 +53,35 @@ void RayTracer::generateFile(const string &outFile, const pair <int, int> size, 
 	const int width {size.first};
 	const int height {size.second};
 	CImg<unsigned char> image(width, height, 1, 3, 0);
-	const int num_threads = 8;
-	thread t[num_threads + 1];
-	auto threadHeight = height/(num_threads);
-	if (threadHeight * num_threads < height)
-		threadHeight++;
-	//Launch a group of threads
-	for (int i = 0; i < num_threads; ++i) {
-		_activeThreads++;
-		t[i] = thread(&RayTracer::fillImage, this, i * threadHeight, threadHeight, &image);
-	}
-	CImgDisplay main_disp(image, "Generation");
-	t[num_threads] = std::thread(&RayTracer::updateDisplay, this, &main_disp, &image);
+    const int num_threads = 8;
+    thread t[num_threads + 1];
+    CImgDisplay main_disp(image, "Generation");
+    t[num_threads] = std::thread(&RayTracer::updateDisplay, this, &main_disp, &image);
+//    fillImage(0, height, &image);
+    auto threadHeight = height/(num_threads);
+    if (threadHeight * num_threads < height)
+        threadHeight++;
+    //Launch a group of threads
+    for (int i = 0; i < num_threads; ++i) {
+        _activeThreads++;
+        t[i] = thread(&RayTracer::fillImage, this, i * threadHeight, threadHeight, &image);
+    }
 	//Join the threads with the main thread
-	for (int i = 0; i < num_threads; ++i) {
-		t[i].join();
-		_activeThreads--;
-	}
-	t[num_threads].join();
+    for (int i = 0; i < num_threads; ++i) {
+        t[i].join();
+        _activeThreads--;
+    }
+    t[num_threads].join();
 	end = chrono::system_clock::now();
 	cout << "finished calculation for "
 			  << chrono::duration_cast<std::chrono::milliseconds>(end - start).count()
 			  << "ms.\n";
-	while (!main_disp.is_closed())
-	{
-		main_disp.wait();
-	}
-	image.save_bmp("test.bmp");
-	ofstream o("scene.json");
+    while (!main_disp.is_closed())
+    {
+        main_disp.wait();
+    }
+    image.save(outFile.c_str());
+    ofstream o((inFile+".bak").c_str());
 	json j = scene;
 	o << setw(4) << j << endl;
     o.close();
@@ -136,9 +136,15 @@ Vec3f RayTracer::pixelColor(const Rayon3f &rayon, int depth) const
 
 Vec3f RayTracer::sky(const Vec3f& rayon) const
 {
-	Vec3f unit_direction = rayon.normalized();
-	auto t = 0.5*(unit_direction.z() + 1.0);
-	return (1.0 - t) * Vec3f(1.0, 1.0, 1.0) + t * Vec3f(0.5, 0.7, 1.0);
+    //On ne touche rien, donc on tape dans le ciel.
+    //L'éclairage doit donc prendre en compte l'inclinaison
+    Vec3f unit_direction = rayon.normalized();
+    Vec3f soleil_direction(0.0f, 1.0f, 0.2f);
+    soleil_direction = soleil_direction.normalized();
+    auto t = 0.5*(unit_direction.z() + 1.0);
+    auto intensite = unit_direction.dot(soleil_direction);
+    auto v = (1.0 - t) * Vec3f(1.0, 1.0, 1.0) + t * Vec3f(0.5, 0.7, 1.0);
+    return v * intensite;
 //Plus le rayon est vertical, plus le ciel est bleu. Plus il est horizontal, plus il est blanc.
 //	float coef {1.f/200.f / rayon.y()};//C'est le sinus du "vertical"
 //	return {coef * 0.9f, coef, 1.f};
@@ -146,18 +152,20 @@ Vec3f RayTracer::sky(const Vec3f& rayon) const
 
 void RayTracer::fillImage(int rowBegin, int nbRows, CImg<unsigned char> *img) const
 {
-    const auto height = img->height();
-    const auto width = img->width();
+    const float height = img->height();
+    const float width = img->width();
 	const int antiAliasing {16};
     for (int i = nbRows + 1; --i;)
     {
         for (int j = 0; j < width; ++j)//, x+=coef)
         {
+            if (i < 526)
+                cout << "col " << j << endl;
             Vec3f pixel{0, 0, 0};
             for (auto k = 0; k < antiAliasing; k++)
             {
-                auto u = (j + frand()) / (width);
-                auto v = (i + rowBegin + frand()) / (height);
+                auto u = (j + frand() - 0.5) / (width);
+                auto v = (i + rowBegin + frand() - 0.5) / (height);
                 auto r = scene.camera().ray(u, v);
                 pixel += pixelColor(r, 16);
             }
@@ -169,6 +177,7 @@ void RayTracer::fillImage(int rowBegin, int nbRows, CImg<unsigned char> *img) co
             (*img)(j, i + rowBegin, 0, 1) = +pixelI.y();
             (*img)(j, i + rowBegin, 0, 2) = +pixelI.z();
         }
+        cout << "row " << i << endl;
     }
 }
 

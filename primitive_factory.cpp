@@ -28,7 +28,7 @@ shared_ptr<Shape> PrimitiveFactory::create(const string &primName, const map <st
     }
     if (primName == "triangle")
     {
-        return make_shared<Triangle>(array< Vec3f, 3>{Vec3f{params.at("x0").number(), params.at("y0").number(), params.at("z0").number()},
+        return make_shared<Triangle>(std::array< Vec3f, 3>{Vec3f{params.at("x0").number(), params.at("y0").number(), params.at("z0").number()},
             Vec3f(params.at("x1").number(), params.at("y1").number(), params.at("z1").number()),
             Vec3f(params.at("x2").number(), params.at("y2").number(), params.at("z2").number())});
     }
@@ -89,7 +89,7 @@ shared_ptr<Shape> PrimitiveFactory::from_json(const json &j, const map<string, s
 	}
 	else if (j.contains("points"))
     {
-        array< Vec3f, 3> a;
+        std::array< Vec3f, 3> a;
         int i = 0;
         for (auto m : j.at("points"))
         {
