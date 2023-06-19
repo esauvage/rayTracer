@@ -1,0 +1,40 @@
+{
+    "camera": {
+        "focus": 6.0,
+        "lens radius": 0.1,
+        "orientation": [
+            -0.5,
+            0.5,
+            0.5,
+            -0.5
+        ],
+        "position": [
+            10.0,
+            0.0,
+            0.5
+        ]
+    },
+    "materials": {
+        "lena": {
+            "albedo": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "filename": "./scenes/lena.bmp",
+            "nom": "lena"
+        }
+    },
+    "world": [
+        {
+            "material": "lena",
+            "position": [
+                3.5,
+                0.0,
+                0.5
+            ],
+            "rayon": 2.0
+        }
+ 
+    ]
+}

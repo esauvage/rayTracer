@@ -2,8 +2,6 @@
 #define METAL_H
 
 #include "material.h"
-#include <nlohmann/json.hpp>
-using json = nlohmann::json;
 
 class Metal : public Material
 {
@@ -13,13 +11,13 @@ public:
 	virtual bool scatter(const Rayon3f& r_in, const HitRecord& rec, Vec3f& localAttenuation, std::vector<Rayon3f>& scattered,
 						 Vec3f& attenuation) const override;
 	float fuzz() const;
-	virtual json &jsonHelper(json &j) const;
+    virtual nlohmann::json &jsonHelper(nlohmann::json &j) const override;
 private:
 	float _fuzz;
 };
 
-inline void to_json(json& j, const Metal& m) {
-	j = json{{"albedo", m.albedo()}, {"fuzz", m.fuzz()}};
+inline void to_json(nlohmann::json& j, const Metal& m) {
+    j = nlohmann::json{{"albedo", m.albedo()}, {"fuzz", m.fuzz()}};
 }
 
 #endif // METAL_H

@@ -1,6 +1,7 @@
 #include "material.h"
 
 using namespace std;
+using json = nlohmann::json;
 
 Material::Material(const Vec3f &albedo) : _albedo(albedo)
 {
@@ -8,19 +9,12 @@ Material::Material(const Vec3f &albedo) : _albedo(albedo)
 
 Vec3f Material::albedo() const
 {
-	if (_albedoPtr)
-	{
-		_albedoPtr->color(tex, p);
-	}
 	return _albedo;
 }
 
 json &Material::jsonHelper(json &j) const
 {
-	if (_albedo)
-		j = json{{"albedo", _albedo->nom()}, {"nom", _nom}};
-	else
-		j = json{{"albedo", _albedo}, {"nom", _nom}};
+    j = json{{"albedo", _albedo}, {"nom", _nom}};
 	return j;
 }
 

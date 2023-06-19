@@ -1,6 +1,8 @@
 #include "horizon.h"
 
 #include "utils.h"
+using namespace std;
+using namespace nlohmann;
 
 Horizon::Horizon(float hauteur)
 	:_hauteur(hauteur)

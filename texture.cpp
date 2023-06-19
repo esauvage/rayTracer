@@ -5,9 +5,10 @@
 #include <iostream>
 
 using namespace std;
+using namespace nlohmann;
 
-Texture::Texture(const Vec3f &albedo, const string &filename)
-	: Material(albedo), _file(filename)
+Texture::Texture(const Vec3f &albedo)
+    : Material(albedo)
 {
 
 }
@@ -27,14 +28,56 @@ bool Texture::scatter(const Rayon3f &r_in, const HitRecord &rec, Vec3f &attenuat
 	}
 	scattered = Rayon3f(rec.p, scatter_direction.normalized());
 	auto sines = sin(10*rec.p.x())*sin(10*rec.p.y())*sin(10*rec.p.z());
-	attenuation = (sines > 0) ? albedo() : Vec3f(0, 0, 0);
+    if (_material1 && _material2)
+    {
+        if (sines > 0)
+        {
+            _material1->scatter(r_in, rec, attenuation, scattered);
+        }
+        else
+        {
+            _material2->scatter(r_in, rec, attenuation, scattered);
+        }
+    }
+    else
+    {
+        attenuation = (sines > 0) ? albedo() : Vec3f(0, 0, 0);
+    }
 	return true;
 }
 
 json &Texture::jsonHelper(json &j) const
 {
 	j = Material::jsonHelper(j);
-	j["filename"] = _file;
-	return j;
+    j["filename"] = _file;
+    if (_material1)
+    {
+        j["material1"] = _material1->nom();
+    }
+    if (_material2)
+    {
+        j["material2"] = _material2->nom();
+    }
+    return j;
+}
+
+std::shared_ptr<Material> Texture::material1() const
+{
+    return _material1;
+}
+
+void Texture::setMaterial1(const std::shared_ptr<Material> &newMaterial)
+{
+    _material1 = newMaterial;
+}
+
+std::shared_ptr<Material> Texture::material2() const
+{
+    return _material2;
+}
+
+void Texture::setMaterial2(const std::shared_ptr<Material> &newMaterial)
+{
+    _material2 = newMaterial;
 }
 

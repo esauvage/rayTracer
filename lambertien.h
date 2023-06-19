@@ -2,8 +2,6 @@
 #define LAMBERTIEN_H
 
 #include "material.h"
-#include <nlohmann/json.hpp>
-using json = nlohmann::json;
 
 class Lambertien : public Material
 {
@@ -14,8 +12,8 @@ public:
 						 Vec3f& attenuation) const override;
 };
 
-inline void to_json(json& j, const Lambertien& m) {
-	j = json{{"albedo", m.albedo()}};
+inline void to_json(nlohmann::json& j, const Lambertien& m) {
+    j = nlohmann::json{{"albedo", m.albedo()}};
 }
 
 #endif // LAMBERTIEN_H

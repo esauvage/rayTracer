@@ -67,13 +67,24 @@
             "fuzz": 0.020000000298023224,
             "nom": "themis"
         },
-         "tex": {
+        "lena": {
+            "albedo": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "filename": "./scenes/lena.bmp",
+            "nom": "lena"
+        },
+        "tex": {
             "albedo": [
                 0.1,
                 0.95,
                 0.1
             ],
             "filename": "toto.txt",
+            "material1": "mur",
+            "material2": "boule2",
             "nom": "tex"
         },
         "verre": {
@@ -151,7 +162,7 @@
             "rayon": 0.4000000059604645
         },
         {
-            "material": "boule2",
+            "material": "lena",
             "position": [
                 4.0,
                 -2.0,

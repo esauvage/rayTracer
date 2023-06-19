@@ -3,9 +3,7 @@
 
 #include <Eigen/Geometry>
 #include "rayon.h"
-#include "albedo.h"
 #include <nlohmann/json.hpp>
-using json = nlohmann::json;
 
 using Vec3f = Eigen::Vector3f;
 using Rayon3f = Rayon<float, 3>;
@@ -19,22 +17,19 @@ public:
 	virtual bool scatter(const Rayon3f& r_in, const HitRecord& rec, Vec3f& attenuation, Rayon3f& scattered) const = 0;
 	virtual bool scatter(const Rayon3f& r_in, const HitRecord& rec, Vec3f& localAttenuation, std::vector<Rayon3f>& scattered,
 						 Vec3f& attenuation) const;
-	Vec3f albedo(const Vec2f &tex, const Vec3f &p) const;
-	virtual json &jsonHelper(json& j) const;
+    Vec3f albedo() const;
+    virtual nlohmann::json &jsonHelper(nlohmann::json& j) const;
 	std::string nom() const;
 	void setNom(const std::string &newNom);
-	std::shared_ptr<Albedo> albedoPtr() const;
-	void setAlbedoPtr(const std::shared_ptr<Albedo> &newAlbedo);
 
 protected:
 	Vec3f reflect(const Vec3f& v, const Vec3f& n) const;
 private:
 	Vec3f _albedo;
 	std::string _nom;
-	std::shared_ptr<Albedo>_albedoPtr {nullptr};
 };
 
-inline void to_json(json& j, const Material& m)
+inline void to_json(nlohmann::json& j, const Material& m)
 {
 	j = m.jsonHelper(j);
 }

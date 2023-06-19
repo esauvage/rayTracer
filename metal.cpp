@@ -5,6 +5,7 @@
 #include <iostream>
 
 using namespace std;
+using namespace nlohmann;
 
 Metal::Metal(const Vec3f &albedo, float fuzz)
 	: Material(albedo), _fuzz(fuzz)
@@ -15,7 +16,7 @@ Metal::Metal(const Vec3f &albedo, float fuzz)
 bool Metal::scatter(const Rayon3f &r_in, const HitRecord &rec, Vec3f &attenuation, Rayon3f &scattered) const
 {
 	const Vec3f reflected = reflect(r_in.direction(), rec.normal());
-	attenuation = albedo(rec.tex(), rec.p);
+    attenuation = albedo();
 	bool r = false;//fabs(scattered.direction().dot(rec.normal())) > 1e-5;
 	int compteur = 100;
 	while (!r && compteur)

@@ -1,5 +1,7 @@
 #include "parameter.h"
 
+using namespace std;
+
 Parameter::Parameter(const Parameter& p)
 	:type(p.type)
 {

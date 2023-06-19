@@ -3,6 +3,7 @@
 #include "utils.h"
 
 using namespace std;
+using namespace nlohmann;
 
 Triangle::Triangle(const array <Vec3f, 3> &points)
 	:_p(points), _n((_p[1] - _p[0]).cross(_p[2] - _p[0]).normalized()), _e1{_p[1] - _p[0]}, _e2{_p[2] - _p[0]}

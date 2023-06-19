@@ -3,7 +3,7 @@
 #include "utils.h"
 
 using namespace Eigen;
-
+using namespace std;
 
 Lambertien::Lambertien(const Vec3f& a)
  : Material(a)
@@ -13,6 +13,7 @@ Lambertien::Lambertien(const Vec3f& a)
 
 bool Lambertien::scatter(const Rayon3f &r_in, const HitRecord &rec, Vec3f &attenuation, Rayon3f &scattered) const
 {
+    (void)r_in;
 	Vec3f scatter_direction = rec.normal() + random_unit_vector();
 	// Catch degenerate scatter direction
 	auto degenere = 0;
@@ -25,7 +26,7 @@ bool Lambertien::scatter(const Rayon3f &r_in, const HitRecord &rec, Vec3f &atten
 		scatter_direction = rec.normal();
 	}
 	scattered = Rayon3f(rec.p, scatter_direction.normalized());
-	attenuation = albedo(rec.tex(), rec.p);
+    attenuation = albedo();
 	return true;
 }
 

@@ -1,6 +1,8 @@
 #include "dielectrique.h"
 
 #include "utils.h"
+using namespace std;
+using namespace nlohmann;
 
 Dielectrique::Dielectrique(float iRefrac) : Material(),
 	_iRefrac(iRefrac)
@@ -8,6 +10,7 @@ Dielectrique::Dielectrique(float iRefrac) : Material(),
 
 bool Dielectrique::scatter(const Rayon3f &r_in, const HitRecord &rec, Vec3f &attenuation, Rayon3f &scattered) const
 {
+    (void)attenuation;
 	float refraction_ratio = rec.front_face ? (1.0/_iRefrac) : _iRefrac;
 
 	Vec3f unit_direction = r_in.direction();

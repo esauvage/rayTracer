@@ -1,13 +1,17 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#define WIN32_LEAN_AND_MEAN
+
 #include <memory>
 #include <Eigen/Geometry>
-#include <iostream>
+template<typename Type, int Size>
+using Vec = Eigen::Matrix<Type, Size, 1>;
+template<typename Type, int Size>
+using Rayon = Eigen::ParametrizedLine<Type, Size>;
 
 using Vec3f = Vec<float, 3>;
 using Vec2f = Vec<float, 2>;
-using namespace std;
 inline float frand() {return rand()/static_cast<float>(RAND_MAX);}
 // Compute barycentric coordinates (u, v, w) for
 // point p with respect to triangle (a, b, c)

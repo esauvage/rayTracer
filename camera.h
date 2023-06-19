@@ -3,7 +3,6 @@
 
 #include "rayon.h"
 #include <nlohmann/json.hpp>
-using json = nlohmann::json;
 
 using Rayon3f = Rayon<float, 3>;
 using Vec3f = Vec<float, 3>;
@@ -53,12 +52,12 @@ namespace nlohmann {
 	};
 }
 
-inline void to_json(json& j, const Camera& camera)
+inline void to_json(nlohmann::json& j, const Camera& camera)
 {
-	j = json{{"position", camera.position()}, {"orientation", camera.rotation()}, {"focus", camera.focusDist()}};
+    j = nlohmann::json{{"position", camera.position()}, {"orientation", camera.rotation()}, {"focus", camera.focusDist()}};
 }
 
-inline void from_json(const json& j, Camera& camera)
+inline void from_json(const nlohmann::json& j, Camera& camera)
 {
 	Vec3f position = Vec3f(j.at("position")[0].get<float>(), j.at("position")[1].get<float>(), j.at("position")[2].get<float>());
 //	j.at("position").get_to(position);

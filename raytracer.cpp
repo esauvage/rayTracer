@@ -65,7 +65,8 @@ void RayTracer::generateFile(const string &outFile, const pair <int, int> size, 
     //Launch a group of threads
     for (int i = 0; i < num_threads; ++i) {
         _activeThreads++;
-		t[i] = thread(&RayTracer::fillImage, this, i * threadHeight, threadHeight, &image, i);
+        int tHeight = min(threadHeight, height- i * threadHeight);
+        t[i] = thread(&RayTracer::fillImage, this, i * threadHeight, tHeight, &image, i);
     }
 	//Join the threads with the main thread
     for (int i = 0; i < num_threads; ++i) {
@@ -115,7 +116,7 @@ Vec3f RayTracer::pixelColor(const Rayon3f &rayon, int depth, Vec3f &attenuation,
 			return color;
 		}
 //		return rec.normal()*0.5 + Vec3f(0.5, 0.5, 0.5);
-		return attenuation;
+        return localAttenuation;
 	}
 //	file << "No touch." << endl;
 	return sky(rayon.direction());
@@ -140,8 +141,6 @@ Vec3f RayTracer::sky(const Vec3f& rayon) const
 //	return {coef * 0.9f, coef, 1.f};
 }
 
-std::mutex img_mutex;
-
 void RayTracer::fillImage(int rowBegin, int nbRows, CImg<unsigned char> *img, int id) const
 {
 	ofstream myfile;
@@ -150,7 +149,7 @@ void RayTracer::fillImage(int rowBegin, int nbRows, CImg<unsigned char> *img, in
 
     const float height = img->height();
     const float width = img->width();
-	const int antiAliasing {8};
+    const int antiAliasing {3};
     for (int i = nbRows + 1; --i;)
     {
         for (int j = 0; j < width; ++j)//, x+=coef)

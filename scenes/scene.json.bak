@@ -31,6 +31,15 @@
             ],
             "nom": "boule2"
         },
+        "lena": {
+            "albedo": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "filename": "./scenes/lena.bmp",
+            "nom": "lena"
+        },
         "mur": {
             "albedo": [
                 0.4000000059604645,
@@ -63,7 +72,9 @@
                 0.949999988079071,
                 0.10000000149011612
             ],
-            "filename": "toto.txt",
+            "filename": "",
+            "material1": "mur",
+            "material2": "boule2",
             "nom": "tex"
         },
         "themis": {
@@ -96,7 +107,7 @@
             "rayon": 0.5
         },
         {
-            "material": "boule2",
+            "material": "lena",
             "position": [
                 3.0,
                 0.4000000059604645,

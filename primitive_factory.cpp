@@ -10,33 +10,34 @@
 #include "lambertien.h"
 #include "dielectrique.h"
 #include "texture.h"
+#include "image.h"
 
-using namespace std;
 using namespace nlohmann;
 using namespace Eigen;
+using namespace std;
 
-shared_ptr<Shape> PrimitiveFactory::create(const string &primName, const map <string, Parameter> &params)
+std::shared_ptr<Shape> PrimitiveFactory::create(const std::string &primName, const std::map <std::string, Parameter> &params)
 {
     if (primName == "sphere")
     {
-        shared_ptr<Shape> r = make_shared<Boule>(Vec3f(params.at("x").number(), params.at("y").number(), params.at("z").number()),
+        std::shared_ptr<Shape> r = std::make_shared<Boule>(Vec3f(params.at("x").number(), params.at("y").number(), params.at("z").number()),
                          params.at("radius").number());
         return r;
     }
     if (primName == "horizon")
     {
-        return make_shared<Horizon>(params.at("elevation").number());
+        return std::make_shared<Horizon>(params.at("elevation").number());
     }
     if (primName == "triangle")
     {
-        return make_shared<Triangle>(std::array< Vec3f, 3>{Vec3f{params.at("x0").number(), params.at("y0").number(), params.at("z0").number()},
+        return std::make_shared<Triangle>(std::array< Vec3f, 3>{Vec3f{params.at("x0").number(), params.at("y0").number(), params.at("z0").number()},
             Vec3f(params.at("x1").number(), params.at("y1").number(), params.at("z1").number()),
             Vec3f(params.at("x2").number(), params.at("y2").number(), params.at("z2").number())});
     }
     return nullptr;
 }
 
-shared_ptr<Shape> PrimitiveFactory::from_json(const json &j, const map<string, shared_ptr<Material> > &materials)
+std::shared_ptr<Shape> PrimitiveFactory::from_json(const json &j, const std::map<std::string, std::shared_ptr<Material> > &materials)
 {
     if (j.is_array())
     {
@@ -44,14 +45,14 @@ shared_ptr<Shape> PrimitiveFactory::from_json(const json &j, const map<string, s
         {
             return PrimitiveFactory::from_json(j[0], materials);
         }
-        shared_ptr<ShapeList> r = make_shared<ShapeList>();
+        std::shared_ptr<ShapeList> r = std::make_shared<ShapeList>();
         for (const auto &s : j)
         {
             r->add(PrimitiveFactory::from_json(s, materials));
         }
         return r;
     }
-    shared_ptr<Shape> r{nullptr};
+    std::shared_ptr<Shape> r{nullptr};
     if (j.contains("rayon"))
     {
         r = make_shared<Boule>(Vec3f(j.at("position")[0].get<float>(), j.at("position")[1].get<float>(), j.at("position")[2].get<float>()),
@@ -63,7 +64,7 @@ shared_ptr<Shape> PrimitiveFactory::from_json(const json &j, const map<string, s
     }
 	if (j.contains("itriangles") || j.contains("triangles"))
 	{
-		shared_ptr<Mesh> mesh = make_shared<Mesh>();
+        std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
 		if (j.contains("points"))
 		{
 			for (const auto &point : j["points"])
@@ -97,18 +98,18 @@ shared_ptr<Shape> PrimitiveFactory::from_json(const json &j, const map<string, s
             a[i] = Vec3f(m[0].get<float>(), m[1].get<float>(), m[2].get<float>());
             i++;
         }
-        r = make_shared<Triangle>(a);
+        r = std::make_shared<Triangle>(a);
     }
-    if (j.contains("material") && (materials.find(j.at("material").get<string>()) != materials.end()))
+    if (j.contains("material") && (materials.find(j.at("material").get<std::string>()) != materials.end()))
     {
-        r->setMaterial(materials.at(j.at("material").get<string>()));
+        r->setMaterial(materials.at(j.at("material").get<std::string>()));
     }
     return r;
 }
 
-shared_ptr<Material> MaterialFactory::create(const map <string, Parameter> &params)
+std::shared_ptr<Material> MaterialFactory::create(const std::map <std::string, Parameter> &params)
 {
-	shared_ptr<Material> m;
+    std::shared_ptr<Material> m;
 	if (params.at("type").text() == "metal")
 	{
 		m = make_shared<Metal>(Vec3f(params.at("red").number(), params.at("green").number(), params.at("blue").number()),
@@ -124,18 +125,17 @@ shared_ptr<Material> MaterialFactory::create(const map <string, Parameter> &para
 	}
 	if (params.at("type").text() == "texture")
 	{
-		m = make_shared<Texture>(Vec3f(params.at("red").number(), params.at("green").number(), params.at("blue").number()),
-								 params.at("filename").text());
+        m = make_shared<Texture>(Vec3f(params.at("red").number(), params.at("green").number(), params.at("blue").number()));
 	}
 	m->setNom(params.at("nom").text());
 	return m;
 }
 
-std::shared_ptr<Material> MaterialFactory::from_json(const json &j)
+std::shared_ptr<Material> MaterialFactory::from_json(const json &j, std::map<std::string, std::shared_ptr<Material> > &materials)
 {
 	if (!j.contains("albedo"))
-		return MaterialFactory::from_json(j[0]);
-	shared_ptr<Material> m;
+        return MaterialFactory::from_json(j[0], materials);
+    std::shared_ptr<Material> m;
 	if (j.contains("fuzz"))
 	{
 		m = make_shared<Metal>(Vec3f(j.at("albedo")[0].get<float>(), j.at("albedo")[1].get<float>(), j.at("albedo")[2].get<float>()),
@@ -144,16 +144,22 @@ std::shared_ptr<Material> MaterialFactory::from_json(const json &j)
 	else if (j.contains("refractiveIndex"))
 	{
 		m = make_shared<Dielectrique>(j.at("refractiveIndex").get<float>());
-	}
-	else if (j.contains("filename"))
-	{
-		m = make_shared<Texture>(Vec3f(j.at("albedo")[0].get<float>(), j.at("albedo")[1].get<float>(), j.at("albedo")[2].get<float>()),
-								j.at("filename").get<string>());
-	}
-	else
+    }
+    else if (j.contains("material1"))
+    {
+        m = make_shared<Texture>(Vec3f(j.at("albedo")[0].get<float>(), j.at("albedo")[1].get<float>(), j.at("albedo")[2].get<float>()));
+        std::shared_ptr<Texture> t = dynamic_pointer_cast<Texture>(m);
+        t->setMaterial1(materials[j.at("material1").get<string>()]);
+        t->setMaterial2(materials[j.at("material2").get<string>()]);
+    }
+    else if (j.contains("filename"))
+    {
+        m = make_shared<Image>(j.at("filename").get<std::string>());
+    }
+    else
 	{
 		m = make_shared<Lambertien>(Vec3f(j.at("albedo")[0].get<float>(), j.at("albedo")[1].get<float>(), j.at("albedo")[2].get<float>()));
 	}
-	m->setNom(j.at("nom").get<string>());
+    m->setNom(j.at("nom").get<std::string>());
 	return m;
 }

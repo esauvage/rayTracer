@@ -2,8 +2,6 @@
 #define DIELECTRIQUE_H
 
 #include "material.h"
-#include <nlohmann/json.hpp>
-using json = nlohmann::json;
 
 class Dielectrique : public Material
 {
@@ -13,7 +11,7 @@ public:
 	virtual bool scatter(const Rayon3f& r_in, const HitRecord& rec, Vec3f& attenuation, Rayon3f& scattered) const override;
 	virtual bool scatter(const Rayon3f& r_in, const HitRecord& rec, Vec3f& localAttenuation, std::vector<Rayon3f>& scattered,
 						 Vec3f& attenuation) const override;
-	json &jsonHelper(json &j) const;
+    nlohmann::json &jsonHelper(nlohmann::json &j) const;
 
 private:
 	float iRefrac() const;

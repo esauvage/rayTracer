@@ -4,9 +4,6 @@
 #include "material.h"
 #include "rayon.h"
 
-#include <nlohmann/json.hpp>
-using json = nlohmann::json;
-
 using Rayon3f = Rayon<float, 3>;
 
 class Material;
@@ -21,10 +18,10 @@ public:
 	std::shared_ptr<Material> material() const;
 
 	void setMaterial(const std::shared_ptr<Material> &newMaterial);
-	virtual json &jsonHelper(json& j) const
+    virtual nlohmann::json &jsonHelper(nlohmann::json& j) const
 	{
 		if (_material)
-			j= json{{"material", _material->nom()}};
+            j= nlohmann::json{{"material", _material->nom()}};
 		return j;
 	}
 
@@ -42,7 +39,7 @@ inline void Shape::setMaterial(const std::shared_ptr<Material> &newMaterial)
 	_material = newMaterial;
 }
 
-inline void to_json(json& j, const Shape& s)
+inline void to_json(nlohmann::json& j, const Shape& s)
 {
 	j = s.jsonHelper(j);
 }
@@ -50,11 +47,11 @@ inline void to_json(json& j, const Shape& s)
 namespace nlohmann {
     template <typename T>
     struct adl_serializer<std::shared_ptr<T> > {
-        static void to_json(json& j, const std::shared_ptr<T>& p) {
-            j = json(*p);
+        static void to_json(nlohmann::json& j, const std::shared_ptr<T>& p) {
+            j = nlohmann::json(*p);
         }
 
-        static void from_json(const json& j, std::shared_ptr<T>& p) {
+        static void from_json(const nlohmann::json& j, std::shared_ptr<T>& p) {
                 *p = j.get<T>(); // same as above, but with
                                   // adl_serializer<T>::from_json
             }

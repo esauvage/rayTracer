@@ -10,8 +10,6 @@
 
 #include "primitive_factory.h"
 
-#include "utils.h"
-
 class Scene
 {
 public:
@@ -33,21 +31,21 @@ private:
     std::shared_ptr<Shape> _world;
 };
 
-inline void to_json(json& j, const Scene& scene)
+inline void to_json(nlohmann::json& j, const Scene& scene)
 {
-	j["camera"] = json(scene.camera());
-    j["materials"] = json(scene.materials());
-    j["world"] = json(scene.world());
+    j["camera"] = nlohmann::json(scene.camera());
+    j["materials"] = nlohmann::json(scene.materials());
+    j["world"] = nlohmann::json(scene.world());
 }
 
-inline void from_json(const json& j, Scene& scene)
+inline void from_json(const nlohmann::json& j, Scene& scene)
 {
 	Camera camera;
 	j.at("camera").get_to(camera);
 	scene.setCamera(camera);
 	for (const auto &m : j.at("materials"))
 	{
-		std::shared_ptr<Material> mat = MaterialFactory::from_json(m);
+        std::shared_ptr<Material> mat = MaterialFactory::from_json(m, scene.materials());
 		scene.materials()[mat->nom()] = mat;
 	}
     scene.setWorld(PrimitiveFactory::from_json(j.at("world"), scene.materials()));
