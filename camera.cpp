@@ -5,9 +5,9 @@
 using namespace Eigen;
 
 Camera::Camera()
-	:_position(0, 0, 0), _rotation(0, 0, 0, 1), _focalLength(1.), _focusDist(7), _aspectRatio(4./3.)
+	:_position(0, 0, 0), _rotation(0, 0, 0, 1), _focalLength(1.), _focusDist(6.5), _aspectRatio(4./3.)
 {
-	_lensRadius = 0.25 / 2.;
+	_lensRadius = 0.1 / 2.;
 	update();
 }
 
@@ -45,10 +45,10 @@ void Camera::setRotation(const Quaternion<float> &newRotation)
 
 void Camera::update()
 {
-	auto theta = M_PI/3.;
-	auto h = tan(theta/2.);
-	auto viewport_height = 2.0 * h;
-	auto viewport_width = _aspectRatio * viewport_height;
+	float theta = M_PI/3.;
+	float h = tan(theta/2.);
+	float viewport_height = 2.0 * h;
+	float viewport_width = _aspectRatio * viewport_height;
 
 	Vec3f vUp = _rotation * Vec3f(0, 1, 0);
 	_w = _rotation * Vec3f(0, 0, -1);
@@ -58,6 +58,11 @@ void Camera::update()
 	_horizontal = _focusDist * viewport_width * _u;
 	_vertical = _focusDist * viewport_height * _v;
 	_lower_left_corner = _position - _horizontal/2. - _vertical/2. - _focusDist * _w;
+}
+
+void Camera::setLensRadius(float newLensRadius)
+{
+	_lensRadius = newLensRadius;
 }
 
 float Camera::focusDist() const

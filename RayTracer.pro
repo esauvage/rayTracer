@@ -20,6 +20,7 @@ INCLUDEPATH += C:\Users\etien\Documents\projets\eigen\
 TEMPLATE = app
 
 SOURCES += \
+	albedo.cpp \
 	camera.cpp \
 	dielectrique.cpp \
 	lambertien.cpp \
@@ -36,6 +37,7 @@ SOURCES += \
 	raytracer.cpp \
 	scene.cpp \
 	shapelist.cpp \
+	texture.cpp \
 	tokenStream.cpp \
 	triangle.cpp
 
@@ -51,6 +53,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 HEADERS += \
+	albedo.h \
 	boule.h \
 	camera.h \
 	dielectrique.h \
@@ -68,6 +71,7 @@ HEADERS += \
 	scene.h \
 	shape.h\
 	shapelist.h \
+	texture.h \
 	tokenStream.h \
 	triangle.h \
 	utils.h

@@ -23,6 +23,8 @@ public:
 	float focusDist() const;
 	void setFocusDist(float newFocusDist);
 
+	void setLensRadius(float newLensRadius);
+
 private:
 	void update();
 
@@ -64,6 +66,10 @@ inline void from_json(const json& j, Camera& camera)
 	Eigen::Quaternionf rotation;
 	j.at("orientation").get_to(rotation);
     camera.setRotation(rotation);
+	if (j.contains("lens radius"))
+	{
+		camera.setLensRadius(j.at("lens radius").get<float>());
+	}
 	if (j.contains("focus"))
 	{
 		camera.setFocusDist(j.at("focus").get<float>());

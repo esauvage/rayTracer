@@ -9,7 +9,7 @@ class Triangle : public Shape
 {
 public:
     Triangle(const std::array< Vec3f, 3>& points);
-	virtual bool touche(const Rayon3f& r, double t_min, double t_max, HitRecord& rec) const;
+	virtual bool touche(const Rayon3f& r, double t_min, double t_max, HitRecord& rec, std::ofstream& file) const;
     virtual json &jsonHelper(json& j) const;
 private:
     std::array< Vec3f, 3 > _p;

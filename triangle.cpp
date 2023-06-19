@@ -9,7 +9,7 @@ Triangle::Triangle(const array <Vec3f, 3> &points)
 {
 }
 
-bool Triangle::touche(const Rayon3f& r, double t_min, double t_max, HitRecord& rec) const
+bool Triangle::touche(const Rayon3f& r, double t_min, double t_max, HitRecord& rec, ofstream& file) const
 {
 	const Vec3f h = r.direction().cross(_e2);
 	const auto a = _e1.dot(h);
@@ -26,6 +26,10 @@ bool Triangle::touche(const Rayon3f& r, double t_min, double t_max, HitRecord& r
 		return false;
 
 	const Vec3f q = s.cross(_e1);
+	if (q.hasNaN())
+	{
+		return false;
+	}
 	const auto v = f * (r.direction().dot(q));
 
 	if (v < 0 || (fabs(v) < 1e-5) || (u + v > 1.0))

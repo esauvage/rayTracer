@@ -3,9 +3,11 @@
 
 #include <memory>
 #include <Eigen/Geometry>
+#include <iostream>
 
 using Vec3f = Vec<float, 3>;
-
+using Vec2f = Vec<float, 2>;
+using namespace std;
 inline float frand() {return rand()/static_cast<float>(RAND_MAX);}
 // Compute barycentric coordinates (u, v, w) for
 // point p with respect to triangle (a, b, c)
@@ -37,13 +39,14 @@ Eigen::Vector3<T>& dir2vector2(Eigen::Vector3<T>& out, const Eigen::Vector3<T>& 
 		   sine.row(0) * cosi.row(1) * in[2],
 						 sine.row(1) * in[2];
     out.normalize();
+//	cout << out << endl;
     return out;
 }
 
 inline Vec3f random_in_unit_sphere()
 {
 	Vec3f p;
-    return dir2vector2(p, Vec3f((frand() * 2)* M_PI, (frand() -0.5)*M_PI, frand()));
+	return dir2vector2(p, Vec3f((frand() -0.5)*M_PI, (frand() * 2)* M_PI, frand()));
 //	while (true)
 //	{
 //		auto p = Vec3f::Random();
@@ -55,7 +58,8 @@ inline Vec3f random_in_unit_sphere()
 inline Vec3f random_unit_vector()
 {
 	Vec3f p;
-    return dir2vector2(p, Vec3f((frand() * 2)* M_PI,(frand() - 0.5)*M_PI,  1.));
+	p = dir2vector2(p, Vec3f((frand() - 0.5)*M_PI, (frand() * 2)* M_PI, 1.));
+	return p;
 //	return random_in_unit_sphere().normalized();
 }
 
@@ -82,13 +86,33 @@ public:
 	}
 	Vec3f normal() const;
 
+	Vec2f tex() const;
+	void setTex(const Vec2f &newTex);
+	void setTex(const float u, const float v);
+
 private:
 	Vec3f _normal;
+	Vec2f _tex;
 };
 
 inline Vec3f HitRecord::normal() const
 {
 	return _normal;
+}
+
+inline Vec2f HitRecord::tex() const
+{
+	return _tex;
+}
+
+inline void HitRecord::setTex(const Vec2f &newTex)
+{
+	_tex = newTex;
+}
+
+inline void HitRecord::setTex(const float u, const float v)
+{
+	_tex = Vec2f(u, v);
 }
 
 #endif // UTILS_H

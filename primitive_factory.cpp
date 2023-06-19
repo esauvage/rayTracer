@@ -9,6 +9,7 @@
 #include "metal.h"
 #include "lambertien.h"
 #include "dielectrique.h"
+#include "texture.h"
 
 using namespace std;
 using namespace nlohmann;
@@ -121,6 +122,11 @@ shared_ptr<Material> MaterialFactory::create(const map <string, Parameter> &para
 	{
 		m = make_shared<Dielectrique>(params.at("refraction").number());
 	}
+	if (params.at("type").text() == "texture")
+	{
+		m = make_shared<Texture>(Vec3f(params.at("red").number(), params.at("green").number(), params.at("blue").number()),
+								 params.at("filename").text());
+	}
 	m->setNom(params.at("nom").text());
 	return m;
 }
@@ -138,6 +144,11 @@ std::shared_ptr<Material> MaterialFactory::from_json(const json &j)
 	else if (j.contains("refractiveIndex"))
 	{
 		m = make_shared<Dielectrique>(j.at("refractiveIndex").get<float>());
+	}
+	else if (j.contains("filename"))
+	{
+		m = make_shared<Texture>(Vec3f(j.at("albedo")[0].get<float>(), j.at("albedo")[1].get<float>(), j.at("albedo")[2].get<float>()),
+								j.at("filename").get<string>());
 	}
 	else
 	{

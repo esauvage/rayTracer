@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <fstream>
 
 #include "utils.h"
 
@@ -13,30 +14,31 @@ Mesh::Mesh()
 
 }
 
-bool Mesh::touche(const Rayon3f &r, double t_min, double t_max, HitRecord &rec) const
+bool Mesh::touche(const Rayon3f &r, double t_min, double t_max, HitRecord &rec, ofstream& file) const
 {
 	HitRecord temp_rec;
 	bool hit_anything = false;
 	auto closest_so_far = t_max;
-
-//	for (const auto& object : _triangles)
-//	{
-//		if (object->touche(r, t_min, closest_so_far, temp_rec))
-//		{
-//			hit_anything = true;
-//			closest_so_far = temp_rec.t;
-//			rec = temp_rec;
-//		}
-//	}
+	int i = 0;
+	int triId = i;
 	for (const auto& triangle : _iTriangles)
 	{
         if (toucheTriangle(triangle, r, t_min, closest_so_far, temp_rec))
         {
-            hit_anything = true;
+			if (temp_rec.p.hasNaN())
+			{
+				file << "triangle :" << triangle << " Bad p"<< endl;
+				continue;
+			}
+			hit_anything = true;
             closest_so_far = temp_rec.t;
             rec = temp_rec;
+			triId = i;
         }
+		++i;
 	}
+	if (hit_anything)
+		file << "triangle :" << triId << " touched. Material :"  << rec.pMaterial<< endl;
 
 	return hit_anything;
 }
@@ -82,8 +84,8 @@ bool Mesh::toucheTriangle(const Eigen::Vector3i &triangle, const Rayon3f &r, dou
 	}
 	//Cette ligne supprime le lissage des normales
 //	rNorm = edge1.cross(edge2);
-	rNorm.normalize();
-	rec.setFaceNormal(r, rNorm);
+//	rNorm.normalize();
+	rec.setFaceNormal(r, rNorm.normalized());
     rec.pMaterial = material();
 
     return true;
@@ -163,6 +165,6 @@ void Mesh::update()
 
 	for (auto & n: _normales)
 	{
-		n.normalize();
+		n = n.normalized();
 	}
 }

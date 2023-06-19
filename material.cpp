@@ -1,17 +1,26 @@
 #include "material.h"
 
+using namespace std;
+
 Material::Material(const Vec3f &albedo) : _albedo(albedo)
 {
 }
 
 Vec3f Material::albedo() const
 {
+	if (_albedoPtr)
+	{
+		_albedoPtr->color(tex, p);
+	}
 	return _albedo;
 }
 
 json &Material::jsonHelper(json &j) const
 {
-	j = json{{"albedo", _albedo}, {"nom", _nom}};
+	if (_albedo)
+		j = json{{"albedo", _albedo->nom()}, {"nom", _nom}};
+	else
+		j = json{{"albedo", _albedo}, {"nom", _nom}};
 	return j;
 }
 
@@ -28,4 +37,23 @@ std::string Material::nom() const
 void Material::setNom(const std::string &newNom)
 {
 	_nom = newNom;
+}
+
+bool Material::scatter(const Rayon3f &r_in, const HitRecord &rec, Vec3f &localAttenuation, vector<Rayon3f> &vScattered, Vec3f &attenuation) const
+{
+	auto degenere = 0;
+	for (auto x : attenuation)
+	{
+		degenere += fabs(x) > 1e-2 ? 0 : 1;
+	}
+	if (degenere > 2)
+	{
+		return false;
+	}
+	Rayon3f scattered;
+	vScattered.clear();
+	bool r = scatter(r_in, rec, localAttenuation, scattered);
+	vScattered.push_back(scattered);
+	attenuation = attenuation.cwiseProduct(localAttenuation);
+	return r;
 }
