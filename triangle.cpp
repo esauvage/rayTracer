@@ -3,6 +3,7 @@
 #include "utils.h"
 
 using namespace std;
+using namespace Eigen;
 using namespace nlohmann;
 
 Triangle::Triangle(const array <Vec3f, 3> &points)
@@ -54,4 +55,19 @@ json &Triangle::jsonHelper(json &j) const
 	j = Shape::jsonHelper(j);
 	j["points"] = _p;
 	return j;
+}
+
+bool Triangle::boundingBox(double time0, double time1, AlignedBox3f &outputBox) const
+{
+	Vec3f min = _p[0];
+	Vec3f max = _p[0];
+	for (const auto &p : _p)
+	{
+		min = p.array().min(min.array());
+		max = p.array().max(max.array());
+	}
+	outputBox = AlignedBox3f(
+		min,
+		max);
+	return true;
 }

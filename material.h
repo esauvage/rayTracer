@@ -6,7 +6,6 @@
 #include <nlohmann/json.hpp>
 
 using Vec3f = Eigen::Vector3f;
-using Rayon3f = Rayon<float, 3>;
 
 class HitRecord;
 

@@ -20,6 +20,8 @@ INCLUDEPATH += C:\Users\etien\Documents\projets\eigen\
 TEMPLATE = app
 
 SOURCES += \
+	aabb.cpp \
+	bvhnode.cpp \
 	camera.cpp \
 	dielectrique.cpp \
 	image.cpp \
@@ -53,7 +55,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 HEADERS += \
+	aabb.h \
 	boule.h \
+	bvhnode.h \
 	camera.h \
 	dielectrique.h \
 	horizon.h \

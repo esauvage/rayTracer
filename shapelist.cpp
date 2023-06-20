@@ -6,6 +6,7 @@
 #include <cstring>
 
 using namespace std;
+using namespace Eigen;
 using namespace nlohmann;
 
 ShapeList::ShapeList()
@@ -33,8 +34,6 @@ bool ShapeList::touche(const Rayon3f& r, double t_min, double t_max, HitRecord& 
 	HitRecord temp_rec;
 	bool hit_anything = false;
 	auto closest_so_far = t_max;
-	int i = 0;
-	int toucheId = i;
 	for (const auto& object : _objects)
 	{
 		if (object->touche(r, t_min, closest_so_far, temp_rec, file))
@@ -42,21 +41,30 @@ bool ShapeList::touche(const Rayon3f& r, double t_min, double t_max, HitRecord& 
 			hit_anything = true;
 			closest_so_far = temp_rec.t;
 			rec = temp_rec;
-			toucheId = i;
 		}
-		i++;
 	}
-
-//	file << "Touche " << toucheId << endl;
 	return hit_anything;
 }
 
 json &ShapeList::jsonHelper(json &j) const
 {
 	j = Shape::jsonHelper(j);
-    for (auto o : _objects)
+	for (const auto &o : _objects)
     {
         j += json(o);
     }
 	return j;
+}
+
+bool ShapeList::boundingBox(double time0, double time1, AlignedBox3f &outputBox) const
+{
+	outputBox.setEmpty();
+	for (const auto &o : _objects)
+	{
+		AlignedBox3f aabb;
+		o->boundingBox(time0, time1, aabb);
+		outputBox.min() = outputBox.min().array().min(aabb.min().array());
+		outputBox.max() = outputBox.max().array().max(aabb.max().array());
+	}
+	return true;
 }

@@ -9,6 +9,7 @@ template<typename Type, int Size>
 using Vec = Eigen::Matrix<Type, Size, 1>;
 template<typename Type, int Size>
 using Rayon = Eigen::ParametrizedLine<Type, Size>;
+using Rayon3f = Rayon<float, 3>;
 
 using Vec3f = Vec<float, 3>;
 using Vec2f = Vec<float, 2>;

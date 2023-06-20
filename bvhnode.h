@@ -1,25 +1,23 @@
-#ifndef SHAPELIST_H
-#define SHAPELIST_H
+#ifndef BVHNODE_H
+#define BVHNODE_H
 
 #include "shape.h"
 
-#include <vector>
-
-class ShapeList : public Shape
+class BVHNode : public Shape
 {
 public:
-	ShapeList();
-	ShapeList(std::shared_ptr<Shape> object);
+	BVHNode();
+	BVHNode(std::shared_ptr<Shape> object);
 
 	virtual bool touche(const Rayon3f& r, double t_min, double t_max, HitRecord& rec, std::ofstream& file) const override;
 	virtual bool boundingBox(double time0, double time1, Eigen::AlignedBox3f& output_box) const override;
-	virtual  nlohmann::json &jsonHelper( nlohmann::json& j) const override;
+	virtual nlohmann::json &jsonHelper( nlohmann::json& j) const override;
 	void add(std::shared_ptr<Shape> object);
 
 private:
-	void clear();
-
-	std::vector<std::shared_ptr<Shape> > _objects;
+	std::shared_ptr<Shape> _left;
+	std::shared_ptr<Shape> _right;
+	Eigen::AlignedBox3f _aabb;
 };
 
-#endif // SHAPELIST_H
+#endif // BVHNODE_H
