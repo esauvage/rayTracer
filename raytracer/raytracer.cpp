@@ -54,7 +54,7 @@ void RayTracer::generateFile(const string &outFile, const pair <int, int> size, 
 	const int width {size.first};
 	const int height {size.second};
 	CImg<unsigned char> image(width, height, 1, 3, 0);
-	const int num_threads = 8;
+    const int num_threads = 32;
     thread t[num_threads + 1];
     CImgDisplay main_disp(image, "Generation");
     t[num_threads] = std::thread(&RayTracer::updateDisplay, this, &main_disp, &image);
@@ -127,7 +127,7 @@ Vec3f RayTracer::sky(const Vec3f& rayon) const
     //On ne touche rien, donc on tape dans le ciel.
     //L'éclairage doit donc prendre en compte l'inclinaison
     Vec3f unit_direction = rayon.normalized();
-	Vec3f soleil_direction(0.0f, 1.0f, 0.5f);
+    Vec3f soleil_direction(1.0f, 1.0f, 0.8f);
 	Vec3f couleur_soleil(1.f, 1.0f, 0.95f);
 	soleil_direction = soleil_direction.normalized();
 	float t = 0.5*(unit_direction.z() + 1.0);
@@ -149,7 +149,7 @@ void RayTracer::fillImage(int rowBegin, int nbRows, CImg<unsigned char> *img, in
 
     const float height = img->height();
     const float width = img->width();
-    const int antiAliasing {3};
+    const int antiAliasing {5};
     for (int i = nbRows + 1; --i;)
     {
         for (int j = 0; j < width; ++j)//, x+=coef)

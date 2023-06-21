@@ -19,7 +19,11 @@ std::string Image::fileName() const
 void Image::setFileName(const std::string &newFile)
 {
     _file = newFile;
-    _image = cimg_library::CImg<unsigned char>(_file.c_str());
+    try {
+        _image = cimg_library::CImg<unsigned char>(_file.c_str());
+    } catch (...) {
+        cout << "Erreur chargement " << newFile << endl;
+    }
 }
 
 bool Image::scatter(const Rayon3f &r_in, const HitRecord &rec, Vec3f &attenuation, Rayon3f &scattered) const
@@ -38,7 +42,7 @@ bool Image::scatter(const Rayon3f &r_in, const HitRecord &rec, Vec3f &attenuatio
     }
     scattered = Rayon3f(rec.p, scatter_direction.normalized());
     const int u = (int)(rec.tex()[1] * _image.height());
-    const int v = (int)(4*rec.tex()[0] * _image.width())%_image.width();
+    const int v = (int)(rec.tex()[0] * _image.width())%_image.width();
     attenuation = Vec3f(_image(v,u,0,0)/255., _image(v,u,0,1)/255., _image(v,u,0,2)/255.);
     return true;
 }

@@ -37,26 +37,33 @@ bool Mesh::touche(const Rayon3f &r, float t_min, float t_max, HitRecord &rec) co
 
 bool Mesh::toucheTriangle(const Eigen::Vector3i &triangle, const Rayon3f &r, float t_min, float t_max, HitRecord &rec) const
 {
-	const float EPSILON = 1e-5;
-	const Vec3f _p[3] {_points[triangle[0]], _points[triangle[1]], _points[triangle[2]]};
+    if (!_aabb.touche(r, t_min, t_max))
+    {
+        return false;
+    }
+    const float EPSILON = 1e-5;
+    Rayon3f rLocal = r;
+    rLocal.direction() = _rotation.inverse()*r.direction();
+    rLocal.origin() = _rotation.inverse()*r.origin();
+    const Vec3f _p[3] {_points[triangle[0]], _points[triangle[1]], _points[triangle[2]]};
 	const auto edge1{ _points[triangle[1]] - _p[0]};
 	const auto edge2{ _points[triangle[2]] - _p[0]};
 //	auto _n(edge1.cross(edge2).normalized());
 	Vec3f h, s, q;
 	float a,f,u,v;
-	h = r.direction().cross(edge2);
+    h = rLocal.direction().cross(edge2);
 	a = edge1.dot(h);
 	if (a > -EPSILON && a < EPSILON)
 		return false;    // This ray is parallel to this triangle.
 	f = 1.0/a;
-	s = r.origin() - _p[0];
+    s = rLocal.origin() - _p[0];
 	u = f * s.dot(h);
 	if ((u < 0.0) || (u > 1.0))
 	{
 		return false;
 	}
 	q = s.cross(edge1);
-	v = f * r.direction().dot(q);
+    v = f * rLocal.direction().dot(q);
 	if ((v < 0.0) || (u + v > 1.0))
 		return false;
 	// At this stage we can compute t to find out where the intersection point is on the line.
@@ -66,7 +73,7 @@ bool Mesh::toucheTriangle(const Eigen::Vector3i &triangle, const Rayon3f &r, flo
 		return false;
 	}
 	rec.t = t;
-	rec.p = r.pointAt(rec.t);
+    rec.p = rLocal.pointAt(rec.t);
 	//On touche.
 	Vec3f rNorm;
 	Vec3f baryPoint = barycentric(rec.p, _p[0], _p[1], _p[2]);
@@ -77,8 +84,10 @@ bool Mesh::toucheTriangle(const Eigen::Vector3i &triangle, const Rayon3f &r, flo
 	//Cette ligne supprime le lissage des normales
 //	rNorm = edge1.cross(edge2);
 //	rNorm.normalize();
-	rec.setFaceNormal(r, rNorm.normalized());
+    rec.setFaceNormal(rLocal, rNorm.normalized());
     rec.pMaterial = material();
+    Vec2f tex(baryPoint(0), baryPoint(1));
+    rec.setTex(tex);
 
     return true;
 }
@@ -114,7 +123,8 @@ void Mesh::add(const Vec3f &point)
 
 void Mesh::add(const Eigen::Vector3i &triangle)
 {
-	_iTriangles.push_back(triangle);
+    _iTriangles.push_back(triangle);
+    boundingBox(0, 0, _aabb);
 }
 
 //Calcule les normales en chaque point en faisant une moyenne par les angles.

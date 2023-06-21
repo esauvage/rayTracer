@@ -22,7 +22,9 @@ private:
 	std::vector<Vec3f > _points;
 	std::vector<Vec3f > _normales;
 	std::vector<Vec2f > _texs;
-	std::vector<Eigen::Vector3i > _iTriangles;
+    std::vector<Eigen::Vector3i > _iTriangles;
+    Eigen::Quaternion<float> _rotation{0, 0, 0, 1};
+    AABB _aabb;
 };
 
 #endif // MESH_H

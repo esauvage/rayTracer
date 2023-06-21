@@ -5,8 +5,6 @@
 #include <iostream>
 #include <cstring>
 
-#include "triangle.h"
-
 using namespace std;
 using namespace Eigen;
 using namespace nlohmann;
@@ -15,6 +13,7 @@ BVHNode::BVHNode()
 {
 
 }
+
 void BVHNode::add(shared_ptr<Shape> object)
 {
 	if (!_left)

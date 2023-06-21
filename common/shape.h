@@ -5,9 +5,6 @@
 #include "rayon.h"
 #include "aabb.h"
 
-//using Rayon3f = Rayon<float, 3>;
-
-class Material;
 class HitRecord;
 
 class Shape

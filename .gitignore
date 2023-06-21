@@ -33,3 +33,5 @@ scenes/lena.json.bak
 scenes/scene.json.bak
 testR.bmp
 testR.bmp
+*.txt
+output12.txt
