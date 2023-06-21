@@ -81,13 +81,6 @@ std::shared_ptr<Shape> PrimitiveFactory::from_json(const json &j, const std::map
 				}
 			}
 		}
-		if (j.contains("triangles"))
-		{
-			for (const auto &s : j["triangles"])
-			{
-				mesh->add(PrimitiveFactory::from_json(s, materials));
-			}
-		}
 		mesh->update();
 		r = mesh;
 	}

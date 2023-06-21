@@ -8,6 +8,9 @@ using namespace nlohmann;
 Triangle::Triangle(const std::array <Vec3f, 3> &points)
 	:_p(points), _n((_p[1] - _p[0]).cross(_p[2] - _p[0]).normalized()), _e1{_p[1] - _p[0]}, _e2{_p[2] - _p[0]}
 {
+	_tex[0] = Vec2f(0,0);
+	_tex[1] = Vec2f(1,0);
+	_tex[2] = Vec2f(1,1);
 }
 
 Triangle::Triangle(const Vec3f &a, const Vec3f &b, const Vec3f &c)
@@ -51,7 +54,9 @@ bool Triangle::touche(const Rayon3f& r, float t_min, float t_max, HitRecord& rec
 	rec.p = r.pointAt(rec.t);
 	rec.setFaceNormal(r, _n);
 	rec.pMaterial = material();
-
+	Vec2f tex(0, 0);
+	tex = _tex[0] * u + _tex[1] * v + _tex[2] * (1 - u - v);
+	rec.setTex(tex);
 	return true;
 }
 
@@ -60,6 +65,16 @@ json &Triangle::jsonHelper(json &j) const
 	j = Shape::jsonHelper(j);
 	j["points"] = _p;
 	return j;
+}
+
+void Triangle::setTex(const std::array<Vec2f, 3> &newTex)
+{
+	_tex = newTex;
+}
+
+void Triangle::setTex(const Vec2f &a, const Vec2f &b, const Vec2f &c)
+{
+	setTex(std::array<Vec2f, 3>{a, b, c});
 }
 
 bool Triangle::boundingBox(double time0, double time1, AABB &outputBox) const

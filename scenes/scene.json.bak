@@ -72,7 +72,6 @@
                 0.949999988079071,
                 0.10000000149011612
             ],
-            "filename": "",
             "material1": "mur",
             "material2": "boule2",
             "nom": "tex"
@@ -96,11 +95,11 @@
             "refractiveIndex": 1.5
         }
     },
-    "world": {
-        "left": {
-            "left": {
-                "left": {
-                    "left": {
+    "world": [
+        [
+            [
+                [
+                    {
                         "material": "tex",
                         "position": [
                             3.5,
@@ -109,13 +108,13 @@
                         ],
                         "rayon": 0.5
                     },
-                    "right": {
+                    {
                         "hauteur": -0.5,
                         "material": "boule2"
                     }
-                },
-                "right": {
-                    "left": {
+                ],
+                [
+                    {
                         "material": "verre",
                         "position": [
                             3.5,
@@ -124,7 +123,7 @@
                         ],
                         "rayon": 0.4000000059604645
                     },
-                    "right": {
+                    {
                         "material": "sol",
                         "position": [
                             0.0,
@@ -133,10 +132,10 @@
                         ],
                         "rayon": 100.0
                     }
-                }
-            },
-            "right": {
-                "left": {
+                ]
+            ],
+            [
+                {
                     "material": "boule2",
                     "position": [
                         3.5,
@@ -145,8 +144,8 @@
                     ],
                     "rayon": 0.4000000059604645
                 },
-                "right": {
-                    "left": {
+                [
+                    {
                         "material": "boule",
                         "position": [
                             3.5,
@@ -155,8 +154,8 @@
                         ],
                         "rayon": 0.4000000059604645
                     },
-                    "right": {
-                        "left": {
+                    [
+                        {
                             "material": "boule2",
                             "position": [
                                 3.5,
@@ -165,7 +164,7 @@
                             ],
                             "rayon": 0.4000000059604645
                         },
-                        "right": {
+                        {
                             "material": "lena",
                             "position": [
                                 4.0,
@@ -174,14 +173,14 @@
                             ],
                             "rayon": 0.6000000238418579
                         }
-                    }
-                }
-            }
-        },
-        "right": {
-            "left": {
-                "left": {
-                    "left": {
+                    ]
+                ]
+            ]
+        ],
+        [
+            [
+                [
+                    {
                         "material": "boule2",
                         "position": [
                             3.0,
@@ -190,7 +189,7 @@
                         ],
                         "rayon": 0.4000000059604645
                     },
-                    "right": {
+                    {
                         "material": "mur",
                         "points": [
                             [
@@ -210,9 +209,9 @@
                             ]
                         ]
                     }
-                },
-                "right": {
-                    "left": {
+                ],
+                [
+                    {
                         "material": "themis",
                         "position": [
                             6.699999809265137,
@@ -221,7 +220,7 @@
                         ],
                         "rayon": 1.2999999523162842
                     },
-                    "right": {
+                    {
                         "itriangles": [
                             [
                                 0,
@@ -268,12 +267,12 @@
                             ]
                         ]
                     }
-                }
-            },
-            "right": {
-                "left": {
-                    "left": {
-                        "left": {
+                ]
+            ],
+            [
+                [
+                    [
+                        {
                             "material": "verre",
                             "position": [
                                 3.0,
@@ -282,8 +281,8 @@
                             ],
                             "rayon": 0.4000000059604645
                         },
-                        "right": {
-                            "left": {
+                        [
+                            {
                                 "material": "mur",
                                 "points": [
                                     [
@@ -303,7 +302,7 @@
                                     ]
                                 ]
                             },
-                            "right": {
+                            {
                                 "material": "mur",
                                 "points": [
                                     [
@@ -323,9 +322,9 @@
                                     ]
                                 ]
                             }
-                        }
-                    },
-                    "right": {
+                        ]
+                    ],
+                    {
                         "material": "mur",
                         "points": [
                             [
@@ -345,9 +344,9 @@
                             ]
                         ]
                     }
-                },
-                "right": {
-                    "left": {
+                ],
+                [
+                    {
                         "material": "mur",
                         "points": [
                             [
@@ -367,7 +366,7 @@
                             ]
                         ]
                     },
-                    "right": {
+                    {
                         "material": "mur",
                         "points": [
                             [
@@ -387,8 +386,8 @@
                             ]
                         ]
                     }
-                }
-            }
-        }
-    }
+                ]
+            ]
+        ]
+    ]
 }

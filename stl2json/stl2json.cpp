@@ -2,7 +2,6 @@
 
 #include "stl_reader.h"
 #include "mesh.h"
-//#include "triangle.h"
 
 #include <iostream>
 
@@ -25,6 +24,7 @@ void STL2JSON::convert(const string &in, const string &out)
         for(size_t itri = 0; itri < mesh.num_tris(); ++itri) {
             Eigen::Vector3i ind(mesh.tri_corner_ind(itri, 0), mesh.tri_corner_ind(itri, 1), mesh.tri_corner_ind(itri, 2));
             jsonMesh.add(ind);
+
 //            shared_ptr <Triangle> jsonTriangle = make_shared<Triangle>(Vec3f(mesh.tri_corner_coords (itri, 0)),
 //                                Vec3f(mesh.tri_corner_coords (itri, 1)),
 //                                Vec3f(mesh.tri_corner_coords (itri, 2)));
@@ -41,7 +41,7 @@ void STL2JSON::convert(const string &in, const string &out)
 //            const float* n = mesh.tri_normal(itri);
 //            std::cout << "normal of triangle " << itri << ": "
 //                      << "(" << n[0] << ", " << n[1] << ", " << n[2] << ")\n";
-        }
+		}
         ofstream o(out);
         nlohmann::json j = jsonMesh;
         o << setw(4) << j << endl;

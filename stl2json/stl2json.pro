@@ -22,6 +22,7 @@ TEMPLATE = app
 
 SOURCES += \
         main.cpp \
+        obj2json.cpp \
         stl2json.cpp
 
 # The following define makes your compiler emit warnings if you use
@@ -36,6 +37,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 HEADERS += \
+        obj2json.h \
+        objload.h \
         stl2json.h
 
 win32: LIBS += -lGdi32

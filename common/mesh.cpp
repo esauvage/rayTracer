@@ -104,16 +104,7 @@ json &Mesh::jsonHelper(json &j) const
 	{
 		j["itriangles"] += json(i);
 	}
-	for (const auto &o : _triangles)
-	{
-		j["triangles"] += json(o);
-	}
 	return j;
-}
-
-void Mesh::add(shared_ptr<Shape> triangle)
-{
-	_triangles.push_back(triangle);
 }
 
 void Mesh::add(const Vec3f &point)

@@ -1,4 +1,5 @@
 #include "stl2json.h"
+#include "obj2json.h"
 
 #include <map>
 #include <iostream>
@@ -39,7 +40,17 @@ int main(int argc, char *argv[])
 		cout << arg.first << " : " << arg.second << std::endl;
 	}
 	const pair <int, int> size {atoi(args["-w"].c_str()), atoi(args["-h"].c_str())};
-    STL2JSON stl2json;
-    stl2json.convert(args["-i"].c_str(), args["-o"].c_str());
+
+	if (args["-i"].find(".obj") != std::string::npos)
+	{
+		OBJ2JSON obj2json;
+		obj2json.convert(args["-i"].c_str(), args["-o"].c_str());
+
+	}
+	if (args["-i"].find(".stl") != std::string::npos)
+	{
+		STL2JSON stl2json;
+		stl2json.convert(args["-i"].c_str(), args["-o"].c_str());
+	}
 	return 0;
 }
