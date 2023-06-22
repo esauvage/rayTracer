@@ -111,8 +111,8 @@ Vec3f RayTracer::pixelColor(const Rayon3f &rayon, int depth, Vec3f &attenuation)
 			color /= vScattered.size();
 			if ((color.array() < 0).any())
 			{
-				cout << "Erreur scattered Color : " << localAttenuation << endl;
-			}
+                cout << "Erreur scattered Color : " << localAttenuation << endl;
+             }
 			return color;
 		}
 //		return rec.normal()*0.5 + Vec3f(0.5, 0.5, 0.5);
@@ -128,7 +128,7 @@ Vec3f RayTracer::sky(const Vec3f& rayon) const
     //L'éclairage doit donc prendre en compte l'inclinaison
     Vec3f unit_direction = rayon.normalized();
 	Vec3f soleil_direction(0.0f, 1.0f, 0.2f);
-	Vec3f couleur_soleil(1.f, 1.0f, 0.95f);
+    Vec3f couleur_soleil(1.f, 1.0f, -0.9f);
 	soleil_direction = soleil_direction.normalized();
 	float t = 0.5*(unit_direction.z() + 1.0);
 	float intensite_soleil = fmax(unit_direction.dot(soleil_direction), 0.);
@@ -149,7 +149,7 @@ void RayTracer::fillImage(int rowBegin, int nbRows, CImg<unsigned char> *img, in
 
     const float height = img->height();
     const float width = img->width();
-    const int antiAliasing {5};
+    const int antiAliasing {8};
     for (int i = nbRows + 1; --i;)
     {
         for (int j = 0; j < width; ++j)//, x+=coef)
