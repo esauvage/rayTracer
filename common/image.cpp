@@ -21,7 +21,9 @@ void Image::setFileName(const std::string &newFile)
     _file = newFile;
     try {
         _image = cimg_library::CImg<unsigned char>(_file.c_str());
-    } catch (...) {
+		cout << "Chargement de " << newFile << endl;
+		cout << "Hauteur : " << _image.height() << " largeur : " << _image.width() << endl;
+	} catch (...) {
         cout << "Erreur chargement " << newFile << endl;
     }
 }
@@ -41,8 +43,9 @@ bool Image::scatter(const Rayon3f &r_in, const HitRecord &rec, Vec3f &attenuatio
         scatter_direction = rec.normal();
     }
     scattered = Rayon3f(rec.p, scatter_direction.normalized());
-    const int u = (int)(rec.tex()[1] * _image.height());
-    const int v = (int)(rec.tex()[0] * _image.width())%_image.width();
+	const int u = _image.height()-1-(rec.tex()[1] * _image.height());
+	const int v = rec.tex()[0] * _image.width();
+//	cout << "u " << u << endl;
     attenuation = Vec3f(_image(v,u,0,0)/255., _image(v,u,0,1)/255., _image(v,u,0,2)/255.);
     return true;
 }

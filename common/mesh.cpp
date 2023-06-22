@@ -67,7 +67,7 @@ bool Mesh::toucheTriangle(const Eigen::Vector3i &triangle, const Rayon3f &r, flo
 	if ((v < 0.0) || (u + v > 1.0))
 		return false;
 	// At this stage we can compute t to find out where the intersection point is on the line.
-	float t = f * edge2.dot(q);
+	const float t = f * edge2.dot(q);
 	if (t < EPSILON || t < t_min || t > t_max) // ray intersection
 	{
 		return false;
@@ -79,15 +79,16 @@ bool Mesh::toucheTriangle(const Eigen::Vector3i &triangle, const Rayon3f &r, flo
 	Vec3f baryPoint = barycentric(rec.p, _p[0], _p[1], _p[2]);
 	for (int i = 0; i < 3; ++i)
 	{
-		rNorm += _normales.at(triangle[i]) * baryPoint[i];
+		rNorm += _normals.at(triangle[i]) * baryPoint[i];
 	}
 	//Cette ligne supprime le lissage des normales
 //	rNorm = edge1.cross(edge2);
 //	rNorm.normalize();
     rec.setFaceNormal(rLocal, rNorm.normalized());
     rec.pMaterial = material();
-    Vec2f tex(baryPoint(0), baryPoint(1));
-    rec.setTex(tex);
+	Vec2f tex;
+	tex = _texs[triangle[0]] * baryPoint(0) + _texs[triangle[1]] * baryPoint(1) + _texs[triangle[2]] * baryPoint(2);
+	rec.setTex(tex);
 
     return true;
 }
@@ -113,25 +114,43 @@ json &Mesh::jsonHelper(json &j) const
 	{
 		j["itriangles"] += json(i);
 	}
+	for (const auto &i : _texs)
+	{
+		j["texs"] += json(i);
+	}
+	for (const auto &i : _normals)
+	{
+		j["normals"] += json(i);
+	}
 	return j;
 }
 
-void Mesh::add(const Vec3f &point)
+void Mesh::addVertex(const Vec3f &point)
 {
 	_points.push_back(point);
 }
 
-void Mesh::add(const Eigen::Vector3i &triangle)
+void Mesh::addTex(const Vec2f &tex)
 {
-    _iTriangles.push_back(triangle);
-    boundingBox(0, 0, _aabb);
+	_texs.push_back(tex);
+}
+
+void Mesh::addNormal(const Vec3f &normal)
+{
+	_normals.push_back(normal);
+}
+
+void Mesh::addVertI(const Eigen::Vector3i &triangle)
+{
+	_iTriangles.push_back(triangle);
+	boundingBox(0, 0, _aabb);
 }
 
 //Calcule les normales en chaque point en faisant une moyenne par les angles.
 //Source : https://stackoverflow.com/questions/45477806/general-method-for-calculating-smooth-vertex-normals-with-100-smoothness
 void Mesh::update()
 {
-	_normales.assign(_points.size(), Vec3f(0, 0, 0));
+	_normals.assign(_points.size(), Vec3f(0, 0, 0));
 	for(size_t i = 0; i < _iTriangles.size(); i++)
 	{
 		const auto v10 = _points[_iTriangles[i][1]] - _points[_iTriangles[i][0]];
@@ -151,12 +170,12 @@ void Mesh::update()
 			a1 = 0.;
 		if (a2 != a2)
 			a2 = 0.;
-		_normales[_iTriangles[i][0]] += fn * a0;
-		_normales[_iTriangles[i][1]] += fn * a1;
-		_normales[_iTriangles[i][2]] += fn * a2;
+		_normals[_iTriangles[i][0]] += fn * a0;
+		_normals[_iTriangles[i][1]] += fn * a1;
+		_normals[_iTriangles[i][2]] += fn * a2;
 	}
 
-	for (auto & n: _normales)
+	for (auto & n: _normals)
 	{
 		n = n.normalized();
 	}

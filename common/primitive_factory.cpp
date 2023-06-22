@@ -71,17 +71,34 @@ std::shared_ptr<Shape> PrimitiveFactory::from_json(const json &j, const std::map
 		{
 			for (const auto &point : j["points"])
 			{
-				mesh->add(Vec3f(point[0].get<float>(), point[1].get<float>(), point[2].get<float>()));
+				mesh->addVertex(Vec3f(point[0].get<float>(), point[1].get<float>(), point[2].get<float>()));
 			}
 			if (j.contains("itriangles"))
 			{
 				for (const auto &i : j["itriangles"])
 				{
-					mesh->add(Vector3i(i[0].get<int>(), i[1].get<int>(), i[2].get<int>()));
+					mesh->addVertI(Vector3i(i[0].get<int>(), i[1].get<int>(), i[2].get<int>()));
 				}
 			}
+			if (j.contains("texs"))
+			{
+				for (const auto &i : j["texs"])
+				{
+					mesh->addTex(Vec2f(i[0].get<float>(), i[1].get<float>()));
+				}
+			}
+			if (j.contains("normals"))
+			{
+				for (const auto &point : j["normals"])
+				{
+					mesh->addNormal(Vec3f(point[0].get<float>(), point[1].get<float>(), point[2].get<float>()));
+				}
+			}
+			else
+			{
+				mesh->update();
+			}
 		}
-		mesh->update();
 		r = mesh;
 	}
 	else if (j.contains("points"))

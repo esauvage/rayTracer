@@ -19,11 +19,11 @@ void STL2JSON::convert(const string &in, const string &out)
         Mesh jsonMesh;
         for (size_t iVert = 0; iVert < mesh.num_vrts(); ++iVert)
         {
-            jsonMesh.add(Vec3f(mesh.vrt_coords(iVert)));
+			jsonMesh.addVertex(Vec3f(mesh.vrt_coords(iVert)));
         }
         for(size_t itri = 0; itri < mesh.num_tris(); ++itri) {
             Eigen::Vector3i ind(mesh.tri_corner_ind(itri, 0), mesh.tri_corner_ind(itri, 1), mesh.tri_corner_ind(itri, 2));
-            jsonMesh.add(ind);
+			jsonMesh.addVertI(ind);
 
 //            shared_ptr <Triangle> jsonTriangle = make_shared<Triangle>(Vec3f(mesh.tri_corner_coords (itri, 0)),
 //                                Vec3f(mesh.tri_corner_coords (itri, 1)),

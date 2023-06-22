@@ -127,7 +127,7 @@ Vec3f RayTracer::sky(const Vec3f& rayon) const
     //On ne touche rien, donc on tape dans le ciel.
     //L'éclairage doit donc prendre en compte l'inclinaison
     Vec3f unit_direction = rayon.normalized();
-    Vec3f soleil_direction(1.0f, 1.0f, 0.8f);
+	Vec3f soleil_direction(0.0f, 1.0f, 0.2f);
 	Vec3f couleur_soleil(1.f, 1.0f, 0.95f);
 	soleil_direction = soleil_direction.normalized();
 	float t = 0.5*(unit_direction.z() + 1.0);
