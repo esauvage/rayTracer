@@ -6,6 +6,8 @@
 
 #include "utils.h"
 
+#include "meshnode.h"
+
 using namespace nlohmann;
 using namespace std;
 
@@ -19,89 +21,6 @@ bool Mesh::touche(const Rayon3f &r, float t_min, float t_max, HitRecord &rec) co
     if (!_root)
         return false;
     return _root->touche(r, t_min, t_max, rec);
-}
-
-bool MeshNode::touche(const Rayon3f &r, float t_min, float t_max, HitRecord &rec) const
-{
-    if (!_aabb.touche(r, t_min, t_max))
-        return false;
-    if (_i >= 0)
-    {
-        if (toucheTriangle(_mesh->points(_i), r, t_min, t_max, rec, _i))
-        {
-            if (rec.p.hasNaN())
-            {
-                return false;
-            }
-            return true;
-        }
-    }
-    bool hit_left = _left->touche(r, t_min, t_max, rec);
-    bool hit_right = _right->touche(r, t_min, hit_left ? rec.t : t_max, rec);
-    return hit_left||hit_right;
-}
-
-bool MeshNode::toucheTriangle(const std::vector<Vec3f> &points, const Rayon3f &r, float t_min, float t_max, HitRecord &rec, int index) const
-{
-    if (!aabb().touche(r, t_min, t_max))
-    {
-        return false;
-    }
-    const float EPSILON = 1e-5;
-    Rayon3f rLocal = r;
-    const Vec3f p[3] {points[0], points[1], points[2]};
-    const auto edge1{ points[1] - p[0]};
-    const auto edge2{ points[2] - p[0]};
-    //	auto _n(edge1.cross(edge2).normalized());
-    Vec3f h, s, q;
-    float a,f,u,v;
-    h = rLocal.direction().cross(edge2);
-    a = edge1.dot(h);
-    if (a > -EPSILON && a < EPSILON)
-        return false;    // This ray is parallel to this triangle.
-    f = 1.0/a;
-    s = rLocal.origin() - p[0];
-    u = f * s.dot(h);
-    if ((u < 0.0) || (u > 1.0))
-    {
-        return false;
-    }
-    q = s.cross(edge1);
-    v = f * rLocal.direction().dot(q);
-    if ((v < 0.0) || (u + v > 1.0))
-        return false;
-    // At this stage we can compute t to find out where the intersection point is on the line.
-    const float t = f * edge2.dot(q);
-    if (t < EPSILON || t < t_min || t > t_max) // ray intersection
-    {
-        return false;
-    }
-    rec.t = t;
-    rec.p = rLocal.pointAt(rec.t);
-    //On touche.
-    Vec3f rNorm;
-    Vec3f baryPoint = barycentric(rec.p, p[0], p[1], p[2]);
-    auto normals = _mesh->normals(index);
-    for (int i = 0; i < 3; ++i)
-    {
-        rNorm += normals.at(i) * baryPoint[i];
-    }
-    //Cette ligne supprime le lissage des normales
-    //	rNorm = edge1.cross(edge2);
-    //	rNorm.normalize();
-    rec.setFaceNormal(rLocal, rNorm.normalized());
-    rec.pMaterial = material();
-    Vec2f tex;
-    auto textures = _mesh->textures(index);
-    tex =textures[0] * baryPoint(0) + textures[1] * baryPoint(1) + textures[2] * baryPoint(2);
-    rec.setTex(tex);
-
-    return true;
-}
-
-int MeshNode::i() const
-{
-    return _i;
 }
 
 //bool Mesh::toucheTriangle(const Eigen::Vector3i &triangle, const Rayon3f &r, float t_min, float t_max, HitRecord &rec) const
@@ -217,7 +136,16 @@ void Mesh::addVertI(const Eigen::Vector3i &triangle)
         _root = make_shared<MeshNode>(MeshNode());
         _root->setMesh(this);
     }
-    _root->add(_iTriangles.size()-1);
+}
+
+void Mesh::updateTree()
+{
+    for (int i = 0; i < _iTriangles.size(); ++i)
+    {
+        _root->add(i);
+    }
+    _root->boundingBox();
+    cout << "Niveau max : " << _root->niveau() << endl;
 }
 
 //Calcule les normales en chaque point en faisant une moyenne par les angles.
@@ -304,107 +232,4 @@ bool Mesh::boundingBox(double time0, double time1, AABB &outputBox) const
         outputBox = _root->boundingBox();
     }
     return true;
-}
-
-MeshNode::MeshNode()
-    :_i(-1), _left(nullptr)
-{
-
-}
-
-void MeshNode::add(int i)
-{
-    if (_i < 0)
-    {
-        _i = i;
-        boundingBox();
-        return;
-    }
-    shared_ptr <MeshNode> p = make_shared<MeshNode>(MeshNode());
-    p->setMesh(_mesh);
-    p->add(i);
-    add(p);
-}
-
-void MeshNode::add(shared_ptr<MeshNode> p)
-{
-    if (!_left)
-    {
-        _left = p;
-        _right = p;
-        boundingBox();
-        return;
-    }
-    if (_right == _left)
-    {
-        _right = p;
-        boundingBox();
-        return;
-    }
-    AABB aabb;
-    p->boundingBox();
-    AABB aabbLeft;
-    _left->boundingBox();
-    AABB aabbRight;
-    _right->boundingBox();
-    aabbLeft = aabbLeft.extend(aabb);
-    aabbRight = aabbRight.extend(aabb);
-    shared_ptr <MeshNode> index;
-    if (aabbRight.diagonal().squaredNorm() < aabbLeft.diagonal().squaredNorm())
-    {
-        //insertion à droite
-        index = _right;
-    }
-    else
-    {
-        //insertion à gauche
-        index = _left;
-    }
-    shared_ptr <MeshNode> insert;
-    insert = make_shared<MeshNode>(MeshNode());
-    insert->setMesh(_mesh);
-    insert->add(index);
-    insert->add(p);
-    if (index == _left)
-    {
-        _left = insert;
-    }
-    else
-    {
-        _right = insert;
-    }
-    boundingBox();
-}
-
-const AABB &MeshNode::boundingBox()
-{
-    if (_i >= 0)
-    {
-        std::vector<Vec3f> points = _mesh->points(_i);
-        Vec3f min = points[0];
-        Vec3f max = points[0];
-        for (const auto &p : points)
-        {
-            min = p.array().min(min.array());
-            max = p.array().max(max.array());
-        }
-        _aabb = AABB(min, max);
-        return _aabb;
-    }
-    if (_left)
-    {
-        _aabb = _left->boundingBox();
-        _aabb.merged(_right->boundingBox());
-    }
-    return _aabb;
-}
-
-void MeshNode::setMesh(Mesh *newMesh)
-{
-    _mesh = newMesh;
-}
-
-AABB MeshNode::aabb() const
-{
-    return _aabb;
 }

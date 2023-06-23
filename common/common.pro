@@ -19,6 +19,7 @@ SOURCES += \
 	horizon.cpp \
 	material.cpp \
 	mesh.cpp \
+    meshnode.cpp \
 	metal.cpp \
         parameter.cpp \
         primitive_factory.cpp \
@@ -37,6 +38,7 @@ HEADERS += \
 	lambertien.h \
 	material.h \
 	mesh.h \
+    meshnode.h \
 	metal.h \
         parameter.h \
         primitive_factory.h \

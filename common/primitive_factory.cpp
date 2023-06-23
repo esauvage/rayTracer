@@ -3,7 +3,7 @@
 #include "boule.h"
 #include "horizon.h"
 #include "triangle.h"
-#include "shapelist.h"
+//#include "shapelist.h"
 #include "mesh.h"
 #include "bvhnode.h"
 
@@ -12,6 +12,8 @@
 #include "dielectrique.h"
 #include "texture.h"
 #include "image.h"
+
+#include <iostream>
 
 using namespace nlohmann;
 using namespace Eigen;
@@ -98,6 +100,7 @@ std::shared_ptr<Shape> PrimitiveFactory::from_json(const json &j, const std::map
 			{
 				mesh->update();
 			}
+            mesh->updateTree();
 		}
 		r = mesh;
 	}

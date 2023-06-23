@@ -54,11 +54,11 @@ void RayTracer::generateFile(const string &outFile, const pair <int, int> size, 
 	const int width {size.first};
 	const int height {size.second};
 	CImg<unsigned char> image(width, height, 1, 3, 0);
-    const int num_threads = 32;
+    const int num_threads = 1;
     thread t[num_threads + 1];
     CImgDisplay main_disp(image, "Generation");
     t[num_threads] = std::thread(&RayTracer::updateDisplay, this, &main_disp, &image);
-//    fillImage(0, height, &image);
+//    fillImage(0, height, &image, 0);
     auto threadHeight = height/(num_threads);
     if (threadHeight * num_threads < height)
         threadHeight++;
@@ -68,7 +68,7 @@ void RayTracer::generateFile(const string &outFile, const pair <int, int> size, 
         int tHeight = min(threadHeight, height- i * threadHeight);
         t[i] = thread(&RayTracer::fillImage, this, i * threadHeight, tHeight, &image, i);
     }
-	//Join the threads with the main thread
+    //Join the threads with the main thread
     for (int i = 0; i < num_threads; ++i) {
         t[i].join();
         _activeThreads--;
@@ -112,7 +112,7 @@ Vec3f RayTracer::pixelColor(const Rayon3f &rayon, int depth, Vec3f &attenuation)
 			if ((color.array() < 0).any())
 			{
                 cout << "Erreur scattered Color : " << localAttenuation << endl;
-             }
+            }
 			return color;
 		}
 //		return rec.normal()*0.5 + Vec3f(0.5, 0.5, 0.5);
@@ -144,12 +144,12 @@ Vec3f RayTracer::sky(const Vec3f& rayon) const
 void RayTracer::fillImage(int rowBegin, int nbRows, CImg<unsigned char> *img, int id) const
 {
 	ofstream myfile;
-	auto fileName = "output" + to_string(id) + ".txt";
-	myfile.open (fileName);
+//	auto fileName = "output" + to_string(id) + ".txt";
+//	myfile.open (fileName);
 
     const float height = img->height();
     const float width = img->width();
-    const int antiAliasing {8};
+    const int antiAliasing {3};
     for (int i = nbRows + 1; --i;)
     {
         for (int j = 0; j < width; ++j)//, x+=coef)
@@ -181,7 +181,7 @@ void RayTracer::fillImage(int rowBegin, int nbRows, CImg<unsigned char> *img, in
         }
 		cout << "row " << i << endl;
     }
-	myfile.close();
+//	myfile.close();
 }
 
 void RayTracer::updateDisplay(CImgDisplay *display, CImg<unsigned char> *img) const

@@ -3,33 +3,7 @@
 
 #include "shape.h"
 
-class Mesh;
-class MeshNode : public Shape
-{
-public:
-    MeshNode();
-    virtual bool touche(const Rayon3f& r, float t_min, float t_max, HitRecord& rec) const override;
-    virtual nlohmann::json &jsonHelper( nlohmann::json& j) const override {return j;}
-    virtual bool boundingBox(double time0, double time1, AABB& output_box) const override {output_box = _aabb; return true;}
-    void add(int i);
-    void add(std::shared_ptr<MeshNode> p);
-    const AABB & boundingBox();
-
-    void setMesh(Mesh *newMesh);
-
-    AABB aabb() const;
-
-    int i() const;
-
-private:
-    bool toucheTriangle(const std::vector<Vec3f> &points, const Rayon3f &r, float t_min, float t_max, HitRecord &rec, int index) const;
-    std::shared_ptr<MeshNode> _left;
-    std::shared_ptr<MeshNode> _right;
-
-    int _i;
-    Mesh * _mesh;
-    AABB _aabb;
-};
+class MeshNode;
 
 class Mesh : public Shape
 {
@@ -44,6 +18,7 @@ public:
 	void addNormal(const Vec3f & normal);
 	void addVertI(const Eigen::Vector3i & triangle);
 	void update();
+    void updateTree();
     void clearNormals();
     std::vector<Vec3f > points(int indexTriangle);
     std::vector<Vec3f > normals(int indexTriangle);
