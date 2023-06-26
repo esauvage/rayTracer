@@ -31,22 +31,34 @@ void Image::setFileName(const std::string &newFile)
 bool Image::scatter(const Rayon3f &r_in, const HitRecord &rec, Vec3f &attenuation, Rayon3f &scattered) const
 {
     (void)r_in;
-    Vec3f scatter_direction = rec.normal() + random_unit_vector();
-    // Catch degenerate scatter direction
-    auto degenere = 0;
-    for (auto x : scatter_direction)
-    {
-        degenere += fabs(x) > 1e-5 ? 0 : 1;
-    }
-    if (degenere > 2)
-    {
-        scatter_direction = rec.normal();
-    }
-    scattered = Rayon3f(rec.p, scatter_direction.normalized());
-	const int u = _image.height()-1-(rec.tex()[1] * _image.height());
-	const int v = rec.tex()[0] * _image.width();
-//	cout << "u " << u << endl;
-    attenuation = Vec3f(_image(v,u,0,0)/255., _image(v,u,0,1)/255., _image(v,u,0,2)/255.);
+	while (true)
+	{
+		Vec3f scatter_direction = rec.normal() + random_unit_vector();
+		if (rec.normal().hasNaN())
+		{
+			cout << "Hit record has NaN" << endl;
+			return false;
+		}
+		// Catch degenerate scatter direction
+		auto degenere = 0;
+		for (auto x : scatter_direction)
+		{
+			degenere += fabs(x) > 1e-5 ? 0 : 1;
+		}
+		if (degenere > 2)
+		{
+			scatter_direction = rec.normal();
+		}
+		scattered = Rayon3f(rec.p, scatter_direction.normalized());
+		if (!scattered.direction().hasNaN())
+		{
+			break;
+		}
+		cout << "Scattered was NaN" << endl;
+	}
+	const int u = min(_image.height() - 1, _image.height()- (int)(rec.tex()[1] * _image.height()));
+	const int v = min((int)(rec.tex()[0] * _image.width()), _image.width() - 1);
+	attenuation = Vec3f(_image(v,u,0,0)/255., _image(v,u,0,1)/255., _image(v,u,0,2)/255.);
     return true;
 }
 

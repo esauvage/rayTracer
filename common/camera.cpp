@@ -3,7 +3,6 @@
 #include "utils.h"
 
 using namespace Eigen;
-using json = nlohmann::json;
 
 Camera::Camera()
 	:_position(0, 0, 0), _rotation(0, 0, 0, 1), _focalLength(1.), _focusDist(6.5), _aspectRatio(4./3.)

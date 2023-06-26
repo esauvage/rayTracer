@@ -36,7 +36,17 @@ const std::shared_ptr<Shape> &Scene::world() const
 
 void Scene::setWorld(const std::shared_ptr<Shape> &newWorld)
 {
-    _world = newWorld;
+	_world = newWorld;
+}
+
+void Scene::addSun(const Sun &sun)
+{
+	_suns.push_back(sun);
+}
+
+const std::vector<Sun> Scene::suns() const
+{
+	return _suns;
 }
 
 Camera Scene::camera() const

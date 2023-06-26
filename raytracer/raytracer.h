@@ -18,7 +18,7 @@ public:
 private:
 	Vec3f pixelColor(const Rayon3f &rayon, int depth, Vec3f &attenuation) const;
     Vec3f sky(const Vec3f& rayon) const;
-	void fillImage(int rowBegin, int nbRows, cimg_library::CImg<unsigned char> *img, int id) const;
+	void fillImage(int rowBegin, int nbRows, cimg_library::CImg<unsigned char> *img) const;
     void updateDisplay(cimg_library::CImgDisplay * display, cimg_library::CImg<unsigned char> *img) const;
 
     Scene scene;

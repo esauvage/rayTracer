@@ -54,26 +54,26 @@ void RayTracer::generateFile(const string &outFile, const pair <int, int> size, 
 	const int width {size.first};
 	const int height {size.second};
 	CImg<unsigned char> image(width, height, 1, 3, 0);
-    const int num_threads = 1;
+	const int num_threads = 32;
     thread t[num_threads + 1];
     CImgDisplay main_disp(image, "Generation");
     t[num_threads] = std::thread(&RayTracer::updateDisplay, this, &main_disp, &image);
-//    fillImage(0, height, &image, 0);
-    auto threadHeight = height/(num_threads);
-    if (threadHeight * num_threads < height)
-        threadHeight++;
-    //Launch a group of threads
-    for (int i = 0; i < num_threads; ++i) {
-        _activeThreads++;
-        int tHeight = min(threadHeight, height- i * threadHeight);
-        t[i] = thread(&RayTracer::fillImage, this, i * threadHeight, tHeight, &image, i);
-    }
-    //Join the threads with the main thread
-    for (int i = 0; i < num_threads; ++i) {
-        t[i].join();
-        _activeThreads--;
-    }
-    t[num_threads].join();
+//	fillImage(0, height, &image, 0);
+	auto threadHeight = height/(num_threads);
+	if (threadHeight * num_threads < height)
+		threadHeight++;
+	//Launch a group of threads
+	for (int i = 0; i < num_threads; ++i) {
+		_activeThreads++;
+		int tHeight = min(threadHeight, height- i * threadHeight);
+		t[i] = thread(&RayTracer::fillImage, this, i * threadHeight, tHeight, &image);
+	}
+	//Join the threads with the main thread
+	for (int i = 0; i < num_threads; ++i) {
+		t[i].join();
+		_activeThreads--;
+	}
+	t[num_threads].join();
 	end = chrono::system_clock::now();
 	cout << "finished calculation for "
               << chrono::duration_cast<std::chrono::milliseconds>(end - start).count()
@@ -104,15 +104,23 @@ Vec3f RayTracer::pixelColor(const Rayon3f &rayon, int depth, Vec3f &attenuation)
 		if (rec.pMaterial && rec.pMaterial->scatter(rayon, rec, localAttenuation, vScattered, attenuation))
 		{
 			Vec3f color(0, 0, 0);
-			for (auto &scattered : vScattered)
+			auto s = vScattered.size();
+			for (auto scattered : vScattered)
 			{
+				if (scattered.direction().hasNaN())
+				{
+					s--;
+					cout << "scaterred with NaN" << endl;
+					continue;
+				}
                 color+= pixelColor(scattered, depth - 1, attenuation).cwiseProduct(localAttenuation);
 			}
-			color /= vScattered.size();
-			if ((color.array() < 0).any())
-			{
-                cout << "Erreur scattered Color : " << localAttenuation << endl;
-            }
+			color /= s ? s : 1;
+//			if ((color.array() < 0).any())
+//			{
+//				cout << "Erreur scattered Color : " << color << endl;
+//				color = Vec3f(fmax(0, color[0]), fmax(0, color[1]), fmax(0, color[2]));
+//            }
 			return color;
 		}
 //		return rec.normal()*0.5 + Vec3f(0.5, 0.5, 0.5);
@@ -127,21 +135,23 @@ Vec3f RayTracer::sky(const Vec3f& rayon) const
     //On ne touche rien, donc on tape dans le ciel.
     //L'éclairage doit donc prendre en compte l'inclinaison
     Vec3f unit_direction = rayon.normalized();
-	Vec3f soleil_direction(0.0f, 1.0f, 0.2f);
-    Vec3f couleur_soleil(1.f, 1.0f, -0.9f);
-	soleil_direction = soleil_direction.normalized();
 	float t = 0.5*(unit_direction.z() + 1.0);
-	float intensite_soleil = fmax(unit_direction.dot(soleil_direction), 0.);
-	float intensite_ambiante = 0.3;
+	float intensite_ambiante = 0.03;
 	Vec3f v = (1.0 - t) * Vec3f(1.0, 1.0, 1.0) + t * Vec3f(0.5, 0.7, 1.0);
-	Vec3f sky = (v * intensite_ambiante + couleur_soleil * intensite_soleil)/(1 + intensite_ambiante);
+	Vec3f sky = v * intensite_ambiante;
+	for (const auto &sun : scene.suns())
+	{
+		float sunIntensity = fmax(unit_direction.dot(sun.direction()), 0.);
+		sky += sun.color() * sunIntensity;
+	}
+	sky /= (scene.suns().size() + intensite_ambiante);
 	return sky;
 //Plus le rayon est vertical, plus le ciel est bleu. Plus il est horizontal, plus il est blanc.
 //	float coef {1.f/200.f / rayon.y()};//C'est le sinus du "vertical"
 //	return {coef * 0.9f, coef, 1.f};
 }
 
-void RayTracer::fillImage(int rowBegin, int nbRows, CImg<unsigned char> *img, int id) const
+void RayTracer::fillImage(int rowBegin, int nbRows, CImg<unsigned char> *img) const
 {
 	ofstream myfile;
 //	auto fileName = "output" + to_string(id) + ".txt";
@@ -149,7 +159,7 @@ void RayTracer::fillImage(int rowBegin, int nbRows, CImg<unsigned char> *img, in
 
     const float height = img->height();
     const float width = img->width();
-    const int antiAliasing {3};
+	const int antiAliasing {3};
     for (int i = nbRows + 1; --i;)
     {
         for (int j = 0; j < width; ++j)//, x+=coef)
@@ -162,6 +172,11 @@ void RayTracer::fillImage(int rowBegin, int nbRows, CImg<unsigned char> *img, in
 				{
 					auto v = (i + rowBegin + (l / (float)(antiAliasing - 1)) - 0.5) / (height);
 					auto r = scene.camera().ray(u, v);
+					while (r.direction().hasNaN())
+					{
+						cout << "Scene camera generated a NaN" << std::endl;
+						scene.camera().ray(u, v);
+					}
 					Vec3f attenuation(1., 1., 1.);
                     auto localPixel = pixelColor(r, 16, attenuation);
 					pixel += localPixel;

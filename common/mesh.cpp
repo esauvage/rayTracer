@@ -142,6 +142,10 @@ void Mesh::updateTree()
 {
     for (int i = 0; i < _iTriangles.size(); ++i)
     {
+		if (!(i%100))
+		{
+			cout << "Triangle num : " << i << endl;
+		}
         _root->add(i);
     }
     _root->boundingBox();
@@ -189,11 +193,12 @@ std::vector<Vec3f> Mesh::points(int indexTriangle)
     std::vector<Vec3f> ret;
     for (const auto i : index)
     {
-        ret.push_back(_points[i]);
+		if (i < _points.size())
+			ret.push_back(_points[i]);
+		else throw std::length_error("not enough points");
     }
     return ret;
 }
-
 
 std::vector<Vec3f> Mesh::normals(int indexTriangle)
 {
@@ -201,7 +206,9 @@ std::vector<Vec3f> Mesh::normals(int indexTriangle)
     std::vector<Vec3f> ret;
     for (const auto i : index)
     {
-        ret.push_back(_normals[i]);
+		if (i < _normals.size())
+		   ret.push_back(_normals.at(i));
+		else throw std::length_error("not enough normals");
     }
     return ret;
 }
@@ -212,7 +219,9 @@ std::vector<Vec2f> Mesh::textures(int indexTriangle)
     std::vector<Vec2f> ret;
     for (const auto i : index)
     {
-        ret.push_back(_texs[i]);
+		if (i < _texs.size())
+			ret.push_back(_texs[i]);
+		else throw std::length_error("not enough texture coords");
     }
     return ret;
 }

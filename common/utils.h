@@ -5,6 +5,7 @@
 
 #include <memory>
 #include <Eigen/Geometry>
+#include <iostream>
 template<typename Type, int Size>
 using Vec = Eigen::Matrix<Type, Size, 1>;
 template<typename Type, int Size>
@@ -28,6 +29,32 @@ Eigen::Vector3<T> barycentric(Eigen::Vector3<T> p, Eigen::Vector3<T> a, Eigen::V
 	const auto denom = d00 * d11 - d01 * d01;
 	if (!denom)
 	{
+		return Eigen::Vector3f(0, 0, 0);
+	}
+	const auto v = (d11 * d20 - d01 * d21) / denom;
+	const auto w = (d00 * d21 - d01 * d20) / denom;
+	const auto u = 1.0f - v - w;
+	return Eigen::Vector3<T>(u, v, w);
+}
+
+template <class T>
+Eigen::Vector3<T> barycentricEdges(Eigen::Vector3<T> v0, Eigen::Vector3<T> v1, Eigen::Vector3<T> v2)
+{
+//	const auto v0 = b - a, v1 = c - a, v2 = p - a;
+	const auto d00 = v0.dot(v0);
+	const auto d01 = v0.dot(v1);
+	const auto d11 = v1.dot(v1);
+	const auto d20 = v2.dot(v0);
+	const auto d21 = v2.dot(v1);
+	const auto denom = d00 * d11 - d01 * d01;
+	if (!denom || denom!=denom)
+	{
+		return Eigen::Vector3f(0, 0, 0);
+	}
+	if (d21!=d21)
+	{
+		std::cout << "v2 : " << v2 << std::endl;
+		std::cout << "v1 : " << v1 << std::endl;
 		return Eigen::Vector3f(0, 0, 0);
 	}
 	const auto v = (d11 * d20 - d01 * d21) / denom;
@@ -64,6 +91,10 @@ inline Vec3f random_unit_vector()
 {
 	Vec3f p;
 	p = dir2vector2(p, Vec3f((frand() - 0.5)*M_PI, (frand() * 2)* M_PI, 1.));
+	if (p.hasNaN())
+	{
+		std::cout << "Erreur random_unit_vector" << std::endl;
+	}
 	return p;
 //	return random_in_unit_sphere().normalized();
 }

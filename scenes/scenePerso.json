@@ -1,7 +1,7 @@
 {
     "camera": {
         "focus": 1.83,
-        "lens radius": 0.05,
+        "lens radius": 0.01,
         "orientation": [
             0.2705981, -0.2705981, -0.6532815, 0.6532815
         ],
@@ -11,6 +11,21 @@
             1.0
         ]
     },
+    "sun": [
+        {
+            "color": [
+                1.0,
+                0.0,
+                0.0
+            ],
+            "direction": [
+                0.0,
+                0.0,
+                1.0
+            ],
+            "intensity": 1.0
+        }
+    ],
     "materials": {
         "perso": {
             "albedo": [
@@ -24,8 +39,8 @@
         "sol": {
             "albedo": [
                 0.2,
-                0.2,
-                0.5
+                0.5,
+                0.2
             ],
              "nom": "sol"
         }

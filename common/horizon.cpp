@@ -15,7 +15,7 @@ bool Horizon::touche(const Rayon3f& r, float t_min, float t_max, HitRecord& rec)
 	if (!r.direction().z())
 		return false;
 	auto t = -(r.origin().z()-_hauteur)/r.direction().normalized().z();
-	if (t < t_min || fabs(t - t_min) < 1e-5 || t > t_max)
+	if (t < t_min || fabs(t - t_min) < 1e-5 || t > t_max || t != t)
 		return false;
 	rec.t = t;
 	rec.p = r.pointAt(rec.t);

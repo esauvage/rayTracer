@@ -14,18 +14,24 @@ Lambertien::Lambertien(const Vec3f& a)
 bool Lambertien::scatter(const Rayon3f &r_in, const HitRecord &rec, Vec3f &attenuation, Rayon3f &scattered) const
 {
     (void)r_in;
-	Vec3f scatter_direction = rec.normal() + random_unit_vector();
-	// Catch degenerate scatter direction
-	auto degenere = 0;
-	for (auto x : scatter_direction)
+	while(true)
 	{
-		degenere += fabs(x) > 1e-5 ? 0 : 1;
+		Vec3f scatter_direction = rec.normal() + random_unit_vector();
+		// Catch degenerate scatter direction
+		auto degenere = 0;
+		for (auto x : scatter_direction)
+		{
+			degenere += fabs(x) > 1e-5 ? 0 : 1;
+		}
+		if (degenere > 2)
+		{
+			scatter_direction = rec.normal();
+		}
+		scattered = Rayon3f(rec.p, scatter_direction.normalized());
+		if (!scattered.direction().hasNaN())
+			break;
+		cout << "Ca vient du Lambertien !" << endl;
 	}
-	if (degenere > 2)
-	{
-		scatter_direction = rec.normal();
-	}
-	scattered = Rayon3f(rec.p, scatter_direction.normalized());
     attenuation = albedo();
 	return true;
 }

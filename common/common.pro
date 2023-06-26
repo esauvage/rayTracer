@@ -25,6 +25,7 @@ SOURCES += \
         primitive_factory.cpp \
 	scene.cpp \
 	shapelist.cpp \
+    sun.cpp \
 	texture.cpp \
 	triangle.cpp
 HEADERS += \
@@ -46,6 +47,7 @@ HEADERS += \
 	scene.h \
 	shape.h\
 	shapelist.h \
+    sun.h \
 	texture.h \
 	triangle.h \
 	utils.h

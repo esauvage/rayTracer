@@ -13,14 +13,13 @@ public:
     void add(int i);
     int add(std::shared_ptr<MeshNode> p);
     const AABB & boundingBox();
-
     void setMesh(Mesh *newMesh);
-
     AABB aabb() const;
-
     int i() const;
-
     int niveau() const;
+	void setLeft(const std::shared_ptr<MeshNode> &newLeft);
+
+	void setRight(const std::shared_ptr<MeshNode> &newRight);
 
 private:
     bool toucheTriangle(const Rayon3f &r, float t_min, float t_max, HitRecord &rec) const;

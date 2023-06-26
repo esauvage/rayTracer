@@ -22,9 +22,7 @@ TEMPLATE = app
 
 SOURCES += \
 	main.cpp \
-	parser.cpp \
-	raytracer.cpp \
-        tokenStream.cpp
+	raytracer.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -38,10 +36,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 HEADERS += \
-	parser.h \
-	raytracer.h \
-        tokenStream.h
-
+	raytracer.h
+DEPENDPATH += ../common
 
 win32: LIBS += -lGdi32
 
