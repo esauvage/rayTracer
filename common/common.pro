@@ -22,6 +22,7 @@ SOURCES += \
     meshnode.cpp \
 	metal.cpp \
         parameter.cpp \
+    phongbliss.cpp \
         primitive_factory.cpp \
 	scene.cpp \
 	shapelist.cpp \
@@ -42,6 +43,7 @@ HEADERS += \
     meshnode.h \
 	metal.h \
         parameter.h \
+    phongbliss.h \
         primitive_factory.h \
 	rayon.h \
 	scene.h \
