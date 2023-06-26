@@ -13,7 +13,7 @@ Vec3f Sun::color() const
 
 void Sun::setColor(const Vec3f &newColor)
 {
-	_color = newColor;
+    _color = newColor.stableNormalized();
 }
 
 Vec3f Sun::direction() const
@@ -23,7 +23,14 @@ Vec3f Sun::direction() const
 
 void Sun::setDirection(const Vec3f &newDirection)
 {
-	_direction = newDirection.normalized();
+    if (newDirection.array().isInf().any())
+    {
+        _direction = Vec3f(INFINITY, INFINITY, INFINITY);
+    }
+    else
+    {
+        _direction = newDirection.normalized();
+    }
 }
 
 float Sun::intensity() const

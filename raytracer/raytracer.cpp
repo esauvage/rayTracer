@@ -136,15 +136,22 @@ Vec3f RayTracer::sky(const Vec3f& rayon) const
     //L'éclairage doit donc prendre en compte l'inclinaison
     Vec3f unit_direction = rayon.normalized();
 	float t = 0.5*(unit_direction.z() + 1.0);
-	float intensite_ambiante = 0.03;
 	Vec3f v = (1.0 - t) * Vec3f(1.0, 1.0, 1.0) + t * Vec3f(0.5, 0.7, 1.0);
-	Vec3f sky = v * intensite_ambiante;
+    Vec3f sky;
 	for (const auto &sun : scene.suns())
 	{
-		float sunIntensity = fmax(unit_direction.dot(sun.direction()), 0.);
-		sky += sun.color() * sunIntensity;
+        float intensity = 1;
+        if (sun.direction().array().isInf().any() || sun.direction().hasNaN())
+        {
+            intensity = sun.intensity();
+        }
+        else
+        {
+            intensity = fmax(unit_direction.dot(sun.direction()), 0.) * sun.intensity();
+        }
+        sky += v.cwiseProduct(sun.color()) * intensity;
 	}
-	sky /= (scene.suns().size() + intensite_ambiante);
+    sky /= (scene.suns().size());
 	return sky;
 //Plus le rayon est vertical, plus le ciel est bleu. Plus il est horizontal, plus il est blanc.
 //	float coef {1.f/200.f / rayon.y()};//C'est le sinus du "vertical"
