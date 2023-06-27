@@ -25,6 +25,7 @@ public:
     void setWorld(const std::shared_ptr<Shape> &newWorld);
 	void addSun(const Sun& sun);
 	const std::vector <Sun> suns() const;
+    void updateMaterials();
 private:
 	Camera _camera;
 	std::map <std::string, std::shared_ptr<Material> >_materials;
@@ -47,6 +48,7 @@ inline void from_json(const nlohmann::json& j, Scene& scene)
 	scene.setCamera(camera);
 	for (const auto &m : j.at("sun"))
 	{
+        std::cout << "Sun found" << std::endl;
 		Sun sun(Vec3f(0, 0, -1), Vec3f(1, 1, 1), 1);
 		m.get_to(sun);
 		sun.setDirection(sun.direction().normalized());

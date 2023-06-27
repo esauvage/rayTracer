@@ -1,5 +1,8 @@
 #include "scene.h"
 
+#include "phongbliss.h"
+#include "lambertien.h"
+
 using namespace std;
 
 template <typename T>
@@ -46,7 +49,24 @@ void Scene::addSun(const Sun &sun)
 
 const std::vector<Sun> Scene::suns() const
 {
-	return _suns;
+    return _suns;
+}
+
+void Scene::updateMaterials()
+{
+    for (auto m:_materials)
+    {
+        std::shared_ptr<PhongBliss> t = dynamic_pointer_cast<PhongBliss>(m.second);
+        if (t)
+        {
+            t->setScene(this);
+        }
+        std::shared_ptr<Lambertien> l = dynamic_pointer_cast<Lambertien>(m.second);
+        if (l)
+        {
+            l->setScene(this);
+        }
+    }
 }
 
 Camera Scene::camera() const

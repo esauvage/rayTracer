@@ -174,10 +174,8 @@ std::shared_ptr<Material> MaterialFactory::from_json(const json &j, std::map<std
 	}
 	else if (j.contains("phong exp"))
 	{
-		std::shared_ptr<PhongBliss> t =  make_shared<PhongBliss>(Vec3f(j.at("albedo")[0].get<float>(), j.at("albedo")[1].get<float>(), j.at("albedo")[2].get<float>()));
-		t->setScene(scene);
+        std::shared_ptr<PhongBliss> t = make_shared<PhongBliss>(Vec3f(j.at("albedo")[0].get<float>(), j.at("albedo")[1].get<float>(), j.at("albedo")[2].get<float>()), j.at("phong exp").get<float>(), scene);
 		m = t;
-//		j.at("phong exp").get<float>();
 	}
 	else
 	{

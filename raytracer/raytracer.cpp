@@ -48,8 +48,9 @@ void RayTracer::generateFile(const string &outFile, const pair <int, int> size, 
 	ifstream i(inFile);
 	json data;
 	i >> data;
-	scene = data.get<Scene>();
+    scene = data.get<Scene>();
 	i.close();
+    scene.updateMaterials();
 	cout << "Input file read." << endl;
 	const int width {size.first};
 	const int height {size.second};
@@ -84,7 +85,7 @@ void RayTracer::generateFile(const string &outFile, const pair <int, int> size, 
     }
     image.save(outFile.c_str());
     ofstream o((inFile+".bak").c_str());
-	json j = scene;
+    json j = scene;
 	o << setw(4) << j << endl;
     o.close();
 }
@@ -134,11 +135,11 @@ Vec3f RayTracer::sky(const Vec3f& rayon) const
 {
     //On ne touche rien, donc on tape dans le ciel.
     //L'éclairage doit donc prendre en compte l'inclinaison
-    Vec3f unit_direction = rayon.normalized();
+    Vec3f unit_direction = rayon.stableNormalized();
 	float t = 0.5*(unit_direction.z() + 1.0);
 	Vec3f v = (1.0 - t) * Vec3f(1.0, 1.0, 1.0) + t * Vec3f(0.5, 0.7, 1.0);
-    Vec3f sky;
-	for (const auto &sun : scene.suns())
+    Vec3f sky(0, 0, 0);
+    for (const auto &sun : scene.suns())
 	{
         float intensity = 1;
         if (sun.direction().array().isInf().any() || sun.direction().hasNaN())
@@ -173,12 +174,12 @@ void RayTracer::fillImage(int rowBegin, int nbRows, CImg<unsigned char> *img) co
 				auto u = (j + (k / (float)(antiAliasing - 1)) - 0.5)/ width;//(j + frand() - 0.5) / (width);
 				for (auto l = 0; l < antiAliasing; l++)
 				{
-					auto v = (i + rowBegin + (l / (float)(antiAliasing - 1)) - 0.5) / (height);
-					auto r = scene.camera().ray(u, v);
+                    auto v = (i + rowBegin + (l / (float)(antiAliasing - 1)) - 0.5) / (height);
+                    auto r = scene.camera().ray(u, v);
 					while (r.direction().hasNaN())
-					{
-						cout << "Scene camera generated a NaN" << std::endl;
-						scene.camera().ray(u, v);
+                    {
+                        cout << "Scene camera generated a NaN" << std::endl;
+                        scene.camera().ray(u, v);
 					}
 					Vec3f attenuation(1., 1., 1.);
                     auto localPixel = pixelColor(r, 16, attenuation);

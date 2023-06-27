@@ -26,7 +26,7 @@ bool Texture::scatter(const Rayon3f &r_in, const HitRecord &rec, Vec3f &attenuat
 	{
 		scatter_direction = rec.normal();
 	}
-	scattered = Rayon3f(rec.p, scatter_direction.normalized());
+    scattered = Rayon3f(rec.p, scatter_direction.stableNormalized());
 	auto sines = sin(10*rec.p.x())*sin(10*rec.p.y())*sin(10*rec.p.z());
     if (_material1 && _material2)
     {
