@@ -54,7 +54,7 @@ inline void from_json(const nlohmann::json& j, Scene& scene)
 	}
 	for (const auto &m : j.at("materials"))
 	{
-        std::shared_ptr<Material> mat = MaterialFactory::from_json(m, scene.materials());
+		std::shared_ptr<Material> mat = MaterialFactory::from_json(m, scene.materials(), &scene);
 		scene.materials()[mat->nom()] = mat;
 	}
     scene.setWorld(PrimitiveFactory::from_json(j.at("world"), scene.materials()));

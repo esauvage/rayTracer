@@ -22,7 +22,7 @@ bool Metal::scatter(const Rayon3f &r_in, const HitRecord &rec, Vec3f &attenuatio
 	while (!r && compteur)
 	{
 		--compteur;
-		Vec3f random = (reflected + _fuzz * random_in_unit_sphere()).normalized();
+		Vec3f random = (reflected + _fuzz * random_in_unit_sphere()).stableNormalized();
 		scattered = Rayon3f(rec.p, random);
 		r = fabs(scattered.direction().dot(rec.normal())) > 1e-5;
 	}

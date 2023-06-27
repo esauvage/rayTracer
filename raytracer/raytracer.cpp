@@ -160,10 +160,6 @@ Vec3f RayTracer::sky(const Vec3f& rayon) const
 
 void RayTracer::fillImage(int rowBegin, int nbRows, CImg<unsigned char> *img) const
 {
-	ofstream myfile;
-//	auto fileName = "output" + to_string(id) + ".txt";
-//	myfile.open (fileName);
-
     const float height = img->height();
     const float width = img->width();
 	const int antiAliasing {3};
@@ -203,7 +199,6 @@ void RayTracer::fillImage(int rowBegin, int nbRows, CImg<unsigned char> *img) co
         }
 		cout << "row " << i << endl;
     }
-//	myfile.close();
 }
 
 void RayTracer::updateDisplay(CImgDisplay *display, CImg<unsigned char> *img) const

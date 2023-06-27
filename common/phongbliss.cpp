@@ -1,58 +1,38 @@
 #include "phongbliss.h"
 
 #include "utils.h"
+#include "scene.h"
 
 using namespace Eigen;
 using namespace std;
 
 PhongBliss::PhongBliss(const Vec3f& a)
-    : Material(a)
+	: Material(a), _scene(nullptr)
 {
-
+	_phongExp = 10;
+	_coeff = 1.0;
 }
 
 bool PhongBliss::scatter(const Rayon3f &r_in, const HitRecord &rec, Vec3f &attenuation, Rayon3f &scattered) const
 {
-    (void)r_in;
-    while(true)
-    {
-        Vec3f scatter_direction = rec.normal() + random_unit_vector();
-        // Catch degenerate scatter direction
-        auto degenere = 0;
-        for (auto x : scatter_direction)
-        {
-            degenere += fabs(x) > 1e-5 ? 0 : 1;
-        }
-        if (degenere > 2)
-        {
-            scatter_direction = rec.normal();
-        }
-        scattered = Rayon3f(rec.p, scatter_direction.stableNormalized());
-        if (!scattered.direction().hasNaN())
-            break;
-        cout << "Ca vient du Lambertien !" << endl;
-    }
-    attenuation = albedo();
+	if (!_scene)
+		return false;
+	attenuation = albedo();
+	for (const auto &sun: _scene->suns())
+	{
+		if (sun.direction().hasNaN()) continue;
+		Vec3f h = (- r_in.direction() + sun.direction())/(sun.direction() - r_in.direction()).norm();
+		//Intensity of the specular light
+		float NdotH = rec.normal().dot(h);
+		float intensity = pow(NdotH, _phongExp);
+
+		//Sum up the specular light factoring
+		attenuation += _coeff * sun.color() * intensity;
+	}
     return true;
 }
 
-bool PhongBliss::scatter(const Rayon3f &r_in, const HitRecord &rec, Vec3f &localAttenuation, vector<Rayon3f> &vScattered, Vec3f &attenuation) const
+void PhongBliss::setScene(Scene *newScene)
 {
-    auto degenere = 0;
-    for (auto x : attenuation)
-    {
-        degenere += fabs(x) > 1e-2 ? 0 : 1;
-    }
-    if (degenere > 2)
-    {
-        return false;
-    }
-    for (int i = 0; i < 4; ++i)
-    {
-        Rayon3f scattered;
-        scatter(r_in, rec, localAttenuation, scattered);
-        vScattered.push_back(scattered);
-    }
-    attenuation = attenuation.cwiseProduct(localAttenuation);
-    return true;
+	_scene = newScene;
 }

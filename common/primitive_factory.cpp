@@ -12,6 +12,7 @@
 #include "dielectrique.h"
 #include "texture.h"
 #include "image.h"
+#include "phongbliss.h"
 
 #include <iostream>
 
@@ -146,10 +147,10 @@ std::shared_ptr<Material> MaterialFactory::create(const std::map <std::string, P
 	return m;
 }
 
-std::shared_ptr<Material> MaterialFactory::from_json(const json &j, std::map<std::string, std::shared_ptr<Material> > &materials)
+std::shared_ptr<Material> MaterialFactory::from_json(const json &j, std::map<std::string, std::shared_ptr<Material> > &materials, Scene * scene)
 {
 	if (!j.contains("albedo"))
-        return MaterialFactory::from_json(j[0], materials);
+		return MaterialFactory::from_json(j[0], materials, scene);
     std::shared_ptr<Material> m;
 	if (j.contains("fuzz"))
 	{
@@ -167,11 +168,18 @@ std::shared_ptr<Material> MaterialFactory::from_json(const json &j, std::map<std
         t->setMaterial1(materials[j.at("material1").get<string>()]);
         t->setMaterial2(materials[j.at("material2").get<string>()]);
     }
-    else if (j.contains("filename"))
-    {
-        m = make_shared<Image>(j.at("filename").get<std::string>());
-    }
-    else
+	else if (j.contains("filename"))
+	{
+		m = make_shared<Image>(j.at("filename").get<std::string>());
+	}
+	else if (j.contains("phong exp"))
+	{
+		std::shared_ptr<PhongBliss> t =  make_shared<PhongBliss>(Vec3f(j.at("albedo")[0].get<float>(), j.at("albedo")[1].get<float>(), j.at("albedo")[2].get<float>()));
+		t->setScene(scene);
+		m = t;
+//		j.at("phong exp").get<float>();
+	}
+	else
 	{
 		m = make_shared<Lambertien>(Vec3f(j.at("albedo")[0].get<float>(), j.at("albedo")[1].get<float>(), j.at("albedo")[2].get<float>()));
 	}

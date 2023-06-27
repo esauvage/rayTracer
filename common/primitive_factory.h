@@ -9,6 +9,7 @@
 #include <nlohmann/json.hpp>
 class Shape;
 class Material;
+class Scene;
 
 class PrimitiveFactory
 {
@@ -22,6 +23,7 @@ class MaterialFactory
 {
 public:
     static std::shared_ptr<Material> create(const std::map< std::string, Parameter >& params);
-    static std::shared_ptr<Material> from_json(const nlohmann::json & j, std::map<std::string, std::shared_ptr<Material> > &materials);
+	static std::shared_ptr<Material> from_json(const nlohmann::json & j, std::map<std::string, std::shared_ptr<Material> > &materials,
+											   Scene * scene);
 };
 #endif //PRIMITIVE_FACTORY
