@@ -13,6 +13,7 @@ SOURCES += \
 	bvhnode.cpp \
 	camera.cpp \
     composedmaterial.cpp \
+    cuboid.cpp \
 	dielectrique.cpp \
 	image.cpp \
 	lambertien.cpp \
@@ -36,6 +37,7 @@ HEADERS += \
 	bvhnode.h \
 	camera.h \
     composedmaterial.h \
+    cuboid.h \
 	dielectrique.h \
 	horizon.h \
 	image.h \
