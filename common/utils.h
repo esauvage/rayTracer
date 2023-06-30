@@ -6,6 +6,8 @@
 #include <memory>
 #include <Eigen/Geometry>
 #include <iostream>
+#include <nlohmann/json.hpp>
+
 template<typename Type, int Size>
 using Vec = Eigen::Matrix<Type, Size, 1>;
 template<typename Type, int Size>
@@ -15,6 +17,21 @@ using Rayon3f = Rayon<float, 3>;
 using Vec3f = Vec<float, 3>;
 using Vec2f = Vec<float, 2>;
 inline float frand() {return rand()/static_cast<float>(RAND_MAX);}
+
+namespace nlohmann {
+	template <typename T>
+	struct adl_serializer<std::shared_ptr<T> > {
+		static void to_json(nlohmann::json& j, const std::shared_ptr<T>& p) {
+			j = nlohmann::json(*p);
+		}
+
+		static void from_json(const nlohmann::json& j, std::shared_ptr<T>& p) {
+				*p = j.get<T>(); // same as above, but with
+								  // adl_serializer<T>::from_json
+			}
+		};
+}
+
 // Compute barycentric coordinates (u, v, w) for
 // point p with respect to triangle (a, b, c)
 template <class T>

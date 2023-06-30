@@ -95,6 +95,33 @@
             ],
             "nom": "phong",
             "phong exp": 10
+        },
+        "composed": {
+            "albedo": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "materials": [
+                {
+                    "albedo": [
+                        0.0,
+                        0.6,
+                        1.0
+                    ],
+                    "nom": "sub1"
+                },
+                {
+                    "albedo": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "nom": "sub2",
+					"phong exp": 100
+                }
+            ],
+            "nom": "composed"
         }
     },
     "sun": [
@@ -105,8 +132,8 @@
                 0.9
             ],
             "direction": [
-                -1.0,
-                -0.2,
+                1.0,
+                0.2,
                 0.2
             ],
             "intensity": 1.0
@@ -167,7 +194,7 @@
             "rayon": 0.4000000059604645
         },
         {
-            "material": "boule2",
+            "material": "phong",
             "position": [
                 3.5,
                 -2.0,
@@ -185,7 +212,7 @@
             "rayon": 0.4000000059604645
         },
         {
-            "material": "phong",
+            "material": "composed",
             "position": [
                 4.0,
                 -2.0,

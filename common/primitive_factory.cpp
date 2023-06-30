@@ -13,6 +13,7 @@
 #include "texture.h"
 #include "image.h"
 #include "phongbliss.h"
+#include "composedmaterial.h"
 
 #include <iostream>
 
@@ -150,7 +151,9 @@ std::shared_ptr<Material> MaterialFactory::create(const std::map <std::string, P
 std::shared_ptr<Material> MaterialFactory::from_json(const json &j, std::map<std::string, std::shared_ptr<Material> > &materials, Scene * scene)
 {
 	if (!j.contains("albedo"))
+	{
 		return MaterialFactory::from_json(j[0], materials, scene);
+	}
     std::shared_ptr<Material> m;
 	if (j.contains("fuzz"))
 	{
@@ -177,8 +180,19 @@ std::shared_ptr<Material> MaterialFactory::from_json(const json &j, std::map<std
         std::shared_ptr<PhongBliss> t = make_shared<PhongBliss>(Vec3f(j.at("albedo")[0].get<float>(), j.at("albedo")[1].get<float>(), j.at("albedo")[2].get<float>()), j.at("phong exp").get<float>(), scene);
 		m = t;
 	}
-	else
+	else if (j.contains("materials"))
 	{
+		cout << "Composed material" << endl;
+		std::shared_ptr<ComposedMaterial> c = make_shared<ComposedMaterial>(Vec3f(0, 0, 0));
+		for (const auto &a : j.at("materials"))
+		{
+			c->addMaterial(MaterialFactory::from_json(a, materials, scene));
+		}
+		m = c;
+	}
+	else if (j.contains("albedo"))
+	{
+		cout << j << endl;
 		m = make_shared<Lambertien>(Vec3f(j.at("albedo")[0].get<float>(), j.at("albedo")[1].get<float>(), j.at("albedo")[2].get<float>()));
 	}
     m->setNom(j.at("nom").get<std::string>());

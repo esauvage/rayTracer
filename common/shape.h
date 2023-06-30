@@ -42,18 +42,18 @@ inline void to_json(nlohmann::json& j, const Shape& s)
 	j = s.jsonHelper(j);
 }
 
-namespace nlohmann {
-    template <typename T>
-    struct adl_serializer<std::shared_ptr<T> > {
-        static void to_json(nlohmann::json& j, const std::shared_ptr<T>& p) {
-            j = nlohmann::json(*p);
-        }
+//namespace nlohmann {
+//    template <typename T>
+//    struct adl_serializer<std::shared_ptr<T> > {
+//        static void to_json(nlohmann::json& j, const std::shared_ptr<T>& p) {
+//            j = nlohmann::json(*p);
+//        }
 
-        static void from_json(const nlohmann::json& j, std::shared_ptr<T>& p) {
-                *p = j.get<T>(); // same as above, but with
-                                  // adl_serializer<T>::from_json
-            }
-        };
-}
+//        static void from_json(const nlohmann::json& j, std::shared_ptr<T>& p) {
+//                *p = j.get<T>(); // same as above, but with
+//                                  // adl_serializer<T>::from_json
+//            }
+//        };
+//}
 
 #endif // SHAPE

@@ -2,6 +2,7 @@
 
 #include "phongbliss.h"
 #include "lambertien.h"
+#include "composedmaterial.h"
 
 using namespace std;
 
@@ -66,7 +67,12 @@ void Scene::updateMaterials()
         {
             l->setScene(this);
         }
-    }
+		std::shared_ptr<ComposedMaterial> c = dynamic_pointer_cast<ComposedMaterial>(m.second);
+		if (c)
+		{
+			c->setScene(this);
+		}
+	}
 }
 
 Camera Scene::camera() const
