@@ -1,6 +1,5 @@
 QT += core
-QT -= gui
-#QT -= qt
+QT += gui widgets concurrent
 
 #CONFIG += c++11
 #LIBRARIES = -lm
@@ -21,8 +20,14 @@ INCLUDEPATH += C:\Users\etien\Documents\projets\eigen\
 TEMPLATE = app
 
 SOURCES += \
+	camera.cpp \
 	main.cpp \
-	raytracer.cpp
+	mesh.cpp \
+	modeler.cpp \
+	raytracer.cpp \
+	renderer.cpp \
+	shader.cpp \
+	vulkanwindow.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -36,9 +41,21 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 HEADERS += \
-	raytracer.h
+	camera.h \
+	mesh.h \
+	modeler.h \
+	raytracer.h \
+	renderer.h \
+	shader.h \
+	vulkanwindow.h
 DEPENDPATH += ../common
 
 win32: LIBS += -lGdi32
 
 LIBS += -L../common -lcommon
+
+FORMS += \
+    modeler.ui
+
+RESOURCES += \
+    raytracer.qrc

@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>color_phong_vert.spv</file>
+        <file>color_phong_frag.spv</file>
+        <file>color_vert.spv</file>
+        <file>color_frag.spv</file>
+        <file>block.buf</file>
+        <file>qt_logo.buf</file>
+    </qresource>
+</RCC>
