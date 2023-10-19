@@ -35,7 +35,7 @@ Renderer::Renderer(VulkanWindow *w, int initialCount)
     m_floorModel.rotate(-90, 1, 0, 0);
     m_floorModel.scale(20, 100, 1);
 
-    m_blockMesh.load(QStringLiteral(":/block.buf"));
+//    m_blockMesh.load(QStringLiteral(":/block.buf"));
     m_logoMesh.load(QStringLiteral(":/qt_logo.buf"));
 
     QObject::connect(&m_frameWatcher, &QFutureWatcherBase::finished, [this] {
@@ -592,7 +592,7 @@ void Renderer::ensureBuffers()
     VkBufferCreateInfo bufInfo;
     memset(&bufInfo, 0, sizeof(bufInfo));
     bufInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-    const int blockMeshByteCount = m_blockMesh.data()->vertexCount * 8 * sizeof(float);
+    const int blockMeshByteCount = m_blockMesh->data()->vertexCount * 8 * sizeof(float);
     bufInfo.size = blockMeshByteCount;
     bufInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
     VkResult err = m_devFuncs->vkCreateBuffer(dev, &bufInfo, nullptr, &m_blockVertexBuf);
@@ -666,7 +666,7 @@ void Renderer::ensureBuffers()
     err = m_devFuncs->vkMapMemory(dev, m_bufMem, 0, m_itemMaterial.uniMemStartOffset, 0, reinterpret_cast<void **>(&p));
     if (err != VK_SUCCESS)
         qFatal("Failed to map memory: %d", err);
-    memcpy(p, m_blockMesh.data()->geom.constData(), blockMeshByteCount);
+    memcpy(p, m_blockMesh->data()->geom.constData(), blockMeshByteCount);
     memcpy(p + logoVertStartOffset, m_logoMesh.data()->geom.constData(), logoMeshByteCount);
     memcpy(p + floorVertStartOffset, quadVert, sizeof(quadVert));
     m_devFuncs->vkUnmapMemory(dev, m_bufMem);
@@ -903,8 +903,8 @@ void Renderer::buildDrawCallsForItems()
     m_devFuncs->vkCmdBindDescriptorSets(cb, VK_PIPELINE_BIND_POINT_GRAPHICS, m_itemMaterial.pipelineLayout, 0, 1,
                                         &m_itemMaterial.descSet, 2, frameUniOffsets);
 
-    if (m_animating)
-        m_rotation += 0.5;
+//    if (m_animating)
+//        m_rotation += 0.5;
 
     if (m_animating || m_vpDirty) {
         if (m_vpDirty)
@@ -939,7 +939,7 @@ void Renderer::buildDrawCallsForItems()
         m_devFuncs->vkUnmapMemory(dev, m_bufMem);
     }
 
-    m_devFuncs->vkCmdDraw(cb, (m_useLogo ? m_logoMesh.data() : m_blockMesh.data())->vertexCount, m_instCount, 0, 0);
+    m_devFuncs->vkCmdDraw(cb, (m_useLogo ? m_logoMesh.data() : m_blockMesh->data())->vertexCount, m_instCount, 0, 0);
 }
 
 void Renderer::buildDrawCallsForFloor()
@@ -959,7 +959,7 @@ void Renderer::buildDrawCallsForFloor()
     m_devFuncs->vkCmdDraw(cb, 4, 1, 0, 0);
 }
 
-void Renderer::setBlockMesh(const Mesh &newBlockMesh)
+void Renderer::setBlockMesh(MeshV *newBlockMesh)
 {
     m_blockMesh = newBlockMesh;
 }

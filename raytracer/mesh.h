@@ -1,8 +1,8 @@
 // Copyright (C) 2017 The Qt Company Ltd.
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR BSD-3-Clause
 
-#ifndef MESH_H
-#define MESH_H
+#ifndef MESHV_H
+#define MESHV_H
 
 #include <QString>
 #include <QFuture>
@@ -15,7 +15,7 @@ struct MeshData
     QByteArray geom; // x, y, z, u, v, nx, ny, nz
 };
 
-class Mesh
+class MeshV
 {
 public:
     void load(const QString &fn);

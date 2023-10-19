@@ -1,5 +1,5 @@
 #include "modeler.h"
-#include "ui_modeler.h"
+//#include "ui_modeler.h"
 #include "vulkanwindow.h"
 #include <QApplication>
 #include <QLabel>
@@ -43,14 +43,13 @@ QMap <QString, QString> arguments()
 Modeler::Modeler(VulkanWindow *vulkanWindow)
 {
     //Lecture fichier
-//    ifstream i(arguments()["-i"].toStdString());
-//    json data;
-//    i >> data;
-//    _scene = data.get<Scene>();
-//    i.close();
-//    _scene.updateMaterials();
-    Mesh mesh;
-    mesh.data()->vertexCount = 4;
+    ifstream i(arguments()["-i"].toStdString());
+    json data;
+    i >> data;
+    _scene = data.get<Scene>();
+    i.close();
+    _scene.updateMaterials();
+    mesh.data()->vertexCount = 12;
     toBigEndian(mesh.data()->geom, 0.f);
     toBigEndian(mesh.data()->geom, 0.f);
     toBigEndian(mesh.data()->geom, 0.f);
@@ -58,7 +57,43 @@ Modeler::Modeler(VulkanWindow *vulkanWindow)
     toBigEndian(mesh.data()->geom, 0.f);
     toBigEndian(mesh.data()->geom, 0.f);
     toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 1.f);
+
+    toBigEndian(mesh.data()->geom, 1.f);
     toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 1.f);
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 1.f);
+
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 1.f);
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 1.f);
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 1.f);
+
+    toBigEndian(mesh.data()->geom, 1.f);
+    toBigEndian(mesh.data()->geom, 1.f);
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 1.f);
+    toBigEndian(mesh.data()->geom, 1.f);
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 1.f);
+
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 1.f);
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 1.f);
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 1.f);
 
     toBigEndian(mesh.data()->geom, 1.f);
     toBigEndian(mesh.data()->geom, 0.f);
@@ -70,13 +105,31 @@ Modeler::Modeler(VulkanWindow *vulkanWindow)
     toBigEndian(mesh.data()->geom, 1.f);
 
     toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, -1.f);
+
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 1.f);
+    toBigEndian(mesh.data()->geom, 0.f);
     toBigEndian(mesh.data()->geom, 1.f);
     toBigEndian(mesh.data()->geom, 0.f);
     toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, -1.f);
+
     toBigEndian(mesh.data()->geom, 1.f);
     toBigEndian(mesh.data()->geom, 0.f);
     toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 0.f);
     toBigEndian(mesh.data()->geom, 1.f);
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, -1.f);
 
     toBigEndian(mesh.data()->geom, 1.f);
     toBigEndian(mesh.data()->geom, 1.f);
@@ -85,8 +138,25 @@ Modeler::Modeler(VulkanWindow *vulkanWindow)
     toBigEndian(mesh.data()->geom, 1.f);
     toBigEndian(mesh.data()->geom, 0.f);
     toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, -1.f);
+
     toBigEndian(mesh.data()->geom, 1.f);
-    vulkanWindow->renderer()->setBlockMesh(mesh);
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 1.f);
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, -1.f);
+
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 1.f);
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 1.f);
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, 0.f);
+    toBigEndian(mesh.data()->geom, -1.f);
     QWidget *wrapper = QWidget::createWindowContainer(vulkanWindow);
     wrapper->setFocusPolicy(Qt::StrongFocus);
     wrapper->setFocus();
@@ -124,6 +194,7 @@ Modeler::Modeler(VulkanWindow *vulkanWindow)
     });
     connect(pauseButton, &QPushButton::clicked, vulkanWindow, &VulkanWindow::togglePaused);
     connect(meshSwitch, &QCheckBox::clicked, vulkanWindow, &VulkanWindow::meshSwitched);
+    connect(vulkanWindow, &VulkanWindow::rendererCreated, this, &Modeler::onRendererCreated);
 
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(infoLabel, 0, 2);
@@ -135,6 +206,16 @@ Modeler::Modeler(VulkanWindow *vulkanWindow)
     layout->addWidget(quitButton, 6, 2);
     layout->addWidget(wrapper, 0, 0, 7, 2);
     setLayout(layout);
+}
+
+void Modeler::mousePressEvent(QMouseEvent *event)
+{
+
+}
+
+void Modeler::onRendererCreated(Renderer *r)
+{
+    r->setBlockMesh(&mesh);
 }
 
 QLabel *Modeler::createLabel(const QString &text)

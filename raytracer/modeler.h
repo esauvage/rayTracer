@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QWidget>
 #include "scene.h"
+#include "mesh.h"
 
 namespace Ui {
 class Modeler;
@@ -17,12 +18,16 @@ class QCheckBox;
 QT_END_NAMESPACE
 
 class VulkanWindow;
+class Renderer;
 
-class Modeler : public QWidget
+class Modeler : public QMainWindow
 {
 public:
     Modeler(VulkanWindow *vulkanWindow);
+    void mousePressEvent(QMouseEvent *event) override;
 
+private slots:
+    void onRendererCreated(Renderer * r);
 private:
     QLabel *createLabel(const QString &text);
 
@@ -34,9 +39,10 @@ private:
     QPushButton *pauseButton;
 
     int m_count = 128;
-private:
+
     Ui::Modeler *ui;
     Scene _scene;
+    MeshV mesh;
 };
 
 //class Modeler : public QMainWindow

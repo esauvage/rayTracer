@@ -5,7 +5,7 @@
 #include <QtConcurrentRun>
 #include <QFile>
 
-void Mesh::load(const QString &fn)
+void MeshV::load(const QString &fn)
 {
     reset();
     m_maybeRunning = true;
@@ -36,7 +36,7 @@ void Mesh::load(const QString &fn)
     });
 }
 
-MeshData *Mesh::data()
+MeshData *MeshV::data()
 {
     if (m_maybeRunning && !m_data.isValid())
         m_data = m_future.result();
@@ -44,7 +44,7 @@ MeshData *Mesh::data()
     return &m_data;
 }
 
-void Mesh::reset()
+void MeshV::reset()
 {
     *data() = MeshData();
     m_maybeRunning = false;

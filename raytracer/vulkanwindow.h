@@ -10,6 +10,7 @@ class Renderer;
 
 class VulkanWindow : public QVulkanWindow
 {
+    Q_OBJECT
 public:
     VulkanWindow(bool dbg);
 
@@ -19,6 +20,9 @@ public:
     int instanceCount() const;
 
     Renderer *renderer() const;
+
+signals:
+    void rendererCreated(Renderer *r);
 
 public slots:
     void addNew();

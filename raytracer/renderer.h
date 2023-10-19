@@ -37,7 +37,7 @@ public:
 
     void setUseLogo(bool b);
 
-    void setBlockMesh(const Mesh &newBlockMesh);
+    void setBlockMesh(MeshV *newBlockMesh);
 
 private:
     void createPipelines();
@@ -57,8 +57,8 @@ private:
     QVulkanDeviceFunctions *m_devFuncs;
 
     bool m_useLogo = false;
-    Mesh m_blockMesh;
-    Mesh m_logoMesh;
+    MeshV *m_blockMesh;
+    MeshV m_logoMesh;
     VkBuffer m_blockVertexBuf = VK_NULL_HANDLE;
     VkBuffer m_logoVertexBuf = VK_NULL_HANDLE;
     struct {
