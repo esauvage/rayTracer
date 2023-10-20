@@ -55,8 +55,13 @@ json &Boule::jsonHelper(json &j) const
 {
 	j = Shape::jsonHelper(j);
 	j["position"] = _pos;
-	j["rayon"] = _r;
-	return j;
+    j["rayon"] = _r;
+    return j;
+}
+
+void Boule::serialize(QByteArray &dest)
+{
+
 }
 
 Vec2f Boule::UV(const Vec3f& p) const

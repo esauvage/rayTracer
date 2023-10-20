@@ -1,3 +1,6 @@
+QT += core
+QT -= gui
+
 TEMPLATE = lib
 CONFIG = staticlib
 
