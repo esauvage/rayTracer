@@ -5,9 +5,9 @@
 #define RENDERER_H
 
 #include "vulkanwindow.h"
-#include "mesh.h"
+#include "meshv.h"
 #include "shader.h"
-#include "camera.h"
+#include "../common/camera.h"
 #include <QFutureWatcher>
 #include <QMutex>
 
@@ -37,7 +37,8 @@ public:
 
     void setUseLogo(bool b);
 
-    void setBlockMesh(MeshV *newBlockMesh);
+    void setBlockMesh(MeshV newBlockMesh);
+    Camera camera() const;
 
 private:
     void createPipelines();
@@ -57,7 +58,7 @@ private:
     QVulkanDeviceFunctions *m_devFuncs;
 
     bool m_useLogo = false;
-    MeshV *m_blockMesh;
+    MeshV m_blockMesh;
     MeshV m_logoMesh;
     VkBuffer m_blockVertexBuf = VK_NULL_HANDLE;
     VkBuffer m_logoVertexBuf = VK_NULL_HANDLE;

@@ -1,16 +1,16 @@
 // Copyright (C) 2017 The Qt Company Ltd.
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR BSD-3-Clause
 
-#ifndef CAMERA_H
-#define CAMERA_H
+#ifndef CAMERAV_H
+#define CAMERAV_H
 
 #include <QVector3D>
 #include <QMatrix4x4>
 
-class Camera
+class CameraV
 {
 public:
-    Camera(const QVector3D &pos);
+    CameraV(const QVector3D &pos);
 
     void yaw(float degrees);
     void pitch(float degrees);

@@ -15,13 +15,16 @@ public:
 	virtual nlohmann::json &jsonHelper(nlohmann::json& j) const override;
 	void setTex(const std::array<Vec2f, 3> &newTex);
 	void setTex(const Vec2f &a, const Vec2f &b, const Vec2f &c);
+    int serialize(QByteArray &dest);
 
 private:
-	std::array< Vec3f, 3 > _p;
+//    void toByteArray(QByteArray &a, T val);
+    std::array< Vec3f, 3 > _p;
 	std::array< Vec2f, 3 > _tex;
 	Vec3f _n;
-	Vec3f _e1;
-	Vec3f _e2;
+    Vec3f _e1;
+    Vec3f _e2;
+
 };
 
 #endif //TRIANGLE_H

@@ -3,8 +3,8 @@
 
 #include <QMainWindow>
 #include <QWidget>
-#include "scene.h"
-#include "mesh.h"
+#include "../common/boule.h"
+#include "meshv.h"
 
 namespace Ui {
 class Modeler;
@@ -24,10 +24,10 @@ class Modeler : public QMainWindow
 {
 public:
     Modeler(VulkanWindow *vulkanWindow);
-    void mousePressEvent(QMouseEvent *event) override;
 
 private slots:
     void onRendererCreated(Renderer * r);
+    void onMousePressed(QMouseEvent *e);
 private:
     QLabel *createLabel(const QString &text);
 
@@ -38,11 +38,13 @@ private:
     QPushButton *quitButton;
     QPushButton *pauseButton;
 
-    int m_count = 128;
+    int m_count = 1;
 
     Ui::Modeler *ui;
-    Scene _scene;
+//    Scene _scene;
     MeshV mesh;
+    Renderer * _renderer{nullptr};
+    Boule _boule;
 };
 
 //class Modeler : public QMainWindow

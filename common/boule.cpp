@@ -2,9 +2,23 @@
 
 #include "utils.h"
 
+#include "triangle.h"
+#include <QDebug>
+
 using namespace std;
 using namespace Eigen;
 using namespace nlohmann;
+
+template <class T>
+void toByteArray(QByteArray & a, T val)
+{
+    char *asChar = ( char* ) & val;
+    for (size_t i = 0; i < sizeof(T); ++i)
+    {
+        a += asChar[i];
+    }
+    return;
+}
 
 Boule::Boule(const Vec3f& position, float rayon)
 	:_pos{position}, _r{rayon}
@@ -59,9 +73,174 @@ json &Boule::jsonHelper(json &j) const
     return j;
 }
 
-void Boule::serialize(QByteArray &dest)
+void Boule::toIcosahedron(QList <Vec3f> &icosahedron)
 {
+    auto t = (1.0 + sqrt(5.0)) / 2.0;// Le nombre d'or !
+    //Un icosaèdre, c'est 4 rectangles orthogonaux. Les voici :
+    icosahedron << Vec3f(-1,  t,  0);
+    icosahedron << Vec3f( 1,  t,  0);
+    icosahedron << Vec3f(-1, -t,  0);
+    icosahedron << Vec3f( 1, -t,  0);
 
+    icosahedron << Vec3f( 0, -1,  t);
+    icosahedron << Vec3f( 0,  1,  t);
+    icosahedron << Vec3f( 0, -1, -t);
+    icosahedron << Vec3f( 0,  1, -t);
+
+    icosahedron << Vec3f( t,  0, -1);
+    icosahedron << Vec3f( t,  0,  1);
+    icosahedron << Vec3f(-t,  0, -1);
+    icosahedron << Vec3f(-t,  0,  1);
+}
+
+int Boule::serialize(QByteArray &dest)
+{
+    QList <Vec3f> icosahedron;
+    toIcosahedron(icosahedron);
+    //Maintenant, il faut définir les faces à partir des points de l'icosahèdre
+    QList <Triangle> _triangles;
+    // 5 faces autour du point 0
+    _triangles << Triangle(icosahedron[0], icosahedron[11], icosahedron[5]);
+    _triangles << Triangle(icosahedron[0], icosahedron[5], icosahedron[1]);
+    _triangles << Triangle(icosahedron[0], icosahedron[1], icosahedron[7]);
+    _triangles << Triangle(icosahedron[0], icosahedron[7], icosahedron[10]);
+    _triangles << Triangle(icosahedron[0], icosahedron[10], icosahedron[11]);
+
+    // 5 adjacent faces
+    _triangles << Triangle(icosahedron[1], icosahedron[5], icosahedron[9]);
+    _triangles << Triangle(icosahedron[5], icosahedron[11], icosahedron[4]);
+    _triangles << Triangle(icosahedron[11], icosahedron[10], icosahedron[2]);
+    _triangles << Triangle(icosahedron[10], icosahedron[7], icosahedron[6]);
+    _triangles << Triangle(icosahedron[7], icosahedron[1], icosahedron[8]);
+
+    // 5 faces around point 3
+    _triangles << Triangle(icosahedron[3], icosahedron[9], icosahedron[4]);
+    _triangles << Triangle(icosahedron[3], icosahedron[4], icosahedron[2]);
+    _triangles << Triangle(icosahedron[3], icosahedron[2], icosahedron[6]);
+    _triangles << Triangle(icosahedron[3], icosahedron[6], icosahedron[8]);
+    _triangles << Triangle(icosahedron[3], icosahedron[8], icosahedron[9]);
+
+    // 5 adjacent faces
+    _triangles << Triangle(icosahedron[4], icosahedron[9], icosahedron[5]);
+    _triangles << Triangle(icosahedron[2], icosahedron[4], icosahedron[11]);
+    _triangles << Triangle(icosahedron[6], icosahedron[2], icosahedron[10]);
+    _triangles << Triangle(icosahedron[8], icosahedron[6], icosahedron[7]);
+    _triangles << Triangle(icosahedron[9], icosahedron[8], icosahedron[1]);
+
+    int nbPoints = 0;
+    for (auto t : _triangles)
+    {
+        nbPoints += t.serialize(dest);
+    }
+    return nbPoints;
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 1.f);
+
+//    toByteArray<float>(dest, 1.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 1.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 1.f);
+
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 1.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 1.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 1.f);
+
+//    toByteArray<float>(dest, 1.f);
+//    toByteArray<float>(dest, 1.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 1.f);
+//    toByteArray<float>(dest, 1.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 1.f);
+
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 1.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 1.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 1.f);
+
+//    toByteArray<float>(dest, 1.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 1.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 1.f);
+
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, -1.f);
+
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 1.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 1.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, -1.f);
+
+//    toByteArray<float>(dest, 1.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 1.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, -1.f);
+
+//    toByteArray<float>(dest, 1.f);
+//    toByteArray<float>(dest, 1.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 1.f);
+//    toByteArray<float>(dest, 1.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, -1.f);
+
+//    toByteArray<float>(dest, 1.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 1.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, -1.f);
+
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 1.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 1.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, 0.f);
+//    toByteArray<float>(dest, -1.f);
+//    return 12;
 }
 
 Vec2f Boule::UV(const Vec3f& p) const

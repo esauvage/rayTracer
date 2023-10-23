@@ -4,6 +4,7 @@
 #include "material.h"
 #include "rayon.h"
 #include "aabb.h"
+#include <QByteArray>
 
 class HitRecord;
 

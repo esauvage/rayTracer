@@ -1,9 +1,9 @@
 // Copyright (C) 2017 The Qt Company Ltd.
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR BSD-3-Clause
 
-#include "camera.h"
+#include "camerav.h"
 
-Camera::Camera(const QVector3D &pos)
+CameraV::CameraV(const QVector3D &pos)
     : m_forward(0.0f, 0.0f, -1.0f),
       m_right(1.0f, 0.0f, 0.0f),
       m_up(0.0f, 1.0f, 0.0f),
@@ -21,7 +21,7 @@ static inline void clamp360(float *v)
         *v += 360.0f;
 }
 
-void Camera::yaw(float degrees)
+void CameraV::yaw(float degrees)
 {
     m_yaw += degrees;
     clamp360(&m_yaw);
@@ -33,7 +33,7 @@ void Camera::yaw(float degrees)
     m_right = (QVector4D(1.0f, 0.0f, 0.0f, 0.0f) * rotMat).toVector3D();
 }
 
-void Camera::pitch(float degrees)
+void CameraV::pitch(float degrees)
 {
     m_pitch += degrees;
     clamp360(&m_pitch);
@@ -45,19 +45,19 @@ void Camera::pitch(float degrees)
     m_up = (QVector4D(0.0f, 1.0f, 0.0f, 0.0f) * rotMat).toVector3D();
 }
 
-void Camera::walk(float amount)
+void CameraV::walk(float amount)
 {
     m_pos[0] += amount * m_forward.x();
     m_pos[2] += amount * m_forward.z();
 }
 
-void Camera::strafe(float amount)
+void CameraV::strafe(float amount)
 {
     m_pos[0] += amount * m_right.x();
     m_pos[2] += amount * m_right.z();
 }
 
-QMatrix4x4 Camera::viewMatrix() const
+QMatrix4x4 CameraV::viewMatrix() const
 {
     QMatrix4x4 m = m_pitchMatrix * m_yawMatrix;
     m.translate(-m_pos);

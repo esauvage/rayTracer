@@ -13,7 +13,7 @@ VulkanWindow::VulkanWindow(bool dbg)
 
 QVulkanWindowRenderer *VulkanWindow::createRenderer()
 {
-    m_renderer = new Renderer(this, 128);
+    m_renderer = new Renderer(this, 1);
     emit rendererCreated(m_renderer);
     return m_renderer;
 }
@@ -37,6 +37,7 @@ void VulkanWindow::mousePressEvent(QMouseEvent *e)
 {
     m_pressed = true;
     m_lastPos = e->position().toPoint();
+    emit mousePressed(e);
 }
 
 void VulkanWindow::mouseReleaseEvent(QMouseEvent *)

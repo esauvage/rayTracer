@@ -3,6 +3,8 @@
 
 #include "rayon.h"
 #include <nlohmann/json.hpp>
+#include <QVector3D>
+#include <QMatrix4x4>
 
 using Rayon3f = Rayon<float, 3>;
 using Vec3f = Vec<float, 3>;
@@ -10,7 +12,8 @@ using Vec3f = Vec<float, 3>;
 class Camera
 {
 public:
-	Camera();
+    Camera();
+    Camera(const QVector3D &pos);
 
 	Rayon3f ray(double u, double v) const;
 
@@ -23,6 +26,13 @@ public:
 	void setFocusDist(float newFocusDist);
 
 	void setLensRadius(float newLensRadius);
+
+    void yaw(float degrees);
+    void pitch(float degrees);
+    void walk(float amount);
+    void strafe(float amount);
+
+    QMatrix4x4 viewMatrix() const;
 
 private:
 	void update();
@@ -37,6 +47,14 @@ private:
 	float _focusDist;
 	float _aspectRatio;
 	float _lensRadius;
+
+    QVector3D m_forward;
+    QVector3D m_right;
+    QVector3D m_up;
+    float m_yaw;
+    float m_pitch;
+    QMatrix4x4 m_yawMatrix;
+    QMatrix4x4 m_pitchMatrix;
 };
 
 namespace nlohmann {

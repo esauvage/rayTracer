@@ -8,22 +8,15 @@
 #include <QCheckBox>
 #include <QGridLayout>
 #include <fstream>
+#include <QMouseEvent>
+#include "../common/boule.h"
+#include "../common/rayon.h"
+//#include "../common/triangle.h"
 
 #include "renderer.h"
 
 using namespace std;
 using namespace nlohmann;
-
-template <class T>
-void toBigEndian(QByteArray & a, T val)
-{
-    char *asChar = ( char* ) & val;
-    for (size_t i = 0; i < sizeof(T); ++i)
-    {
-        a += asChar[i];
-    }
-    return;
-}
 
 QMap <QString, QString> arguments()
 {
@@ -41,122 +34,18 @@ QMap <QString, QString> arguments()
 }
 
 Modeler::Modeler(VulkanWindow *vulkanWindow)
+    :_boule(Vec3f(0, 0, 0), 1)
 {
     //Lecture fichier
     ifstream i(arguments()["-i"].toStdString());
     json data;
-    i >> data;
-    _scene = data.get<Scene>();
+//    i >> data;
+//    _scene = data.get<Scene>();
     i.close();
-    _scene.updateMaterials();
-    mesh.data()->vertexCount = 12;
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 1.f);
-
-    toBigEndian(mesh.data()->geom, 1.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 1.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 1.f);
-
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 1.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 1.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 1.f);
-
-    toBigEndian(mesh.data()->geom, 1.f);
-    toBigEndian(mesh.data()->geom, 1.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 1.f);
-    toBigEndian(mesh.data()->geom, 1.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 1.f);
-
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 1.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 1.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 1.f);
-
-    toBigEndian(mesh.data()->geom, 1.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 1.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 1.f);
-
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, -1.f);
-
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 1.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 1.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, -1.f);
-
-    toBigEndian(mesh.data()->geom, 1.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 1.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, -1.f);
-
-    toBigEndian(mesh.data()->geom, 1.f);
-    toBigEndian(mesh.data()->geom, 1.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 1.f);
-    toBigEndian(mesh.data()->geom, 1.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, -1.f);
-
-    toBigEndian(mesh.data()->geom, 1.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 1.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, -1.f);
-
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 1.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 1.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, 0.f);
-    toBigEndian(mesh.data()->geom, -1.f);
+//    _scene.updateMaterials();
+    mesh.data()->vertexCount = _boule.serialize(mesh.data()->geom);
+//    Triangle triangle(Vec3f(0, 0, 0), Vec3f(0, 1, 0), Vec3f(1, 0, 0));
+//    mesh.data()->vertexCount = triangle.serialize(mesh.data()->geom);
     QWidget *wrapper = QWidget::createWindowContainer(vulkanWindow);
     wrapper->setFocusPolicy(Qt::StrongFocus);
     wrapper->setFocus();
@@ -195,6 +84,7 @@ Modeler::Modeler(VulkanWindow *vulkanWindow)
     connect(pauseButton, &QPushButton::clicked, vulkanWindow, &VulkanWindow::togglePaused);
     connect(meshSwitch, &QCheckBox::clicked, vulkanWindow, &VulkanWindow::meshSwitched);
     connect(vulkanWindow, &VulkanWindow::rendererCreated, this, &Modeler::onRendererCreated);
+    connect(vulkanWindow, &VulkanWindow::mousePressed, this, &Modeler::onMousePressed);
 
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(infoLabel, 0, 2);
@@ -205,17 +95,31 @@ Modeler::Modeler(VulkanWindow *vulkanWindow)
     layout->addWidget(pauseButton, 5, 2);
     layout->addWidget(quitButton, 6, 2);
     layout->addWidget(wrapper, 0, 0, 7, 2);
-    setLayout(layout);
-}
+    // Set layout in QWidget
+    QWidget *window = new QWidget();
+    window->setLayout(layout);
 
-void Modeler::mousePressEvent(QMouseEvent *event)
-{
-
+    // Set QWidget as the central layout of the main window
+    setCentralWidget(window);
 }
 
 void Modeler::onRendererCreated(Renderer *r)
 {
-    r->setBlockMesh(&mesh);
+    r->setBlockMesh(mesh);
+    _renderer = r;
+}
+
+void Modeler::onMousePressed(QMouseEvent *e)
+{
+    if (!_renderer)
+        return;
+    Camera cam = _renderer->camera();
+    auto r = cam.ray(e->position().x(), e->position().y());
+    HitRecord rec;
+    if (_boule.touche(r,0, 10000, rec))
+        infoLabel->setText("Touché");
+            else
+            infoLabel->setText("Raté");
 }
 
 QLabel *Modeler::createLabel(const QString &text)

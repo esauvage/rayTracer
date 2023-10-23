@@ -23,6 +23,7 @@ public:
 
 signals:
     void rendererCreated(Renderer *r);
+    void mousePressed(QMouseEvent *e);
 
 public slots:
     void addNew();

@@ -12,7 +12,7 @@
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
-#include "utils.h"
+#include "../common/utils.h"
 
 using namespace std;
 using namespace Eigen;

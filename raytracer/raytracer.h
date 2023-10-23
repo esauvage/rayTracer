@@ -4,7 +4,7 @@
 #include <atomic>
 
 #include <CImg.h>
-#include "scene.h"
+#include "../common/scene.h"
 
 using Rayon3f = Rayon<float, 3>;
 using Vec3f = Vec<float, 3>;

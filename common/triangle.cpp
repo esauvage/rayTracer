@@ -5,6 +5,17 @@
 using namespace Eigen;
 using namespace nlohmann;
 
+template <class T>
+void toByteArray(QByteArray & a, T val)
+{
+    char *asChar = ( char* ) & val;
+    for (size_t i = 0; i < sizeof(T); ++i)
+    {
+        a += asChar[i];
+    }
+    return;
+}
+
 Triangle::Triangle(const std::array <Vec3f, 3> &points)
 	:_p(points), _n((_p[1] - _p[0]).cross(_p[2] - _p[0]).normalized()), _e1{_p[1] - _p[0]}, _e2{_p[2] - _p[0]}
 {
@@ -74,7 +85,38 @@ void Triangle::setTex(const std::array<Vec2f, 3> &newTex)
 
 void Triangle::setTex(const Vec2f &a, const Vec2f &b, const Vec2f &c)
 {
-	setTex(std::array<Vec2f, 3>{a, b, c});
+    setTex(std::array<Vec2f, 3>{a, b, c});
+}
+
+int Triangle::serialize(QByteArray &dest)
+{
+    for (auto i = 0; i < 3; ++i)
+    {
+        for (auto j = 0; j < 3; ++j)
+        {
+            toByteArray<float>(dest, _p[i][j]);
+        }
+        toByteArray<float>(dest, _tex[i][0]);
+        toByteArray<float>(dest, _tex[i][1]);
+        for (auto j = 0; j < 3; ++j)
+        {
+            toByteArray<float>(dest, _n[j]);
+        }
+    }
+    for (auto i = 2; i >= 0; --i)
+    {
+        for (auto j = 0; j < 3; ++j)
+        {
+            toByteArray<float>(dest, _p[i][j]);
+        }
+        toByteArray<float>(dest, _tex[i][0]);
+        toByteArray<float>(dest, _tex[i][1]);
+        for (auto j = 0; j < 3; ++j)
+        {
+            toByteArray<float>(dest, -_n[j]);
+        }
+    }
+    return 6;
 }
 
 bool Triangle::boundingBox(double time0, double time1, AABB &outputBox) const

@@ -28,7 +28,7 @@ Renderer::Renderer(VulkanWindow *w, int initialCount)
     : m_window(w),
       // Have the light positioned just behind the default camera position, looking forward.
       m_lightPos(0.0f, 0.0f, 25.0f),
-      m_cam(QVector3D(0.0f, 0.0f, 20.0f)), // starting camera position
+      m_cam(QVector3D(0.0f, 0.0f, 10.0f)), // starting camera position
       m_instCount(initialCount)
 {
     m_floorModel.translate(0, -5, 0);
@@ -592,7 +592,7 @@ void Renderer::ensureBuffers()
     VkBufferCreateInfo bufInfo;
     memset(&bufInfo, 0, sizeof(bufInfo));
     bufInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-    const int blockMeshByteCount = m_blockMesh->data()->vertexCount * 8 * sizeof(float);
+    const int blockMeshByteCount = m_blockMesh.data()->vertexCount * 8 * sizeof(float);
     bufInfo.size = blockMeshByteCount;
     bufInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
     VkResult err = m_devFuncs->vkCreateBuffer(dev, &bufInfo, nullptr, &m_blockVertexBuf);
@@ -666,7 +666,7 @@ void Renderer::ensureBuffers()
     err = m_devFuncs->vkMapMemory(dev, m_bufMem, 0, m_itemMaterial.uniMemStartOffset, 0, reinterpret_cast<void **>(&p));
     if (err != VK_SUCCESS)
         qFatal("Failed to map memory: %d", err);
-    memcpy(p, m_blockMesh->data()->geom.constData(), blockMeshByteCount);
+    memcpy(p, m_blockMesh.data()->geom.constData(), blockMeshByteCount);
     memcpy(p + logoVertStartOffset, m_logoMesh.data()->geom.constData(), logoMeshByteCount);
     memcpy(p + floorVertStartOffset, quadVert, sizeof(quadVert));
     m_devFuncs->vkUnmapMemory(dev, m_bufMem);
@@ -750,7 +750,8 @@ void Renderer::ensureInstanceBuffer()
         };
         for (int i = m_preparedInstCount; i < m_instCount; ++i) {
             // Apply a random translation to each instance of the mesh.
-            float t[] = { gen(-5, 5), gen(-4, 6), gen(-30, 5) };
+//            float t[] = { gen(-5, 5), gen(-4, 6), gen(-30, 5) };
+            float t[] = { 0., 0., 0. };
             memcpy(p, t, 12);
             // Apply a random adjustment to the diffuse color for each instance. (default is 0.7)
             float d[] = { gen(-6, 3) / 10.0f, gen(-6, 3) / 10.0f, gen(-6, 3) / 10.0f };
@@ -939,7 +940,7 @@ void Renderer::buildDrawCallsForItems()
         m_devFuncs->vkUnmapMemory(dev, m_bufMem);
     }
 
-    m_devFuncs->vkCmdDraw(cb, (m_useLogo ? m_logoMesh.data() : m_blockMesh->data())->vertexCount, m_instCount, 0, 0);
+    m_devFuncs->vkCmdDraw(cb, (m_useLogo ? m_logoMesh.data() : m_blockMesh.data())->vertexCount, m_instCount, 0, 0);
 }
 
 void Renderer::buildDrawCallsForFloor()
@@ -959,7 +960,12 @@ void Renderer::buildDrawCallsForFloor()
     m_devFuncs->vkCmdDraw(cb, 4, 1, 0, 0);
 }
 
-void Renderer::setBlockMesh(MeshV *newBlockMesh)
+Camera Renderer::camera() const
+{
+    return m_cam;
+}
+
+void Renderer::setBlockMesh(MeshV newBlockMesh)
 {
     m_blockMesh = newBlockMesh;
 }

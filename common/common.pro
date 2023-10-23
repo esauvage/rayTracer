@@ -1,4 +1,4 @@
-QT -= gui
+QT += gui
 
 TEMPLATE = lib
 DEFINES += TESTCOMMON_LIBRARY
@@ -21,7 +21,6 @@ INCLUDEPATH += C:\Users\etien\Documents\projets\eigen\
 SOURCES += \
 	aabb.cpp \
 	bvhnode.cpp \
-	camera.cpp \
     composedmaterial.cpp \
     cuboid.cpp \
 	dielectrique.cpp \
@@ -45,7 +44,6 @@ HEADERS += \
 	aabb.h \
 	boule.h \
 	bvhnode.h \
-	camera.h \
     composedmaterial.h \
     cuboid.h \
 	dielectrique.h \
