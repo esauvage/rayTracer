@@ -35,6 +35,7 @@ private:
     void mouseReleaseEvent(QMouseEvent *) override;
     void mouseMoveEvent(QMouseEvent *) override;
     void keyPressEvent(QKeyEvent *) override;
+    void resizeEvent(QResizeEvent *ev) override;
 
     bool m_debug;
     Renderer *m_renderer;

@@ -7,13 +7,15 @@
 #include <QKeyEvent>
 
 VulkanWindow::VulkanWindow(bool dbg)
-    : m_debug(dbg)
+    : m_debug(dbg), m_renderer(nullptr)
 {
 }
 
 QVulkanWindowRenderer *VulkanWindow::createRenderer()
 {
     m_renderer = new Renderer(this, 1);
+    m_renderer->rcamera().setSize(size());
+    m_renderer->rcamera().yaw(90);
     emit rendererCreated(m_renderer);
     return m_renderer;
 }
@@ -81,6 +83,12 @@ void VulkanWindow::keyPressEvent(QKeyEvent *e)
     default:
         break;
     }
+}
+
+void VulkanWindow::resizeEvent(QResizeEvent *ev)
+{
+    if (!m_renderer) return;
+    m_renderer->rcamera().setSize(ev->size());
 }
 
 Renderer *VulkanWindow::renderer() const

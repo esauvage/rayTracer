@@ -114,7 +114,7 @@ void Modeler::onMousePressed(QMouseEvent *e)
     if (!_renderer)
         return;
     Camera cam = _renderer->camera();
-    auto r = cam.ray(e->position().x(), e->position().y());
+    auto r = cam.ray(e->position().x()/(float)cam.size().width(), e->position().y()/(float)cam.size().height());
     HitRecord rec;
     if (_boule.touche(r,0, 10000, rec))
         infoLabel->setText("Touché");

@@ -39,6 +39,7 @@ public:
 
     void setBlockMesh(MeshV newBlockMesh);
     Camera camera() const;
+    Camera &rcamera();
 
 private:
     void createPipelines();

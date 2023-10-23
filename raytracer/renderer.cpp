@@ -7,6 +7,8 @@
 #include <QtConcurrentRun>
 #include <QTime>
 
+using namespace Eigen;
+
 static float quadVert[] = { // Y up, front = CW
     -1, -1, 0,
     -1,  1, 0,
@@ -31,6 +33,8 @@ Renderer::Renderer(VulkanWindow *w, int initialCount)
       m_cam(QVector3D(0.0f, 0.0f, 10.0f)), // starting camera position
       m_instCount(initialCount)
 {
+    m_cam.setLensRadius(0);
+    m_cam.setRotation(Quaternion(1.f, 0.f, 0.f, 0.f));
     m_floorModel.translate(0, -5, 0);
     m_floorModel.rotate(-90, 1, 0, 0);
     m_floorModel.scale(20, 100, 1);
@@ -961,6 +965,11 @@ void Renderer::buildDrawCallsForFloor()
 }
 
 Camera Renderer::camera() const
+{
+    return m_cam;
+}
+
+Camera &Renderer::rcamera()
 {
     return m_cam;
 }

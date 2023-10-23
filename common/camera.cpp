@@ -31,11 +31,12 @@ Camera::Camera(const QVector3D &pos)
 Rayon3f Camera::ray(double u, double v) const
 {
 	Vec3f rd = _lensRadius * random_in_unit_disk();
-	Vec3f offset = _u * rd.x() + _v * rd.y();
-
-	return Rayon3f(
-		_position + offset,
-		(_lower_left_corner + u*_horizontal + v*_vertical - _position - offset).normalized());
+    Vec3f offset = _u * rd.x() + _v * rd.y();
+    Vec3f screenCoord = _lower_left_corner + u*_horizontal + v*_vertical;
+    Vec3f direction = (screenCoord - _position - offset).normalized();
+    return Rayon3f(
+        _position + offset,
+        direction);
 }
 
 Vec3f Camera::position() const
@@ -62,19 +63,36 @@ void Camera::setRotation(const Quaternion<float> &newRotation)
 
 void Camera::update()
 {
-	float theta = M_PI/3.;
-	float h = tan(theta/2.);
-	float viewport_height = 2.0 * h;
-	float viewport_width = _aspectRatio * viewport_height;
+//	float theta = M_PI/3.;
+//	float h = tan(theta/2.);
+//	float viewport_height = 2.0 * h;
+//	float viewport_width = _aspectRatio * viewport_height;
 
-	Vec3f vUp = _rotation * Vec3f(0, 1, 0);
-    _w = _rotation * Vec3f(1, 0, 0);
-	_u = vUp.cross(_w).normalized();//unit_vector(cross(vup, w));
-	_v = _w.cross(_u);
+//	Vec3f vUp = _rotation * Vec3f(0, 1, 0);
+    _w = _rotation * Vec3f(0, 0, 1);
+    _u = Vec3f(m_right.x(), m_right.y(), m_right.z());//vUp.cross(_w).normalized();//unit_vector(cross(vup, w));
+    _v = Vec3f(m_up.x(), m_up.y(), m_up.z());//w.cross(_u);
 
-	_horizontal = _focusDist * viewport_width * _u;
-	_vertical = _focusDist * viewport_height * _v;
-	_lower_left_corner = _position - _horizontal/2. - _vertical/2. - _focusDist * _w;
+//	_horizontal = _focusDist * viewport_width * _u;
+    //    _vertical = _focusDist * viewport_height * _v;
+    _horizontal = _focusDist * _size.width() /(float)_size.height() * _u;
+    _vertical = _focusDist * _v;
+//    _lower_left_corner = _position - _horizontal/2. - _vertical/2. - _focusDist * m_forward;
+    _lower_left_corner = Vec3f(-_focusDist * _size.width() /(float)_size.height()/2., -_focusDist/2., -_focalLength);
+    auto buf = (QVector4D(_lower_left_corner.x(), _lower_left_corner.y(), _lower_left_corner.z(), 0.0f) *viewMatrix()).toVector3D();
+    _lower_left_corner = Vec3f(buf.x(), buf.y(), buf.z());
+    _lower_left_corner+= _position;
+}
+
+QSize Camera::size() const
+{
+    return _size;
+}
+
+void Camera::setSize(const QSize &newSize)
+{
+    _size = newSize;
+    update();
 }
 
 void Camera::setLensRadius(float newLensRadius)

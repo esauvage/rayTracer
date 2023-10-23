@@ -34,6 +34,10 @@ public:
 
     QMatrix4x4 viewMatrix() const;
 
+    void setSize(const QSize &newSize);
+
+    QSize size() const;
+
 private:
 	void update();
 
@@ -55,6 +59,7 @@ private:
     float m_pitch;
     QMatrix4x4 m_yawMatrix;
     QMatrix4x4 m_pitchMatrix;
+    QSize _size;
 };
 
 namespace nlohmann {
