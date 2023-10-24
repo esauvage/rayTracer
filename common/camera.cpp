@@ -38,8 +38,8 @@ Rayon3f Camera::ray(double u, double v) const
 //    Vec3f screenCoord = _lower_left_corner + u*_horizontal + v*_vertical;
     Vec3f screenCoord {u, v, 0};
 //    Vec3f direction = (screenCoord - _position - offset).normalized();
-    auto buf = (QVector4D(u*w, v*h, 0, 0.0f) *viewMatrix()).toVector3D() + m_forward * 3.;
-    Vec3f direction = (Vec3f(buf.x(), buf.y(), buf.z()) * 10).normalized();
+    auto buf = (QVector4D(u*w, v*h, -1., 0.0f) *viewMatrix()).toVector3D();
+    Vec3f direction = (Vec3f(buf.x(), buf.y(), buf.z())).normalized();
     return Rayon3f(
         _position + offset,
         direction);

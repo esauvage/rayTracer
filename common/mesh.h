@@ -23,7 +23,7 @@ public:
     std::vector<Vec3f > points(int indexTriangle);
     std::vector<Vec3f > normals(int indexTriangle);
     std::vector<Vec2f > textures(int indexTriangle);
-
+    int serialize(QByteArray &dest);
 private:
 //	bool toucheTriangle(const Eigen::Vector3i &triangle, const Rayon3f &r, float t_min, float t_max, HitRecord &rec) const;
     Vec3f centre(const Eigen::Vector3i &triangle) const;

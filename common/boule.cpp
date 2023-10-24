@@ -76,21 +76,22 @@ json &Boule::jsonHelper(json &j) const
 void Boule::toIcosahedron(QList <Vec3f> &icosahedron)
 {
     auto t = (1.0 + sqrt(5.0)) / 2.0;// Le nombre d'or !
+    auto l = _r / sqrt(1 + t * t);//Rayon de la sphère
     //Un icosaèdre, c'est 4 rectangles orthogonaux. Les voici :
-    icosahedron << Vec3f(-1,  t,  0);
-    icosahedron << Vec3f( 1,  t,  0);
-    icosahedron << Vec3f(-1, -t,  0);
-    icosahedron << Vec3f( 1, -t,  0);
+    icosahedron << Vec3f(-1,  t,  0)*l;
+    icosahedron << Vec3f( 1,  t,  0)*l;
+    icosahedron << Vec3f(-1, -t,  0)*l;
+    icosahedron << Vec3f( 1, -t,  0)*l;
 
-    icosahedron << Vec3f( 0, -1,  t);
-    icosahedron << Vec3f( 0,  1,  t);
-    icosahedron << Vec3f( 0, -1, -t);
-    icosahedron << Vec3f( 0,  1, -t);
+    icosahedron << Vec3f( 0, -1,  t)*l;
+    icosahedron << Vec3f( 0,  1,  t)*l;
+    icosahedron << Vec3f( 0, -1, -t)*l;
+    icosahedron << Vec3f( 0,  1, -t)*l;
 
-    icosahedron << Vec3f( t,  0, -1);
-    icosahedron << Vec3f( t,  0,  1);
-    icosahedron << Vec3f(-t,  0, -1);
-    icosahedron << Vec3f(-t,  0,  1);
+    icosahedron << Vec3f( t,  0, -1)*l;
+    icosahedron << Vec3f( t,  0,  1)*l;
+    icosahedron << Vec3f(-t,  0, -1)*l;
+    icosahedron << Vec3f(-t,  0,  1)*l;
 }
 
 int Boule::serialize(QByteArray &dest)
