@@ -5,7 +5,7 @@
 using namespace Eigen;
 
 Camera::Camera()
-    :_position(0, 0, 0), _rotation(0, 0, 0, 1), _focalLength(1.), _focusDist(6.5), _aspectRatio(4./3.),
+    :_position(0, 0, 0), _rotation(0, 0, 0, 1), _focalLength(10.), _focusDist(6.5), _aspectRatio(4./3.),
     m_forward(0.0f, 0.0f, -1.0f),
     m_right(1.0f, 0.0f, 0.0f),
     m_up(0.0f, 1.0f, 0.0f),
@@ -17,7 +17,7 @@ Camera::Camera()
 }
 
 Camera::Camera(const QVector3D &pos)
-    :_position(pos.x(), pos.y(), pos.z()), _rotation(0, 0, 0, 1), _focalLength(1.), _focusDist(6.5), _aspectRatio(4./3.),
+    :_position(pos.x(), pos.y(), pos.z()), _rotation(0, 0, 0, 1), _focalLength(10.), _focusDist(6.5), _aspectRatio(4./3.),
     m_forward(0.0f, 0.0f, -1.0f),
     m_right(1.0f, 0.0f, 0.0f),
     m_up(0.0f, 1.0f, 0.0f),
@@ -30,10 +30,16 @@ Camera::Camera(const QVector3D &pos)
 
 Rayon3f Camera::ray(double u, double v) const
 {
-	Vec3f rd = _lensRadius * random_in_unit_disk();
+    float theta = M_PI/4.;
+    float h = tan(theta/2.);
+    float w = h * _size.width() / _size.height();
+    Vec3f rd = _lensRadius * random_in_unit_disk();
     Vec3f offset = _u * rd.x() + _v * rd.y();
-    Vec3f screenCoord = _lower_left_corner + u*_horizontal + v*_vertical;
-    Vec3f direction = (screenCoord - _position - offset).normalized();
+//    Vec3f screenCoord = _lower_left_corner + u*_horizontal + v*_vertical;
+    Vec3f screenCoord {u, v, 0};
+//    Vec3f direction = (screenCoord - _position - offset).normalized();
+    auto buf = (QVector4D(u*w, v*h, 0, 0.0f) *viewMatrix()).toVector3D() + m_forward * 3.;
+    Vec3f direction = (Vec3f(buf.x(), buf.y(), buf.z()) * 10).normalized();
     return Rayon3f(
         _position + offset,
         direction);
@@ -75,13 +81,13 @@ void Camera::update()
 
 //	_horizontal = _focusDist * viewport_width * _u;
     //    _vertical = _focusDist * viewport_height * _v;
-    _horizontal = _focusDist * _size.width() /(float)_size.height() * _u;
-    _vertical = _focusDist * _v;
-//    _lower_left_corner = _position - _horizontal/2. - _vertical/2. - _focusDist * m_forward;
-    _lower_left_corner = Vec3f(-_focusDist * _size.width() /(float)_size.height()/2., -_focusDist/2., -_focalLength);
+    _horizontal = _size.width() * _u;
+    _vertical = _size.height() * _v;
+//    _lower_left_corner = _horizontal/2. + _vertical/2. - _focusDist * Vec3f(m_forward.x(), m_forward.y(), m_forward.z());
+    _lower_left_corner = Vec3f(- _size.width() /2., -_size.height() /2., -_focalLength);
     auto buf = (QVector4D(_lower_left_corner.x(), _lower_left_corner.y(), _lower_left_corner.z(), 0.0f) *viewMatrix()).toVector3D();
     _lower_left_corner = Vec3f(buf.x(), buf.y(), buf.z());
-    _lower_left_corner+= _position;
+    _lower_left_corner += _position;
 }
 
 QSize Camera::size() const

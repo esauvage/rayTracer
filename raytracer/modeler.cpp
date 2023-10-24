@@ -114,12 +114,12 @@ void Modeler::onMousePressed(QMouseEvent *e)
     if (!_renderer)
         return;
     Camera cam = _renderer->camera();
-    auto r = cam.ray(e->position().x()/(float)cam.size().width(), e->position().y()/(float)cam.size().height());
+    auto r = cam.ray(e->position().x()/(float)cam.size().width()*2.-1.0, -e->position().y()/(float)cam.size().height()*2.+1.0);
     HitRecord rec;
     if (_boule.touche(r,0, 10000, rec))
         infoLabel->setText("Touché");
-            else
-            infoLabel->setText("Raté");
+    else
+        infoLabel->setText("Raté");
 }
 
 QLabel *Modeler::createLabel(const QString &text)

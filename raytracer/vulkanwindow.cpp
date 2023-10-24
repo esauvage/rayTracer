@@ -15,7 +15,6 @@ QVulkanWindowRenderer *VulkanWindow::createRenderer()
 {
     m_renderer = new Renderer(this, 1);
     m_renderer->rcamera().setSize(size());
-    m_renderer->rcamera().yaw(90);
     emit rendererCreated(m_renderer);
     return m_renderer;
 }
