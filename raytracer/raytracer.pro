@@ -10,11 +10,11 @@ CONFIG -= app_bundle
 #QMAKE_LFLAGS_DEBUG += -pg -O3
 
 INCLUDEPATH += C:\Users\etien\Documents\projets\eigen\
-    C:\Users\SauvageE.ANTYCIPSIMU\Documents\GitHub\eigen\
+    C:\Users\sauvagee\Documents\GitHub\eigen\
     C:\Users\etien\Documents\projets\json\single_include\
-    C:\Users\SauvageE.ANTYCIPSIMU\Documents\GitHub\json\single_include\
+    "D:\Sauvegarde Mes Documents\GitHub\json\single_include"\
     C:\Users\etien\Documents\projets\CImg\
-    C:\Users\SauvageE.ANTYCIPSIMU\Documents\GitHub\CImg\
+    "D:\Sauvegarde Mes Documents\GitHub\CImg"\
   #  ../common
 
 TEMPLATE = app
@@ -45,11 +45,11 @@ SOURCES += \
 	camerav.cpp \
 	main.cpp \
 	meshv.cpp \
-	modeler.cpp \
+        # modeler.cpp \
 	raytracer.cpp \
-	renderer.cpp \
-	shader.cpp \
-	vulkanwindow.cpp
+        # renderer.cpp \
+        # shader.cpp \
+        # vulkanwindow.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -90,11 +90,11 @@ HEADERS += \
 	../common/utils.h \
 	camerav.h \
 	meshv.h \
-	modeler.h \
+        # modeler.h \
 	raytracer.h \
-	renderer.h \
-	shader.h \
-	vulkanwindow.h
+        # renderer.h \
+        # shader.h \
+        # vulkanwindow.h
 #DEPENDPATH += ../common
 
 win32: LIBS += -lGdi32

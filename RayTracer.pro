@@ -1,5 +1,5 @@
 TEMPLATE = subdirs
-SUBDIRS = common raytracer stl2json
+SUBDIRS = common raytracer #stl2json
 
 common.subdir  = common
 raytracer.subdir = raytracer

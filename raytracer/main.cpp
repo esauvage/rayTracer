@@ -2,8 +2,8 @@
 
 #include <QApplication>
 #include <QLoggingCategory>
-#include "modeler.h"
-#include "vulkanwindow.h"
+// #include "modeler.h"
+// #include "vulkanwindow.h"
 
 #include <map>
 #include <iostream>
@@ -38,22 +38,22 @@ map <string, string> arguments(int argc, char *argv[])
 
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
+    // QApplication app(argc, argv);
 
-    const bool dbg = qEnvironmentVariableIntValue("QT_VK_DEBUG");
+    // const bool dbg = qEnvironmentVariableIntValue("QT_VK_DEBUG");
 
-    QVulkanInstance inst;
+    // QVulkanInstance inst;
 
-    if (dbg) {
-        QLoggingCategory::setFilterRules(QStringLiteral("qt.vulkan=true"));
-        inst.setLayers({ "VK_LAYER_KHRONOS_validation" });
-    }
+    // if (dbg) {
+    //     QLoggingCategory::setFilterRules(QStringLiteral("qt.vulkan=true"));
+    //     inst.setLayers({ "VK_LAYER_KHRONOS_validation" });
+    // }
 
-    if (!inst.create())
-        qFatal("Failed to create Vulkan instance: %d", inst.errorCode());
+    // if (!inst.create())
+    //     qFatal("Failed to create Vulkan instance: %d", inst.errorCode());
 
-    VulkanWindow *vulkanWindow = new VulkanWindow(dbg);
-    vulkanWindow->setVulkanInstance(&inst);
+    // VulkanWindow *vulkanWindow = new VulkanWindow(dbg);
+    // vulkanWindow->setVulkanInstance(&inst);
 
     auto args = arguments(argc, argv);//atoi ne prend pas de const
     for (auto&& arg : args)
@@ -61,13 +61,13 @@ int main(int argc, char *argv[])
         cout << arg.first << " : " << arg.second << std::endl;
     }
 
-    Modeler mainWindow(vulkanWindow);
-    mainWindow.resize(1024, 768);
-    mainWindow.show();
+    // Modeler mainWindow(vulkanWindow);
+    // mainWindow.resize(1024, 768);
+    // mainWindow.show();
 
-    return app.exec();
-//	const pair <int, int> size {atoi(args["-w"].c_str()), atoi(args["-h"].c_str())};
-//	RayTracer rayTracer;
-//	rayTracer.generateFile(args["-o"], size, args["-i"]);
-//	return 0;
+    // return app.exec();
+    const pair <int, int> size {atoi(args["-w"].c_str()), atoi(args["-h"].c_str())};
+    RayTracer rayTracer;
+    rayTracer.generateFile(args["-o"], size, args["-i"]);
+    return 0;
 }

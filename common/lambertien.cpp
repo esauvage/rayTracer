@@ -28,7 +28,7 @@ bool Lambertien::scatter(const Rayon3f &r_in, const HitRecord &rec, Vec3f &atten
         //Sum up the specular light factoring
         attenuation += albedo().cwiseProduct(sun.color()) * intensity;
     }
-    return false;
+    return true;
 //    while(true)
 //	{
 //		Vec3f scatter_direction = rec.normal() + random_unit_vector();

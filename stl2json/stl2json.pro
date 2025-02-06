@@ -11,11 +11,11 @@ CONFIG -= app_bundle
 #QMAKE_LFLAGS_DEBUG += -pg -O3
 
 INCLUDEPATH += C:\Users\etien\Documents\projets\eigen\
-    C:\Users\SauvageE.ANTYCIPSIMU\Documents\GitHub\eigen\
+    C:\Users\sauvagee\Documents\GitHub\eigen\
     C:\Users\etien\Documents\projets\json\single_include\
-    C:\Users\SauvageE.ANTYCIPSIMU\Documents\GitHub\json\single_include\
+    "D:\Sauvegarde Mes Documents\GitHub\json\single_include"\
     C:\Users\etien\Documents\projets\stl_reader\
-    C:\Users\SauvageE.ANTYCIPSIMU\Documents\GitHub\stl_reader \
+    "D:\Sauvegarde Mes Documents\GitHub\stl_reader"\
     ../common
 
 TEMPLATE = app

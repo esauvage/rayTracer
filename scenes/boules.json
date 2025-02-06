@@ -47,6 +47,29 @@
             "nom": "themis"
         }
     },
+    "sun": [
+        {
+            "color": [
+                1.0,
+                0.9,
+                0.9
+            ],
+            "direction": [
+                1.0,
+                0.2,
+                0.2
+            ],
+            "intensity": 1.0
+        },
+        {
+            "color": [
+                1.0,
+                1.0,
+                0.9
+            ],
+            "intensity": 0.05
+        }
+    ],
     "world": [
         {
             "material": "boule",

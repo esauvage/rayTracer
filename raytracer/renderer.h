@@ -4,9 +4,9 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
-#include "vulkanwindow.h"
-#include "meshv.h"
-#include "shader.h"
+// #include "vulkanwindow.h"
+// #include "meshv.h"
+// #include "shader.h"
 #include "../common/camera.h"
 #include <QFutureWatcher>
 #include <QMutex>
@@ -37,7 +37,7 @@ public:
 
     void setUseLogo(bool b);
 
-    void setBlockMesh(MeshV newBlockMesh);
+    // void setBlockMesh(MeshV newBlockMesh);
     Camera camera() const;
     Camera &rcamera();
 
@@ -55,8 +55,8 @@ private:
 
     void markViewProjDirty() { m_vpDirty = m_window->concurrentFrameCount(); }
 
-    VulkanWindow *m_window;
-    QVulkanDeviceFunctions *m_devFuncs;
+    // VulkanWindow *m_window;
+    // QVulkanDeviceFunctions *m_devFuncs;
 
     bool m_useLogo = false;
     MeshV m_blockMesh;
