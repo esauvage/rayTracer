@@ -2,12 +2,16 @@
     "camera": {
         "focus": 6.0,
         "lens radius": 0.1,
-        "orientation": [ 0.8509035, 0, 0, 0.525322
+        "orientation": [
+			-0.5,
+            0.5,
+            0.5,
+            -0.5
         ],
         "position": [
-            10.0,
+            11.0,
             0.0,
-            0.5
+            -0.5
         ]
     },
     "materials": {

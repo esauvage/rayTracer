@@ -92,7 +92,7 @@ void RayTracer::generateFile(const string &outFile, const pair <int, int> size, 
 
 Vec3f RayTracer::pixelColor(const Rayon3f &rayon, int depth, Vec3f &attenuation) const
 {
-	if (depth <= 0)
+    if (depth <= 0)
     {
 		return sky(rayon.direction());//{0, 1, 0};//rayon.milieu->material->col * (1./255.);
     }
@@ -148,11 +148,11 @@ Vec3f RayTracer::sky(const Vec3f& rayon) const
         }
         else
         {
-            intensity = fmax(unit_direction.dot(sun.direction()), 0.) * sun.intensity();
+//            intensity = fmax(unit_direction.dot(sun.direction()), 0.) * sun.intensity();
         }
         sky += v.cwiseProduct(sun.color()) * intensity;
 	}
-    sky /= (scene.suns().size());
+//    sky /= (scene.suns().size());
 	return sky;
 //Plus le rayon est vertical, plus le ciel est bleu. Plus il est horizontal, plus il est blanc.
 //	float coef {1.f/200.f / rayon.y()};//C'est le sinus du "vertical"
