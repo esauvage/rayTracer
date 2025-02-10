@@ -25,8 +25,6 @@ public:
 	float focusDist() const;
 	void setFocusDist(float newFocusDist);
 
-	void setLensRadius(float newLensRadius);
-
     void yaw(float degrees);
     void pitch(float degrees);
     void walk(float amount);
@@ -35,8 +33,10 @@ public:
     QMatrix4x4 viewMatrix() const;
 
     void setSize(const QSize &newSize);
-
     QSize size() const;
+
+    void setDefocusAngle(float newDefocusAngle);
+    float defocusAngle() const;
 
 private:
 	void update();
@@ -44,21 +44,19 @@ private:
 
 	Vec3f _position;
 	Eigen::Quaternion<float> _rotation;
-	Vec3f _lower_left_corner;
-	Vec3f _horizontal;
-	Vec3f _vertical;
-	Vec3f _u, _v, _w;
-	float _focalLength;
+    Vec3f _horizontal;
+    Vec3f _vertical;
+    Vec3f _u, _v, _w;
+    float _focalLength;
 	float _focusDist;
     float _defocusAngle;
 	float _aspectRatio;
-	float _lensRadius;
+    float _lensRadius;
     Vec3f _defocusDiskU;       // Defocus disk horizontal radius
     Vec3f _defocusDiskV;       // Defocus disk vertical radius
     Vec3f _pixel00Loc;          // Location of pixel 0, 0
     Vec3f _pixelDeltaU;        // Offset to pixel to the right
     Vec3f _pixelDeltaV;        // Offset to pixel below
-
 
     QVector3D m_forward;
     QVector3D m_right;
@@ -85,7 +83,8 @@ namespace nlohmann {
 
 inline void to_json(nlohmann::json& j, const Camera& camera)
 {
-    j = nlohmann::json{{"position", camera.position()}, {"orientation", camera.rotation()}, {"focus", camera.focusDist()}};
+    j = nlohmann::json{{"position", camera.position()}, {"orientation", camera.rotation()}, {"focus", camera.focusDist()},
+                       {"defocus angle", camera.defocusAngle()}};
 }
 
 inline void from_json(const nlohmann::json& j, Camera& camera)
@@ -96,9 +95,9 @@ inline void from_json(const nlohmann::json& j, Camera& camera)
 	Eigen::Quaternionf rotation;
 	j.at("orientation").get_to(rotation);
     camera.setRotation(rotation);
-	if (j.contains("lens radius"))
+    if (j.contains("defocus angle"))
 	{
-		camera.setLensRadius(j.at("lens radius").get<float>());
+        camera.setDefocusAngle(j.at("defocus angle").get<float>());
 	}
 	if (j.contains("focus"))
 	{

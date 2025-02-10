@@ -13,7 +13,6 @@ Camera::Camera()
     m_pitch(0.0f),
     _defocusAngle(0.01)
 {
-    _lensRadius = 0.1 / 2.;
     update();
 }
 
@@ -26,36 +25,38 @@ Camera::Camera(const QVector3D &pos)
     m_pitch(0.0f),
     _defocusAngle(0.01)
 {
-    _lensRadius = 0.05 / 2.;
     update();
 }
 
 Rayon3f Camera::ray(double u, double v) const
 {
-    float theta = M_PI/4.;
-    float h = tan(theta/2.);
-    float w = h * _size.width() / _size.height();
-    Vec3f offset(0, 0, 0);// = _lensRadius * random_in_unit_disk();
-//    offset[2] = 0;
-    //On a la position du coin en bas à gauche de l'écran.
-    //Il me faut la taille d'un pixel
+    Vec3f offset(0, 0, 0);
     Vec3f pixel_sample = _pixel00Loc
                         + ((u + offset.x()) * _pixelDeltaU)
                         + ((v + offset.y()) * _pixelDeltaV);
     auto ray_origin = (_defocusAngle <= 0) ? _position : defocusDiskSample();
-    Vec3f buf = pixel_sample - ray_origin + _position;
-    buf.normalize();
+    Vec3f buf = pixel_sample - ray_origin;
     Vec3f direction = (_rotation * Vec3f(buf.x(), buf.y(), buf.z())).normalized();
     //Attention, l'image est générée INVERSEE verticalement. C'est normal.
     return Rayon3f(
-        ray_origin,
+        _position + ray_origin,
         direction);
 }
 
 Vec3f Camera::defocusDiskSample() const {
     // Returns a random point in the camera defocus disk.
     auto p = random_in_unit_disk();
-    return _position + (p[0] * _defocusDiskU) + (p[1] * _defocusDiskV);
+    return (p[0] * _defocusDiskU) + (p[1] * _defocusDiskV);
+}
+
+float Camera::defocusAngle() const
+{
+    return _defocusAngle;
+}
+
+void Camera::setDefocusAngle(float newDefocusAngle)
+{
+    _defocusAngle = newDefocusAngle;
 }
 
 Vec3f Camera::position() const
@@ -82,39 +83,18 @@ void Camera::setRotation(const Quaternion<float> &newRotation)
 
 void Camera::update()
 {
-//	float h = tan(theta/2.);
-//	float viewport_height = 2.0 * h;
-//	float viewport_width = _aspectRatio * viewport_height;
-
-//	Vec3f vUp = _rotation * Vec3f(0, 1, 0);
     _w = _rotation * Vec3f(0, 0, 1);
     _u = Vec3f(m_right.x(), m_right.y(), m_right.z());//vUp.cross(_w).normalized();//unit_vector(cross(vup, w));
     _v = Vec3f(m_up.x(), m_up.y(), m_up.z());//w.cross(_u);
 
-//	_horizontal = _focusDist * viewport_width * _u;
-    //    _vertical = _focusDist * viewport_height * _v;
     _horizontal = _size.width() * _u;
     _vertical = _size.height() * _v;
-//    _lower_left_corner = _horizontal/2. + _vertical/2. - _focusDist * Vec3f(m_forward.x(), m_forward.y(), m_forward.z());
-    _lower_left_corner = Vec3f(- _size.width() /2., -_size.height() /2., -_focalLength);
-    auto buf = (QVector4D(_lower_left_corner.x(), _lower_left_corner.y(), _lower_left_corner.z(), 0.0f) *viewMatrix()).toVector3D();
-    _lower_left_corner = Vec3f(buf.x(), buf.y(), buf.z());
-    _lower_left_corner += _position;
 
-
-//Je veux avoir le viewport dans les coordonnées de la caméra
-    //Le coin inférieur gauche est donc à, (x, y, -1)*_focusDist
-    //Avec : y = -0.5, x = -0.5 * ratio
     // Determine viewport dimensions.
     float theta = M_PI/4.;
     auto h = tan(theta/2);
     auto viewport_height = 2 * h * _focusDist;
     auto viewport_width = viewport_height * _size.width()/_size.height();
-
-    // Calculate the u,v,w unit basis vectors for the camera coordinate frame.
-//    w = unit_vector(lookfrom - lookat);
-//    u = unit_vector(cross(vup, w));
-//    v = cross(w, u);
 
     // Calculate the vectors across the horizontal and down the vertical viewport edges.
     Vec3f viewport_u = viewport_width * _u;    // Vector across viewport horizontal edge
@@ -145,11 +125,6 @@ void Camera::setSize(const QSize &newSize)
 {
     _size = newSize;
     update();
-}
-
-void Camera::setLensRadius(float newLensRadius)
-{
-	_lensRadius = newLensRadius;
 }
 
 float Camera::focusDist() const

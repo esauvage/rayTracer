@@ -1,7 +1,7 @@
 {
     "camera": {
         "focus": 4.0,
-        "lens radius": 0.01,
+        "defocus angle": 0.005,
         "orientation": [0.5, -0.5, 0.5, -0.5
         ],
         "position": [
