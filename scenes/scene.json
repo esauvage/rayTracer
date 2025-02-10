@@ -1,11 +1,11 @@
 {
     "camera": {
-        "focus": 15.0,
+        "focus": 4.0,
         "lens radius": 0.01,
         "orientation": [0.5, -0.5, 0.5, -0.5
         ],
         "position": [
-            15.0,
+            7.0,
             0,
             1.5
         ]

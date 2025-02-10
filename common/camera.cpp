@@ -11,7 +11,7 @@ Camera::Camera()
     m_up(0.0f, 1.0f, 0.0f),
     m_yaw(0.0f),
     m_pitch(0.0f),
-    _defocusAngle(0)
+    _defocusAngle(0.01)
 {
     _lensRadius = 0.1 / 2.;
     update();
@@ -24,7 +24,7 @@ Camera::Camera(const QVector3D &pos)
     m_up(0.0f, 1.0f, 0.0f),
     m_yaw(0.0f),
     m_pitch(0.0f),
-    _defocusAngle(0)
+    _defocusAngle(0.01)
 {
     _lensRadius = 0.05 / 2.;
     update();
@@ -35,26 +35,16 @@ Rayon3f Camera::ray(double u, double v) const
     float theta = M_PI/4.;
     float h = tan(theta/2.);
     float w = h * _size.width() / _size.height();
-//    Vec3f offset = _lensRadius * random_in_unit_disk();
+    Vec3f offset(0, 0, 0);// = _lensRadius * random_in_unit_disk();
 //    offset[2] = 0;
     //On a la position du coin en bas à gauche de l'écran.
     //Il me faut la taille d'un pixel
- //   Vec3f offset = _u * rd.x() + _v * rd.y();
-    auto offset = Vec3f(0, 0, 0);
     Vec3f pixel_sample = _pixel00Loc
-                        + ((u-0.5 + offset.x()) * _pixelDeltaU)
-                        + ((v-0.5 + offset.y()) * _pixelDeltaV);
-//    pixel_sample[2] += _focusDist;
+                        + ((u + offset.x()) * _pixelDeltaU)
+                        + ((v + offset.y()) * _pixelDeltaV);
     auto ray_origin = (_defocusAngle <= 0) ? _position : defocusDiskSample();
-    Vec3f buf = pixel_sample - ray_origin;
-
-//    auto origin = _position + offset;
-//    auto a = _lower_left_corner + u*_horizontal + v*_vertical;
-//    auto buf = (QVector4D(a[0]*w, a[1]*h, a[2], 0.0f) *viewMatrix()).toVector3D();
-//    buf -= QVector3D(origin[0], origin[1], origin[2]);
-    auto buf2 = (QVector4D((u-0.5)*w, (v-0.5)*h, -1., 0.0f) *viewMatrix()).toVector3D();
+    Vec3f buf = pixel_sample - ray_origin + _position;
     buf.normalize();
-    buf2.normalize();
     Vec3f direction = (_rotation * Vec3f(buf.x(), buf.y(), buf.z())).normalized();
     //Attention, l'image est générée INVERSEE verticalement. C'est normal.
     return Rayon3f(
@@ -112,7 +102,9 @@ void Camera::update()
     _lower_left_corner += _position;
 
 
-
+//Je veux avoir le viewport dans les coordonnées de la caméra
+    //Le coin inférieur gauche est donc à, (x, y, -1)*_focusDist
+    //Avec : y = -0.5, x = -0.5 * ratio
     // Determine viewport dimensions.
     float theta = M_PI/4.;
     auto h = tan(theta/2);
@@ -131,11 +123,13 @@ void Camera::update()
     // Calculate the horizontal and vertical delta vectors to the next pixel.
     _pixelDeltaU = viewport_u / _size.width();
     _pixelDeltaV = viewport_v / _size.height();
+    _pixelDeltaV[1] = _focusDist;
+    _pixelDeltaU[0] = _focusDist * _size.width()/_size.height();
 
     // Calculate the location of the upper left pixel.
     auto viewport_upper_left = _position - Vec3f(0, 0, _focusDist) - viewport_u/2 - viewport_v/2;
     _pixel00Loc = viewport_upper_left - 0.5 * (_pixelDeltaU + _pixelDeltaV);
-
+    _pixel00Loc = Vec3f(-0.5*_size.width()/_size.height(), -0.5, -1)*_focusDist;
     // Calculate the camera defocus disk basis vectors.
     auto defocus_radius = _focusDist * tan(_defocusAngle / 2.);
     _defocusDiskU = _u * defocus_radius;
