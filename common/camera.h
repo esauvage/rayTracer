@@ -40,6 +40,7 @@ public:
 
 private:
 	void update();
+    Vec3f defocusDiskSample() const;
 
 	Vec3f _position;
 	Eigen::Quaternion<float> _rotation;
@@ -49,8 +50,15 @@ private:
 	Vec3f _u, _v, _w;
 	float _focalLength;
 	float _focusDist;
+    float _defocusAngle;
 	float _aspectRatio;
 	float _lensRadius;
+    Vec3f _defocusDiskU;       // Defocus disk horizontal radius
+    Vec3f _defocusDiskV;       // Defocus disk vertical radius
+    Vec3f _pixel00Loc;          // Location of pixel 0, 0
+    Vec3f _pixelDeltaU;        // Offset to pixel to the right
+    Vec3f _pixelDeltaV;        // Offset to pixel below
+
 
     QVector3D m_forward;
     QVector3D m_right;
@@ -82,7 +90,7 @@ inline void to_json(nlohmann::json& j, const Camera& camera)
 
 inline void from_json(const nlohmann::json& j, Camera& camera)
 {
-	Vec3f position = Vec3f(j.at("position")[0].get<float>(), j.at("position")[1].get<float>(), j.at("position")[2].get<float>());
+    Vec3f position = Vec3f(j.at("position")[0].get<float>(), j.at("position")[1].get<float>(), j.at("position")[2].get<float>());
 //	j.at("position").get_to(position);
 	camera.setPosition(position);
 	Eigen::Quaternionf rotation;
@@ -94,8 +102,8 @@ inline void from_json(const nlohmann::json& j, Camera& camera)
 	}
 	if (j.contains("focus"))
 	{
-		camera.setFocusDist(j.at("focus").get<float>());
-	}
+        camera.setFocusDist(j.at("focus").get<float>());
+    }
 }
 
 #endif // CAMERA_H

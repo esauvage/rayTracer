@@ -1,13 +1,12 @@
 {
     "camera": {
-        "focus": 1.83,
+        "focus": 6,
         "lens radius": 0.01,
-        "orientation": [
-            0.2705981, -0.2705981, -0.6532815, 0.6532815
+        "orientation": [0.5, -0.5, -0.5, 0.5
         ],
         "position": [
-            1.3,
-            1.3,
+            -5,
+            0,
             1.0
         ]
     },
@@ -41,7 +40,7 @@
                 1.0,
                 1.0
             ],
-			"filename": "./scenes/Kamael_Guard_Armor_01_dn.bmp",
+			"filename": "scenes/Kamael_Guard_Armor_01_dn.bmp",
             "nom": "perso"
         },
         "sol": {

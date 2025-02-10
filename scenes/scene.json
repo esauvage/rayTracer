@@ -1,17 +1,13 @@
 {
     "camera": {
-        "focus": 6.0,
-        "lens radius": 0.1,
-        "orientation": [
-			-0.5,
-            0.5,
-            0.5,
-            -0.5
+        "focus": 15.0,
+        "lens radius": 0.01,
+        "orientation": [0.5, -0.5, 0.5, -0.5
         ],
         "position": [
-            11.0,
-            0.0,
-            -0.5
+            15.0,
+            0,
+            1.5
         ]
     },
     "materials": {
@@ -225,9 +221,9 @@
             "position": [
                 0.0,
                 0.0,
-                -100.25
+                -2000.05
             ],
-            "rayon": 100.0
+            "rayon": 2000.0
         },
         {
             "material": "themis",

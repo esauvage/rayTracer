@@ -18,7 +18,7 @@ bool MeshNode::touche(const Rayon3f &r, float t_min, float t_max, HitRecord &rec
 		std::cout << "Touche::ray direction has NaN" << std::endl;
 		return false;
 	}
-	if (_i >= 0)
+    if (_i >= 0)// Ca c'est pas bon
     {
         return toucheTriangle(r, t_min, t_max, rec);
     }
@@ -52,7 +52,7 @@ bool MeshNode::toucheTriangle(const Rayon3f &r, float t_min, float t_max, HitRec
     float a,f,u,v;
 	h = r.direction().cross(edge2);
     a = edge1.dot(h);
-    if (a > -EPSILON && a < EPSILON)
+    if ((a > -EPSILON && a < EPSILON)|| (a != a))
         return false;    // This ray is parallel to this triangle.
     f = 1.0/a;
 	s = r.origin() - p[0];
@@ -86,8 +86,9 @@ bool MeshNode::toucheTriangle(const Rayon3f &r, float t_min, float t_max, HitRec
 		cout << "C'est les normales du mesh !" << endl;
 		for (int i = 0; i < 3; ++i)
 		{
-			cout << normals.at(i) << endl;
+            cout << "norme " << i << " : " << rNorm[i] << endl;
 		}
+        return false;
 	}
 	//Cette ligne supprime le lissage des normales
     //	rNorm = edge1.cross(edge2);
@@ -126,7 +127,6 @@ int MeshNode::i() const
 {
     return _i;
 }
-
 
 void MeshNode::add(int i)
 {

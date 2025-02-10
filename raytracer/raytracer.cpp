@@ -51,6 +51,9 @@ void RayTracer::generateFile(const string &outFile, const pair <int, int> size, 
     scene = data.get<Scene>();
 	i.close();
     scene.updateMaterials();
+    auto camera = scene.camera();
+    camera.setSize(QSize(size.first, size.second));
+    scene.setCamera(camera);
 	cout << "Input file read." << endl;
 	const int width {size.first};
 	const int height {size.second};
@@ -148,11 +151,11 @@ Vec3f RayTracer::sky(const Vec3f& rayon) const
         }
         else
         {
-//            intensity = fmax(unit_direction.dot(sun.direction()), 0.) * sun.intensity();
+            intensity = fmax(unit_direction.dot(sun.direction()), 0.) * sun.intensity();
         }
         sky += v.cwiseProduct(sun.color()) * intensity;
 	}
-//    sky /= (scene.suns().size());
+    sky /= (scene.suns().size());
 	return sky;
 //Plus le rayon est vertical, plus le ciel est bleu. Plus il est horizontal, plus il est blanc.
 //	float coef {1.f/200.f / rayon.y()};//C'est le sinus du "vertical"
@@ -164,7 +167,7 @@ void RayTracer::fillImage(int rowBegin, int nbRows, CImg<unsigned char> *img) co
     const float height = img->height();
     const float width = img->width();
 	const int antiAliasing {3};
-    for (int i = nbRows + 1; --i;)
+    for (int i = nbRows; i >= 0;--i)
     {
         for (int j = 0; j < width; ++j)//, x+=coef)
         {
