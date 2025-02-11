@@ -7,7 +7,7 @@ using namespace Eigen;
 using namespace std;
 
 PhongBliss::PhongBliss(const Vec3f& a, float phongExp, Scene * scene)
-    : Material(a), _scene(scene), _phongExp(phongExp)
+    : Material(a), _phongExp(phongExp), _scene(scene)
 {
     _coeff = 1.0;
 }

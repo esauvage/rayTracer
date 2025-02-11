@@ -1,7 +1,7 @@
 #include "sun.h"
 
 Sun::Sun(const Vec3f &direction, const Vec3f &color, const float intensity)
-	:_direction(direction.normalized()), _color(color), _intensity(intensity)
+    :_color(color), _direction(direction.normalized()), _intensity(intensity)
 {
 
 }

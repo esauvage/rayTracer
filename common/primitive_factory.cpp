@@ -3,7 +3,6 @@
 #include "boule.h"
 #include "horizon.h"
 #include "triangle.h"
-//#include "shapelist.h"
 #include "mesh.h"
 #include "bvhnode.h"
 
@@ -193,7 +192,7 @@ std::shared_ptr<Material> MaterialFactory::from_json(const json &j, std::map<std
 	else if (j.contains("albedo"))
 	{
 		cout << j << endl;
-		m = make_shared<Lambertien>(Vec3f(j.at("albedo")[0].get<float>(), j.at("albedo")[1].get<float>(), j.at("albedo")[2].get<float>()));
+        m = make_shared<Lambertien>(Vec3f(j.at("albedo")[0].get<float>(), j.at("albedo")[1].get<float>(), j.at("albedo")[2].get<float>()));
 	}
     m->setNom(j.at("nom").get<std::string>());
 	return m;
