@@ -23,18 +23,20 @@ Vec3f Material::reflect(const Vec3f &v, const Vec3f &n) const
 	return v - 2*v.dot(n)*n;
 }
 
-std::string Material::nom() const
+string Material::nom() const
 {
 	return _nom;
 }
 
-void Material::setNom(const std::string &newNom)
+void Material::setNom(const string &newNom)
 {
 	_nom = newNom;
 }
 
 Vec3f Material::emitted(const Vec2f& tex, const Vec3f &p) const
 {
+    (void)tex;
+    (void)p;
     return Vec3f(0,0,0);
 }
 
@@ -49,10 +51,17 @@ bool Material::scatter(const Rayon3f &r_in, const HitRecord &rec, Vec3f &localAt
 	{
 		return false;
 	}
-	Rayon3f scattered;
 	vScattered.clear();
-	bool r = scatter(r_in, rec, localAttenuation, scattered);
-	vScattered.push_back(scattered);
-	attenuation = attenuation.cwiseProduct(localAttenuation);
-	return r;
+    bool ret{false};
+    for (int i = 0; i < 10; ++i)
+    {
+        Rayon3f scattered;
+        if (scatter(r_in, rec, localAttenuation, scattered))
+        {
+            ret = true;
+            vScattered.push_back(scattered);
+        }
+    }
+    attenuation = attenuation.cwiseProduct(localAttenuation);
+    return ret;
 }

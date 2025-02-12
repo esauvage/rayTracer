@@ -19,7 +19,7 @@ bool Horizon::touche(const Rayon3f& r, float t_min, float t_max, HitRecord& rec)
 		return false;
 	rec.t = t;
 	rec.p = r.pointAt(rec.t);
-	rec.setFaceNormal(r, Vec3f(0, 0, 1));
+    rec.setFaceNormal(r, Vec3f(0, 0, (r.origin().z()-_hauteur)>0 ? 1 : -1));
 	rec.pMaterial = material();
 	return true;
 }
@@ -33,8 +33,9 @@ json &Horizon::jsonHelper(json &j) const
 
 bool Horizon::boundingBox(double time0, double time1, AABB &outputBox) const
 {
-    (time0);
-    Vec3f min(-INFINITY, -INFINITY, -INFINITY);
+    (void)time0;
+    (void)time1;
+    Vec3f min(-INFINITY, -INFINITY, _hauteur);
     Vec3f max(INFINITY, INFINITY, _hauteur);
     outputBox = AABB(min, max);
     return true;

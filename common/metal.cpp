@@ -24,7 +24,7 @@ bool Metal::scatter(const Rayon3f &r_in, const HitRecord &rec, Vec3f &attenuatio
 		--compteur;
 		Vec3f random = (reflected + _fuzz * random_in_unit_sphere()).stableNormalized();
 		scattered = Rayon3f(rec.p, random);
-		r = fabs(scattered.direction().dot(rec.normal())) > 1e-5;
+        r = fabs(scattered.direction().dot(rec.normal())) > 1e-5;
 	}
 //	cout << "Scatter direction : " << scattered.direction().x() << " " << scattered.direction().y() << " " << scattered.direction().z();
 //	cout << "position"  << scattered.origin().x() << " " << scattered.origin().y() << " " << scattered.origin().z() << endl;
@@ -43,27 +43,27 @@ json &Metal::jsonHelper(json &j) const
 	return j;
 }
 
-bool Metal::scatter(const Rayon3f &r_in, const HitRecord &rec, Vec3f &localAttenuation, vector<Rayon3f> &vScattered, Vec3f &attenuation) const
-{
-	auto degenere = 0;
-	for (auto x : attenuation)
-	{
-		degenere += fabs(x) > 1e-2 ? 0 : 1;
-	}
-	if (degenere > 2)
-	{
-		return false;
-	}
-	bool ret{false};
-	for (int i = 0; i < 4; ++i)
-	{
-		Rayon3f scattered;
-		if (scatter(r_in, rec, localAttenuation, scattered))
-		{
-			ret = true;
-			vScattered.push_back(scattered);
-		}
-	}
-	attenuation = attenuation.cwiseProduct(localAttenuation);
-	return ret;
-}
+// bool Metal::scatter(const Rayon3f &r_in, const HitRecord &rec, Vec3f &localAttenuation, vector<Rayon3f> &vScattered, Vec3f &attenuation) const
+// {
+// 	auto degenere = 0;
+// 	for (auto x : attenuation)
+// 	{
+// 		degenere += fabs(x) > 1e-2 ? 0 : 1;
+// 	}
+// 	if (degenere > 2)
+// 	{
+// 		return false;
+// 	}
+// 	bool ret{false};
+// 	for (int i = 0; i < 4; ++i)
+// 	{
+// 		Rayon3f scattered;
+// 		if (scatter(r_in, rec, localAttenuation, scattered))
+// 		{
+// 			ret = true;
+// 			vScattered.push_back(scattered);
+// 		}
+// 	}
+// 	attenuation = attenuation.cwiseProduct(localAttenuation);
+// 	return ret;
+// }

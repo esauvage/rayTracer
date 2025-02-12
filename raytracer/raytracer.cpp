@@ -63,9 +63,9 @@ void RayTracer::generateFile(const string &outFile, const pair <int, int> size, 
     CImgDisplay main_disp(image, "Generation");
     t[num_threads] = std::thread(&RayTracer::updateDisplay, this, &main_disp, &image);
 //	fillImage(0, height, &image, 0);
-	auto threadHeight = height/(num_threads);
+    auto threadHeight = height/(num_threads);
 	if (threadHeight * num_threads < height)
-		threadHeight++;
+        threadHeight++;
 	//Launch a group of threads
 	for (int i = 0; i < num_threads; ++i) {
 		_activeThreads++;
@@ -103,40 +103,43 @@ Vec3f RayTracer::pixelColor(const Rayon3f &rayon, int depth, Vec3f &attenuation)
     // If the ray hits nothing, return the background color.
     if (scene.world()->touche(rayon, 0, INFINITY, rec))
 	{
-		vector<Rayon3f > vScattered;
-		Rayon3f scattered;
-        Vec3f localAttenuation = attenuation;
-        if (rec.pMaterial)
+        //If there is no material recognised, then return the current color.
+        if (!rec.pMaterial)
         {
-            Vec3f color_from_emission = rec.pMaterial->emitted(rec.tex(), rec.p);
-            Vec3f color(0, 0, 0);
-            if (rec.pMaterial->scatter(rayon, rec, localAttenuation, vScattered, attenuation))
-            {
-                auto s = 0;
-                for (auto scattered : vScattered)
-                {
-                    if (scattered.direction().hasNaN())
-                    {
-                        cout << "scaterred with NaN" << endl;
-                        continue;
-                    }
-                    s++;
-                    auto buf = pixelColor(scattered, depth - 1, attenuation).cwiseProduct(localAttenuation);
-                    if (buf.squaredNorm() == 0) continue;
-                    color += buf;
-                }
-                color /= s ? s : 1;
-    //			if ((color.array() < 0).any())
-    //			{
-    //				cout << "Erreur scattered Color : " << color << endl;
-    //				color = Vec3f(fmax(0, color[0]), fmax(0, color[1]), fmax(0, color[2]));
-    //            }
-            }
-            return color_from_emission + color;
+            return attenuation;
         }
-//		return rec.normal()*0.5 + Vec3f(0.5, 0.5, 0.5);
-        return localAttenuation;
-	}
+        //By default, we return what we get from emission and a black color
+        const auto color_from_emission = rec.pMaterial->emitted(rec.tex(), rec.p);
+        Vec3f color(0, 0, 0);
+        //If the ray hits something, it may scatter
+        vector<Rayon3f > vScattered;
+        Rayon3f scattered;
+        Vec3f localAttenuation = attenuation;//We are considering this attenuation
+        if (rec.pMaterial->scatter(rayon, rec, localAttenuation, vScattered, attenuation))
+        {
+            auto s = 0;
+            for (auto scattered : vScattered)
+            {
+                if (scattered.direction().hasNaN())
+                {
+                    cout << "scattered with NaN" << endl;
+                    continue;
+                }
+                //We retrieve the color of the scaterred ray
+                auto buf = pixelColor(scattered, depth - 1, attenuation).cwiseProduct(localAttenuation);
+                if (buf.squaredNorm() == 0) continue;
+                s++;
+                color += buf;
+            }
+            color /= s ? s : 1;
+            //			if ((color.array() < 0).any())
+            //			{
+            //				cout << "Erreur scattered Color : " << color << endl;
+            //				color = Vec3f(fmax(0, color[0]), fmax(0, color[1]), fmax(0, color[2]));
+            //            }
+        }
+        return color_from_emission + color;
+    }
 //	file << "No touch." << endl;
 	return sky(rayon.direction());
 }
@@ -148,7 +151,8 @@ Vec3f RayTracer::sky(const Vec3f& rayon) const
     Vec3f unit_direction = rayon.stableNormalized();
 	float t = 0.5*(unit_direction.z() + 1.0);
 	Vec3f v = (1.0 - t) * Vec3f(1.0, 1.0, 1.0) + t * Vec3f(0.5, 0.7, 1.0);
-    Vec3f sky(0, 0, 0);
+    Vec3f sky(0.2, 0.2, 0.2);//ambiant Light
+    int realSuns = 0;
     for (const auto &sun : scene.suns())
 	{
         float intensity = 1;
@@ -160,9 +164,15 @@ Vec3f RayTracer::sky(const Vec3f& rayon) const
         {
             intensity = fmax(unit_direction.dot(sun.direction()), 0.) * sun.intensity();
         }
+        if (intensity <= 0)
+            continue;
         sky += v.cwiseProduct(sun.color()) * intensity;
+        realSuns++;
 	}
-    sky /= (scene.suns().size());
+    if (realSuns)
+    {
+        sky /= (float)realSuns;
+    }
 	return sky;
 //Plus le rayon est vertical, plus le ciel est bleu. Plus il est horizontal, plus il est blanc.
 //	float coef {1.f/200.f / rayon.y()};//C'est le sinus du "vertical"
@@ -173,12 +183,13 @@ void RayTracer::fillImage(int rowBegin, int nbRows, CImg<unsigned char> *img) co
 {
     const float height = img->height();
     const float width = img->width();
-    const int antiAliasing {10};
-    for (int i = nbRows; i >= 0;--i)
+    const int antiAliasing {5};
+    for (int i = nbRows -1; i >= 0;--i)
     {
         for (int j = 0; j < width; ++j)//, x+=coef)
         {
             Vec3f pixel{0, 0, 0};
+            int realAntiAliasing = 0;
 			for (auto k = 0; k < antiAliasing; k++)
             {
 				auto u = (j + (k / (float)(antiAliasing - 1)) - 0.5)/ width;//(j + frand() - 0.5) / (width);
@@ -193,12 +204,15 @@ void RayTracer::fillImage(int rowBegin, int nbRows, CImg<unsigned char> *img) co
 					}
 					Vec3f attenuation(1., 1., 1.);
                     auto localPixel = pixelColor(r, 16, attenuation);
+                    if (localPixel.squaredNorm() == INFINITY)
+                        continue;
+                    realAntiAliasing++;
 					pixel += localPixel;
 //					myfile << "row " << i << "col" << j << endl;
 				}
             }
             // Divide the color by the number of samples and gamma-correct for gamma=2.0.
-			pixel *= 1. / (float)(antiAliasing * antiAliasing);
+            pixel *= 1. / (float)realAntiAliasing;
 			pixel = pixel.array().min(1.);
 			pixel = pixel.array().max(0.);
 			pixel = pixel.array().sqrt();

@@ -1,10 +1,8 @@
 #include "light.h"
 
 #include "utils.h"
-#include "scene.h"
 
 using namespace Eigen;
-using namespace std;
 
 Light::Light(const Vec3f& a, float intensity)
  : Material(a),
@@ -15,12 +13,18 @@ Light::Light(const Vec3f& a, float intensity)
 
 bool Light::scatter(const Rayon3f &r_in, const HitRecord &rec, Vec3f &attenuation, Rayon3f &scattered) const
 {
+    (void)scattered;
+    (void)attenuation;
+    (void)r_in;
+    (void)rec;
     return false;
 }
 
 Vec3f Light::emitted(const Vec2f & tex, const Vec3f& p) const
 {
-    return albedo() * 100;
+    (void)tex;
+    (void)p;
+    return albedo() * _intensity;
 }
 
 float Light::intensity() const
