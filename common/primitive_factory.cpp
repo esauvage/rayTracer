@@ -150,6 +150,7 @@ std::shared_ptr<Material> MaterialFactory::create(const std::map <std::string, P
         m = make_shared<Texture>(Vec3f(params.at("red").number(), params.at("green").number(), params.at("blue").number()));
 	}
 	m->setNom(params.at("nom").text());
+    m->setNbScatteredRays(params.at("nbRays").number());
 	return m;
 }
 

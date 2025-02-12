@@ -34,7 +34,7 @@ Rayon3f Camera::ray(double u, double v) const
     Vec3f pixel_sample = _pixel00Loc
                         + ((u + offset.x()) * _pixelDeltaU)
                         + ((v + offset.y()) * _pixelDeltaV);
-    auto ray_origin = (_defocusAngle <= 0) ? _position : defocusDiskSample();
+    auto ray_origin = (_defocusAngle <= 0) ? Vec3f(0, 0, 0) : defocusDiskSample();
     Vec3f buf = pixel_sample - ray_origin;
     Vec3f direction = (_rotation * Vec3f(buf.x(), buf.y(), buf.z())).normalized();
     //Attention, l'image est générée INVERSEE verticalement. C'est normal.

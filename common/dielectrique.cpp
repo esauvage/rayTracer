@@ -65,7 +65,7 @@ bool Dielectrique::scatter(const Rayon3f &r_in, const HitRecord &rec, Vec3f &loc
 	}
 	bool ret{false};
 //	Vec3f color(0., 0., 0.);
-    for (int i = 0; i < 10; ++i)
+    for (int i = 0; i < nbScatteredRays(); ++i)
 	{
 		Rayon3f scattered;
 		if (scatter(r_in, rec, localAttenuation, scattered))

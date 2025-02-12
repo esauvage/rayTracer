@@ -1,7 +1,7 @@
 {
     "camera": {
-        "focus": 4.5,
-        "defocus angle": 0.005,
+        "focus": 5.5,
+        "defocus angle": 0.001,
         "orientation": [0.5, -0.5, 0.5, -0.5
         ],
         "position": [
@@ -18,6 +18,7 @@
                 0.8
             ],
             "fuzz": 0.02,
+			"nbRays" : 200,
             "nom": "boule"
         },
         "boule2": {
@@ -26,6 +27,7 @@
                 0.2,
                 0.95
             ],
+			"nbRays" : 200,
             "nom": "boule2"
         },
         "blanc": {
@@ -34,6 +36,7 @@
                 0.99,
                 0.99
             ],
+			"nbRays" : 200,
             "nom": "blanc"
         },
         "mur": {
@@ -43,6 +46,7 @@
                 0.4000000059604645
             ],
             "fuzz": 0.019999999552965164,
+			"nbRays" : 200,
             "nom": "mur"
         },
         "mur2": {
@@ -52,6 +56,7 @@
                 0.2
             ],
             "fuzz": 0.01,
+			"nbRays" : 200,
             "nom": "mur2"
         },
         "sol": {
@@ -60,6 +65,7 @@
                 0.4000000059604645,
                 0.05000000074505806
             ],
+			"nbRays" : 200,
             "nom": "sol"
         },
         "themis": {
@@ -69,6 +75,7 @@
                 0.1
             ],
             "fuzz": 0.020000000298023224,
+			"nbRays" : 200,
             "nom": "themis"
         },
         "tex": {
@@ -80,6 +87,7 @@
             "filename": "toto.txt",
             "material1": "mur",
             "material2": "boule2",
+			"nbRays" : 200,
             "nom": "tex"
         },
         "verre": {
@@ -89,6 +97,7 @@
                 0.0
             ],
             "nom": "verre",
+			"nbRays" : 200,
             "refractiveIndex": 1.5
         },
         "phong": {
@@ -98,6 +107,7 @@
                 0.0
             ],
             "nom": "phong",
+			"nbRays" : 200,
             "phong exp": 10
         },
         "composed": {
@@ -113,6 +123,7 @@
                         0.6,
                         1.0
                     ],
+					"nbRays" : 200,
                     "nom": "sub1"
                 },
                 {
@@ -121,6 +132,7 @@
                         0.0,
                         0.0
                     ],
+					"nbRays" : 200,
                     "nom": "sub2",
 					"phong exp": 100
                 }
@@ -130,7 +142,7 @@
         "lumiere": {
             "light": [
                 0.9,
-                0.5,
+                0.3,
                 0.9
             ],
             "intensity": 10,
@@ -149,7 +161,7 @@
                 0.2,
                 1
             ],
-            "intensity": 0.0
+            "intensity": 0.5
         }
 	],
     "world": [
@@ -220,10 +232,10 @@
             "material": "lumiere",
             "position": [
                 1.5,
-                1.3,
-                0.5
+                1.5,
+                0.3
             ],
-            "rayon": 0.5
+            "rayon": 0.3
         },
         {
             "material": "composed",

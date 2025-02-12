@@ -23,7 +23,7 @@ bool Lambertien::scatter(const Rayon3f &r_in, const HitRecord &rec, Vec3f &atten
     // {
         // if (sun.direction().hasNaN()) continue;
         // nbSuns++;
-        scatter_direction += rec.normal() + 1*random_unit_vector();
+        scatter_direction += rec.normal() + 0.5*random_unit_vector();
 
         //Intensity of the specular light
     //     float NdotL = fmax(0, rec.normal().dot(sun.direction()));

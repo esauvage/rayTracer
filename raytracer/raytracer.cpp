@@ -183,7 +183,7 @@ void RayTracer::fillImage(int rowBegin, int nbRows, CImg<unsigned char> *img) co
 {
     const float height = img->height();
     const float width = img->width();
-    const int antiAliasing {5};
+    const int antiAliasing {15};
     for (int i = nbRows -1; i >= 0;--i)
     {
         for (int j = 0; j < width; ++j)//, x+=coef)
@@ -203,7 +203,7 @@ void RayTracer::fillImage(int rowBegin, int nbRows, CImg<unsigned char> *img) co
                         scene.camera().ray(u, v);
 					}
 					Vec3f attenuation(1., 1., 1.);
-                    auto localPixel = pixelColor(r, 16, attenuation);
+                    auto localPixel = pixelColor(r, 32, attenuation);
                     if (localPixel.squaredNorm() == INFINITY)
                         continue;
                     realAntiAliasing++;

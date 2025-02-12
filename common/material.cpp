@@ -3,7 +3,7 @@
 using namespace std;
 using json = nlohmann::json;
 
-Material::Material(const Vec3f &albedo) : _albedo(albedo)
+Material::Material(const Vec3f &albedo) : _albedo(albedo), _nbScatteredRays{1}
 {
 }
 
@@ -21,6 +21,16 @@ json &Material::jsonHelper(json &j) const
 Vec3f Material::reflect(const Vec3f &v, const Vec3f &n) const
 {
 	return v - 2*v.dot(n)*n;
+}
+
+int Material::nbScatteredRays() const
+{
+    return _nbScatteredRays;
+}
+
+void Material::setNbScatteredRays(int newNbScatteredRays)
+{
+    _nbScatteredRays = newNbScatteredRays;
 }
 
 string Material::nom() const
@@ -53,7 +63,7 @@ bool Material::scatter(const Rayon3f &r_in, const HitRecord &rec, Vec3f &localAt
 	}
 	vScattered.clear();
     bool ret{false};
-    for (int i = 0; i < 10; ++i)
+    for (int i = 0; i < _nbScatteredRays; ++i)
     {
         Rayon3f scattered;
         if (scatter(r_in, rec, localAttenuation, scattered))

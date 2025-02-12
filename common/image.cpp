@@ -86,7 +86,7 @@ bool Image::scatter(const Rayon3f &r_in, const HitRecord &rec, Vec3f &localAtten
     {
         return false;
     }
-    for (int i = 0; i < 4; ++i)
+    for (int i = 0; i < nbScatteredRays(); ++i)
     {
         Rayon3f scattered;
         scatter(r_in, rec, localAttenuation, scattered);

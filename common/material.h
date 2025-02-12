@@ -23,11 +23,15 @@ public:
 	void setNom(const std::string &newNom);
     virtual Vec3f emitted(const Vec2f& tex, const Vec3f& p) const;
 
+    int nbScatteredRays() const;
+    void setNbScatteredRays(int newNbScatteredRays);
+
 protected:
 	Vec3f reflect(const Vec3f& v, const Vec3f& n) const;
 private:
 	Vec3f _albedo;
 	std::string _nom;
+    int _nbScatteredRays;
 };
 
 inline void to_json(nlohmann::json& j, const Material& m)
