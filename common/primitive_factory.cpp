@@ -13,6 +13,7 @@
 #include "image.h"
 #include "phongbliss.h"
 #include "composedmaterial.h"
+#include "light.h"
 
 #include <iostream>
 
@@ -131,11 +132,15 @@ std::shared_ptr<Material> MaterialFactory::create(const std::map <std::string, P
 		m = make_shared<Metal>(Vec3f(params.at("red").number(), params.at("green").number(), params.at("blue").number()),
 								  params.at("fuzziness").number());
 	}
-	if (params.at("type").text() == "lambertien")
-	{
-		m = make_shared<Lambertien>(Vec3f(params.at("red").number(), params.at("green").number(), params.at("blue").number()));
-	}
-	if (params.at("type").text() == "dielectrique")
+    if (params.at("type").text() == "lambertien")
+    {
+        m = make_shared<Lambertien>(Vec3f(params.at("red").number(), params.at("green").number(), params.at("blue").number()));
+    }
+    if (params.at("type").text() == "light")
+    {
+        m = make_shared<Light>(Vec3f(params.at("red").number(), params.at("green").number(), params.at("blue").number()));
+    }
+    if (params.at("type").text() == "dielectrique")
 	{
 		m = make_shared<Dielectrique>(params.at("refraction").number());
 	}
@@ -149,7 +154,7 @@ std::shared_ptr<Material> MaterialFactory::create(const std::map <std::string, P
 
 std::shared_ptr<Material> MaterialFactory::from_json(const json &j, std::map<std::string, std::shared_ptr<Material> > &materials, Scene * scene)
 {
-	if (!j.contains("albedo"))
+    if (!j.contains("albedo")&& !j.contains("light"))
 	{
 		return MaterialFactory::from_json(j[0], materials, scene);
 	}
@@ -189,11 +194,17 @@ std::shared_ptr<Material> MaterialFactory::from_json(const json &j, std::map<std
 		}
 		m = c;
 	}
-	else if (j.contains("albedo"))
-	{
-		cout << j << endl;
+    else if (j.contains("light"))
+    {
+        cout << j << endl;
+        m = make_shared<Light>(Vec3f(j.at("light")[0].get<float>(), j.at("light")[1].get<float>(), j.at("light")[2].get<float>()),
+                                  j.at("intensity").get<float>());
+    }
+    else if (j.contains("albedo"))
+    {
+        cout << j << endl;
         m = make_shared<Lambertien>(Vec3f(j.at("albedo")[0].get<float>(), j.at("albedo")[1].get<float>(), j.at("albedo")[2].get<float>()));
-	}
+    }
     m->setNom(j.at("nom").get<std::string>());
 	return m;
 }

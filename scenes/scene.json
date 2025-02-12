@@ -1,6 +1,6 @@
 {
     "camera": {
-        "focus": 4.0,
+        "focus": 4.5,
         "defocus angle": 0.005,
         "orientation": [0.5, -0.5, 0.5, -0.5
         ],
@@ -118,6 +118,15 @@
                 }
             ],
             "nom": "composed"
+        },
+        "lumiere": {
+            "light": [
+                0.9,
+                0.5,
+                0.9
+            ],
+            "intensity": 1000,
+            "nom": "lumiere"
         }
     },
     "sun": [
@@ -132,7 +141,7 @@
                 0.2,
                 1
             ],
-            "intensity": 10.0
+            "intensity": 0.0
         }
 	],
     "world": [
@@ -157,7 +166,7 @@
         {
             "material": "verre",
             "position": [
-                3.0,
+                2.0,
                 1.0,
                 0.5
             ],
@@ -193,11 +202,20 @@
         {
             "material": "verre",
             "position": [
-                3.5,
-                -2.0,
-                0.20000000298023224
+                1.8,
+                2.0,
+                0.2
             ],
-            "rayon": 0.4000000059604645
+            "rayon": 0.2
+        },
+        {
+            "material": "lumiere",
+            "position": [
+                1.5,
+                2.0,
+                0.3
+            ],
+            "rayon": 0.1
         },
         {
             "material": "composed",

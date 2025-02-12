@@ -100,35 +100,40 @@ Vec3f RayTracer::pixelColor(const Rayon3f &rayon, int depth, Vec3f &attenuation)
 		return sky(rayon.direction());//{0, 1, 0};//rayon.milieu->material->col * (1./255.);
     }
 	HitRecord rec;
+    // If the ray hits nothing, return the background color.
     if (scene.world()->touche(rayon, 0, INFINITY, rec))
 	{
 		vector<Rayon3f > vScattered;
 		Rayon3f scattered;
-		Vec3f localAttenuation = attenuation;
-		if (rec.pMaterial && rec.pMaterial->scatter(rayon, rec, localAttenuation, vScattered, attenuation))
-		{
-			Vec3f color(0, 0, 0);
-            auto s = 0;
-			for (auto scattered : vScattered)
-			{
-				if (scattered.direction().hasNaN())
-				{
-					cout << "scaterred with NaN" << endl;
-					continue;
-				}
-                s++;
-                auto buf = pixelColor(scattered, depth - 1, attenuation).cwiseProduct(localAttenuation);
-                if (buf.squaredNorm() == 0) continue;
-                color += buf;
-			}
-			color /= s ? s : 1;
-//			if ((color.array() < 0).any())
-//			{
-//				cout << "Erreur scattered Color : " << color << endl;
-//				color = Vec3f(fmax(0, color[0]), fmax(0, color[1]), fmax(0, color[2]));
-//            }
-			return color;
-		}
+        Vec3f localAttenuation = attenuation;
+        if (rec.pMaterial)
+        {
+            Vec3f color_from_emission = rec.pMaterial->emitted(rec.tex(), rec.p);
+            Vec3f color(0, 0, 0);
+            if (rec.pMaterial->scatter(rayon, rec, localAttenuation, vScattered, attenuation))
+            {
+                auto s = 0;
+                for (auto scattered : vScattered)
+                {
+                    if (scattered.direction().hasNaN())
+                    {
+                        cout << "scaterred with NaN" << endl;
+                        continue;
+                    }
+                    s++;
+                    auto buf = pixelColor(scattered, depth - 1, attenuation).cwiseProduct(localAttenuation);
+                    if (buf.squaredNorm() == 0) continue;
+                    color += buf;
+                }
+                color /= s ? s : 1;
+    //			if ((color.array() < 0).any())
+    //			{
+    //				cout << "Erreur scattered Color : " << color << endl;
+    //				color = Vec3f(fmax(0, color[0]), fmax(0, color[1]), fmax(0, color[2]));
+    //            }
+            }
+            return color_from_emission + color;
+        }
 //		return rec.normal()*0.5 + Vec3f(0.5, 0.5, 0.5);
         return localAttenuation;
 	}
@@ -168,7 +173,7 @@ void RayTracer::fillImage(int rowBegin, int nbRows, CImg<unsigned char> *img) co
 {
     const float height = img->height();
     const float width = img->width();
-    const int antiAliasing {5};
+    const int antiAliasing {10};
     for (int i = nbRows; i >= 0;--i)
     {
         for (int j = 0; j < width; ++j)//, x+=coef)

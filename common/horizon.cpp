@@ -33,6 +33,7 @@ json &Horizon::jsonHelper(json &j) const
 
 bool Horizon::boundingBox(double time0, double time1, AABB &outputBox) const
 {
+    (time0);
     Vec3f min(-INFINITY, -INFINITY, -INFINITY);
     Vec3f max(INFINITY, INFINITY, _hauteur);
     outputBox = AABB(min, max);

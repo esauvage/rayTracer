@@ -33,6 +33,11 @@ void Material::setNom(const std::string &newNom)
 	_nom = newNom;
 }
 
+Vec3f Material::emitted(const Vec2f& tex, const Vec3f &p) const
+{
+    return Vec3f(0,0,0);
+}
+
 bool Material::scatter(const Rayon3f &r_in, const HitRecord &rec, Vec3f &localAttenuation, vector<Rayon3f> &vScattered, Vec3f &attenuation) const
 {
 	auto degenere = 0;

@@ -29,8 +29,9 @@ SOURCES += \
 	../common/dielectrique.cpp \
 	../common/horizon.cpp \
 	../common/image.cpp \
-	../common/lambertien.cpp \
-	../common/material.cpp \
+        ../common/lambertien.cpp \
+        ../common/light.cpp \
+        ../common/material.cpp \
 	../common/mesh.cpp \
 	../common/meshnode.cpp \
 	../common/metal.cpp \
@@ -72,8 +73,9 @@ HEADERS += \
 	../common/dielectrique.h \
 	../common/horizon.h \
 	../common/image.h \
-	../common/lambertien.h \
-	../common/material.h \
+        ../common/lambertien.h \
+        ../common/light.h \
+        ../common/material.h \
 	../common/mesh.h \
 	../common/meshnode.h \
 	../common/metal.h \

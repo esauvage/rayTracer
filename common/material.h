@@ -6,6 +6,7 @@
 #include <nlohmann/json.hpp>
 
 using Vec3f = Eigen::Vector3f;
+using Vec2f = Eigen::Vector2f;
 
 class HitRecord;
 
@@ -20,6 +21,7 @@ public:
     virtual nlohmann::json &jsonHelper(nlohmann::json& j) const;
 	std::string nom() const;
 	void setNom(const std::string &newNom);
+    virtual Vec3f emitted(const Vec2f& tex, const Vec3f& p) const;
 
 protected:
 	Vec3f reflect(const Vec3f& v, const Vec3f& n) const;

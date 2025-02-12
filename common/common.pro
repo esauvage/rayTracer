@@ -25,8 +25,9 @@ SOURCES += \
         cuboid.cpp \
 	dielectrique.cpp \
 	image.cpp \
-	lambertien.cpp \
-	boule.cpp \
+        lambertien.cpp \
+        light.cpp \
+        boule.cpp \
 	horizon.cpp \
 	material.cpp \
         mesh.cpp \
@@ -49,8 +50,9 @@ HEADERS += \
 	dielectrique.h \
 	horizon.h \
 	image.h \
-	lambertien.h \
-	material.h \
+        lambertien.h \
+        light.h \
+        material.h \
         mesh.h \
         meshnode.h \
 	metal.h \
