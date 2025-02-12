@@ -138,7 +138,8 @@ std::shared_ptr<Material> MaterialFactory::create(const std::map <std::string, P
     }
     if (params.at("type").text() == "light")
     {
-        m = make_shared<Light>(Vec3f(params.at("red").number(), params.at("green").number(), params.at("blue").number()));
+        m = make_shared<Light>(Vec3f(params.at("red").number(), params.at("green").number(), params.at("blue").number()),
+                               params.at("intensity").number());
     }
     if (params.at("type").text() == "dielectrique")
 	{
