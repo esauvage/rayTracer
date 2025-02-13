@@ -5,25 +5,25 @@
 using namespace Eigen;
 
 Camera::Camera()
-    :_position(0, 0, 0), _rotation(0, 0, 0, 1), _focalLength(6.), _focusDist(6.5), _aspectRatio(4./3.),
+    :_position(0, 0, 0), _rotation(0, 0, 0, 1), _focalLength(6.), _focusDist(6.5), _defocusAngle(0.01),
+    _aspectRatio(4./3.),
     m_forward(0.0f, 0.0f, -1.0f),
     m_right(1.0f, 0.0f, 0.0f),
     m_up(0.0f, 1.0f, 0.0f),
     m_yaw(0.0f),
-    m_pitch(0.0f),
-    _defocusAngle(0.01)
+    m_pitch(0.0f)
 {
     update();
 }
 
 Camera::Camera(const QVector3D &pos)
-    :_position(pos.x(), pos.y(), pos.z()), _rotation(0, 0, 0, 1), _focalLength(6.), _focusDist(6.5), _aspectRatio(4./3.),
+    :_position(pos.x(), pos.y(), pos.z()), _rotation(0, 0, 0, 1), _focalLength(6.), _focusDist(6.5), _defocusAngle(0.01),
+    _aspectRatio(4./3.),
     m_forward(0.0f, 0.0f, -1.0f),
     m_right(1.0f, 0.0f, 0.0f),
     m_up(0.0f, 1.0f, 0.0f),
     m_yaw(0.0f),
-    m_pitch(0.0f),
-    _defocusAngle(0.01)
+    m_pitch(0.0f)
 {
     update();
 }
@@ -45,7 +45,7 @@ Rayon3f Camera::ray(double u, double v) const
 
 Vec3f Camera::defocusDiskSample() const {
     // Returns a random point in the camera defocus disk.
-    auto p = random_in_unit_disk();
+    auto p = random_in_unit_disk<double>();
     return (p[0] * _defocusDiskU) + (p[1] * _defocusDiskV);
 }
 
@@ -70,12 +70,12 @@ void Camera::setPosition(const Vec3f &newPosition)
 	update();
 }
 
-Quaternion<float> Camera::rotation() const
+Quaternion<double> Camera::rotation() const
 {
 	return _rotation;
 }
 
-void Camera::setRotation(const Quaternion<float> &newRotation)
+void Camera::setRotation(const Quaternion<double> &newRotation)
 {
 	_rotation = newRotation;
 	update();

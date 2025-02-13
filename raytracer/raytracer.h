@@ -6,8 +6,8 @@
 #include <CImg.h>
 #include "../common/scene.h"
 
-using Rayon3f = Rayon<float, 3>;
-using Vec3f = Vec<float, 3>;
+using Rayon3f = Rayon<double, 3>;
+using Vec3f = Vec<double, 3>;
 
 class RayTracer
 {

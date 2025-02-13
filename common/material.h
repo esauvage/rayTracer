@@ -5,8 +5,8 @@
 #include "rayon.h"
 #include <nlohmann/json.hpp>
 
-using Vec3f = Eigen::Vector3f;
-using Vec2f = Eigen::Vector2f;
+using Vec3f = Eigen::Vector3d;
+using Vec2f = Eigen::Vector2d;
 
 class HitRecord;
 

@@ -59,11 +59,6 @@ void ComposedMaterial::setScene(Scene * scene)
 		{
 			t->setScene(scene);
 		}
-		std::shared_ptr<Lambertien> l = dynamic_pointer_cast<Lambertien>(m);
-		if (l)
-		{
-			l->setScene(scene);
-		}
 		std::shared_ptr<ComposedMaterial> c = dynamic_pointer_cast<ComposedMaterial>(m);
 		if (c)
 		{

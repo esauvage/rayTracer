@@ -228,6 +228,8 @@ std::vector<Vec2f> Mesh::textures(int indexTriangle)
 
 bool Mesh::boundingBox(double time0, double time1, AABB &outputBox) const
 {
+    (void)time0;
+    (void)time1;
     Vec3f min = _points[0];
     Vec3f max = _points[0];
     for (const auto &p : _points)

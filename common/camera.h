@@ -6,8 +6,8 @@
 #include <QVector3D>
 #include <QMatrix4x4>
 
-using Rayon3f = Rayon<float, 3>;
-using Vec3f = Vec<float, 3>;
+using Rayon3f = Rayon<double, 3>;
+using Vec3f = Vec<double, 3>;
 
 class Camera
 {
@@ -19,8 +19,8 @@ public:
 
 	Vec3f position() const;
 	void setPosition(const Vec3f &newPosition);
-	Eigen::Quaternion<float> rotation() const;
-	void setRotation(const Eigen::Quaternion<float> &newRotation);
+    Eigen::Quaternion<double> rotation() const;
+    void setRotation(const Eigen::Quaternion<double> &newRotation);
 
 	float focusDist() const;
 	void setFocusDist(float newFocusDist);
@@ -43,15 +43,15 @@ private:
     Vec3f defocusDiskSample() const;
 
 	Vec3f _position;
-	Eigen::Quaternion<float> _rotation;
+    Eigen::Quaternion<double> _rotation;
     Vec3f _horizontal;
     Vec3f _vertical;
     Vec3f _u, _v, _w;
-    float _focalLength;
-	float _focusDist;
-    float _defocusAngle;
-	float _aspectRatio;
-    float _lensRadius;
+    double _focalLength;
+    double _focusDist;
+    double _defocusAngle;
+    double _aspectRatio;
+    double _lensRadius;
     Vec3f _defocusDiskU;       // Defocus disk horizontal radius
     Vec3f _defocusDiskV;       // Defocus disk vertical radius
     Vec3f _pixel00Loc;          // Location of pixel 0, 0
@@ -92,7 +92,7 @@ inline void from_json(const nlohmann::json& j, Camera& camera)
     Vec3f position = Vec3f(j.at("position")[0].get<float>(), j.at("position")[1].get<float>(), j.at("position")[2].get<float>());
 //	j.at("position").get_to(position);
 	camera.setPosition(position);
-	Eigen::Quaternionf rotation;
+    Eigen::Quaternion<double> rotation;
 	j.at("orientation").get_to(rotation);
     camera.setRotation(rotation);
     if (j.contains("defocus angle"))

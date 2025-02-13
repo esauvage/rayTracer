@@ -37,7 +37,7 @@ bool Image::scatter(const Rayon3f &r_in, const HitRecord &rec, Vec3f &attenuatio
     while (!r && compteur)
     {
         --compteur;
-        Vec3f scatter_direction = rec.normal() + random_unit_vector();
+        Vec3f scatter_direction = rec.normal() + random_unit_vector<double>();
         if (rec.normal().hasNaN())
         {
             cout << "Hit record has NaN" << endl;

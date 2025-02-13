@@ -1,7 +1,6 @@
 #include "lambertien.h"
 
 #include "utils.h"
-#include "scene.h"
 
 using namespace Eigen;
 
@@ -17,13 +16,7 @@ bool Lambertien::scatter(const Rayon3f &r_in, const HitRecord &rec, Vec3f &atten
     // if (!_scene)
     //     return false;
     attenuation = albedo();
-    Vec3f scatter_direction(0, 0, 0);
-    // int nbSuns = 0;
-    // for (const auto &sun: _scene->suns())
-    // {
-        // if (sun.direction().hasNaN()) continue;
-        // nbSuns++;
-        scatter_direction += rec.normal() + 0.5*random_unit_vector();
+    Vec3f scatter_direction = rec.normal() + random_unit_vector<double>();
 
         //Intensity of the specular light
     //     float NdotL = fmax(0, rec.normal().dot(sun.direction()));
@@ -38,9 +31,4 @@ bool Lambertien::scatter(const Rayon3f &r_in, const HitRecord &rec, Vec3f &atten
         scatter_direction = rec.normal();
     scattered = Rayon3f(rec.p, scatter_direction);
     return true;
-}
-
-void Lambertien::setScene(Scene *newScene)
-{
-    _scene = newScene;
 }

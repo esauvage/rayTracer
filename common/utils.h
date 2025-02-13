@@ -12,11 +12,11 @@ template<typename Type, int Size>
 using Vec = Eigen::Matrix<Type, Size, 1>;
 template<typename Type, int Size>
 using Rayon = Eigen::ParametrizedLine<Type, Size>;
-using Rayon3f = Rayon<float, 3>;
+using Rayon3f = Rayon<double, 3>;
 
-using Vec3f = Vec<float, 3>;
-using Vec2f = Vec<float, 2>;
-inline float frand() {return rand()/static_cast<float>(RAND_MAX);}
+using Vec3f = Vec<double, 3>;
+using Vec2f = Vec<double, 2>;
+inline double frand() {return rand()/static_cast<double>(RAND_MAX);}
 
 namespace nlohmann {
 	template <typename T>
@@ -66,13 +66,13 @@ Eigen::Vector3<T> barycentricEdges(Eigen::Vector3<T> v0, Eigen::Vector3<T> v1, E
 	const auto denom = d00 * d11 - d01 * d01;
 	if (!denom || denom!=denom)
 	{
-		return Eigen::Vector3f(0, 0, 0);
+        return Eigen::Vector3<T>(0, 0, 0);
 	}
 	if (d21!=d21)
 	{
 		std::cout << "v2 : " << v2 << std::endl;
 		std::cout << "v1 : " << v1 << std::endl;
-		return Eigen::Vector3f(0, 0, 0);
+        return Eigen::Vector3<T>(0, 0, 0);
 	}
 	const auto v = (d11 * d20 - d01 * d21) / denom;
 	const auto w = (d00 * d21 - d01 * d20) / denom;
@@ -92,10 +92,11 @@ Eigen::Vector3<T>& dir2vector2(Eigen::Vector3<T>& out, const Eigen::Vector3<T>& 
     return out;
 }
 
-inline Vec3f random_in_unit_sphere()
+template <class T>
+inline Eigen::Vector3<T> random_in_unit_sphere()
 {
-	Vec3f p;
-	return dir2vector2(p, Vec3f((frand() -0.5)*M_PI, (frand() * 2)* M_PI, frand()));
+    Eigen::Vector3<T> p;
+    return dir2vector2(p, Eigen::Vector3<T>((frand() - 0.5) * M_PI, (frand() * 2) * M_PI, frand()));
 //	while (true)
 //	{
 //		auto p = Vec3f::Random();
@@ -104,10 +105,11 @@ inline Vec3f random_in_unit_sphere()
 //	}
 }
 
-inline Vec3f random_unit_vector()
+template <class T>
+inline Eigen::Vector3<T>random_unit_vector()
 {
-	Vec3f p;
-	p = dir2vector2(p, Vec3f((frand() - 0.5)*M_PI, (frand() * 2)* M_PI, 1.));
+    Eigen::Vector3<T> p;
+    p = dir2vector2(p, Eigen::Vector3<T>((frand() - 0.5)*M_PI, (frand() * 2)* M_PI, 1.));
 	if (p.hasNaN())
 	{
 		std::cout << "Erreur random_unit_vector" << std::endl;
@@ -116,11 +118,21 @@ inline Vec3f random_unit_vector()
 //	return random_in_unit_sphere().normalized();
 }
 
-inline Vec3f random_in_unit_disk()
+template <class T>
+inline Eigen::Vector3<T> random_in_unit_disk()
 {
-	Vec3f p;
-	return dir2vector2(p, Vec3f(frand()*2*M_PI, 0, frand()));
+    Eigen::Vector3<T> p;
+    return dir2vector2(p, Eigen::Vector3<T>(frand()*2*M_PI, 0, frand()));
 //	return random_in_unit_sphere().normalized();
+}
+
+template <class T>
+inline Eigen::Vector3<T> random_on_hemisphere(const Eigen::Vector3<T>& normal) {
+    Eigen::Vector3<T> on_unit_sphere = random_unit_vector<T>();
+    if (on_unit_sphere.dot(normal) > 0.0) // In the same hemisphere as the normal
+        return on_unit_sphere;
+    else
+        return -on_unit_sphere;
 }
 
 class Material;
@@ -129,7 +141,7 @@ class HitRecord {
 public:
 	HitRecord(){}
 	Vec3f p;
-	float t;
+    double t;
 	bool front_face;
 	std::shared_ptr<Material> pMaterial;
 
@@ -141,7 +153,7 @@ public:
 
 	Vec2f tex() const;
 	void setTex(const Vec2f &newTex);
-	void setTex(const float u, const float v);
+    void setTex(const double u, const double v);
 
 private:
 	Vec3f _normal;
@@ -163,7 +175,7 @@ inline void HitRecord::setTex(const Vec2f &newTex)
 	_tex = newTex;
 }
 
-inline void HitRecord::setTex(const float u, const float v)
+inline void HitRecord::setTex(const double u, const double v)
 {
 	_tex = Vec2f(u, v);
 }

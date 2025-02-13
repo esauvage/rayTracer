@@ -18,7 +18,7 @@
                 0.8
             ],
             "fuzz": 0.02,
-			"nbRays" : 200,
+			"nbRays" : 5,
             "nom": "boule"
         },
         "boule2": {
@@ -27,7 +27,7 @@
                 0.2,
                 0.95
             ],
-			"nbRays" : 200,
+			"nbRays" : 5,
             "nom": "boule2"
         },
         "blanc": {
@@ -36,7 +36,7 @@
                 0.99,
                 0.99
             ],
-			"nbRays" : 200,
+			"nbRays" : 5,
             "nom": "blanc"
         },
         "mur": {
@@ -46,7 +46,7 @@
                 0.4000000059604645
             ],
             "fuzz": 0.019999999552965164,
-			"nbRays" : 200,
+			"nbRays" : 5,
             "nom": "mur"
         },
         "mur2": {
@@ -56,7 +56,7 @@
                 0.2
             ],
             "fuzz": 0.01,
-			"nbRays" : 200,
+			"nbRays" : 5,
             "nom": "mur2"
         },
         "sol": {
@@ -65,7 +65,7 @@
                 0.4000000059604645,
                 0.05000000074505806
             ],
-			"nbRays" : 200,
+			"nbRays" : 5,
             "nom": "sol"
         },
         "themis": {
@@ -75,7 +75,7 @@
                 0.1
             ],
             "fuzz": 0.020000000298023224,
-			"nbRays" : 200,
+			"nbRays" : 5,
             "nom": "themis"
         },
         "tex": {
@@ -87,7 +87,7 @@
             "filename": "toto.txt",
             "material1": "mur",
             "material2": "boule2",
-			"nbRays" : 200,
+			"nbRays" : 5,
             "nom": "tex"
         },
         "verre": {
@@ -97,7 +97,7 @@
                 0.0
             ],
             "nom": "verre",
-			"nbRays" : 200,
+			"nbRays" : 5,
             "refractiveIndex": 1.5
         },
         "phong": {
@@ -107,7 +107,7 @@
                 0.0
             ],
             "nom": "phong",
-			"nbRays" : 200,
+			"nbRays" : 5,
             "phong exp": 10
         },
         "composed": {
@@ -123,7 +123,7 @@
                         0.6,
                         1.0
                     ],
-					"nbRays" : 200,
+					"nbRays" : 5,
                     "nom": "sub1"
                 },
                 {
@@ -132,7 +132,7 @@
                         0.0,
                         0.0
                     ],
-					"nbRays" : 200,
+					"nbRays" : 5,
                     "nom": "sub2",
 					"phong exp": 100
                 }

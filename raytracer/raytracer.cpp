@@ -125,7 +125,7 @@ Vec3f RayTracer::pixelColor(const Rayon3f &rayon, int depth, Vec3f &attenuation)
                     cout << "scattered with NaN" << endl;
                     continue;
                 }
-                //We retrieve the color of the scaterred ray
+                //We retrieve the color of the scattered ray
                 auto buf = pixelColor(scattered, depth - 1, attenuation).cwiseProduct(localAttenuation);
                 if (buf.squaredNorm() == 0) continue;
                 s++;
@@ -183,7 +183,7 @@ void RayTracer::fillImage(int rowBegin, int nbRows, CImg<unsigned char> *img) co
 {
     const float height = img->height();
     const float width = img->width();
-    const int antiAliasing {15};
+    const int antiAliasing {5};
     for (int i = nbRows -1; i >= 0;--i)
     {
         for (int j = 0; j < width; ++j)//, x+=coef)

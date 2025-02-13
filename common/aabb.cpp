@@ -3,19 +3,19 @@
 using namespace Eigen;
 
 AABB::AABB()
-    :AlignedBox3f()
+    :AlignedBox<double, 3>()
 {
 
 }
 
-AABB::AABB(const AlignedBox3f &a)
-    :AlignedBox3f(a)
+AABB::AABB(const AlignedBox<double, 3> &a)
+    :AlignedBox<double, 3>(a)
 {
 
 }
 
 AABB::AABB(const Vec3f& min, const Vec3f& max)
-    :AlignedBox3f(min, max)
+    :AlignedBox<double, 3>(min, max)
 {
 
 }

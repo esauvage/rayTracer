@@ -59,6 +59,8 @@ bool Boule::touche(const Rayon3f& r, float t_min, float t_max, HitRecord& rec) c
 
 bool Boule::boundingBox(double time0, double time1, AABB &outputBox) const
 {
+    (void)time0;
+    (void)time1;
     outputBox = AABB(
 		_pos - Vec3f(_r, _r, _r),
 		_pos + Vec3f(_r, _r, _r));
@@ -252,7 +254,7 @@ Vec2f Boule::UV(const Vec3f& p) const
 	//     <1 0 0> yields <0.50 0.50>       <-1  0  0> yields <0.00 0.50>
 	//     <0 1 0> yields <0.50 1.00>       < 0 -1  0> yields <0.50 0.00>
     //     <0 0 1> yields <0.25 0.50>       < 0  0 -1> yields <0.75 0.50>
-    Eigen::Quaternion<float> rotation(0.2705981, 0.2705981, -0.6532815, 0.6532815);
+    Eigen::Quaternion<double> rotation(0.2705981, 0.2705981, -0.6532815, 0.6532815);
     Vec3f pLocal = rotation * p;
 
     float theta = acos(-pLocal.y());
