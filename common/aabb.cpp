@@ -23,7 +23,16 @@ AABB::AABB(const Vec3f& min, const Vec3f& max)
 bool AABB::touche(const Rayon3f& r, float t_min, float t_max) const
 {
 	for (int a = 0; a < 3; a++) {
-		auto invD = 1.0f / r.direction()[a];
+        if (!r.direction()[a])
+        {
+            if ((r.origin()[a] >= fmin(min()[a], max()[a])) && (r.origin()[a] <= fmax(min()[a], max()[a])))
+            {
+                continue;
+            }
+            else
+                return false;
+        }
+        auto invD = 1.0f / r.direction()[a];
 		auto t0 = (min()[a] - r.origin()[a]) * invD;
 		auto t1 = (max()[a] - r.origin()[a]) * invD;
 		if (invD < 0.0f)

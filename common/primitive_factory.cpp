@@ -4,6 +4,7 @@
 #include "horizon.h"
 #include "triangle.h"
 #include "mesh.h"
+#include "cuboid.h"
 #include "bvhnode.h"
 
 #include "metal.h"
@@ -36,8 +37,8 @@ std::shared_ptr<Shape> PrimitiveFactory::create(const std::string &primName, con
     if (primName == "triangle")
     {
         return std::make_shared<Triangle>(std::array< Vec3f, 3>{Vec3f{params.at("x0").number(), params.at("y0").number(), params.at("z0").number()},
-            Vec3f(params.at("x1").number(), params.at("y1").number(), params.at("z1").number()),
-            Vec3f(params.at("x2").number(), params.at("y2").number(), params.at("z2").number())});
+                                                               Vec3f(params.at("x1").number(), params.at("y1").number(), params.at("z1").number()),
+                                                               Vec3f(params.at("x2").number(), params.at("y2").number(), params.at("z2").number())});
     }
     return nullptr;
 }
@@ -62,13 +63,23 @@ std::shared_ptr<Shape> PrimitiveFactory::from_json(const json &j, const std::map
     if (j.contains("rayon"))
     {
         r = make_shared<Boule>(Vec3f(j.at("position")[0].get<float>(), j.at("position")[1].get<float>(), j.at("position")[2].get<float>()),
-                j["rayon"].get<float>());
+                               j["rayon"].get<float>());
+    }
+    if (j.contains("rayon"))
+    {
+        r = make_shared<Boule>(Vec3f(j.at("position")[0].get<float>(), j.at("position")[1].get<float>(), j.at("position")[2].get<float>()),
+                               j["rayon"].get<float>());
     }
     if (j.contains("hauteur"))
     {
         r = make_shared<Horizon>(j.at("hauteur").get<float>());
     }
-	if (j.contains("itriangles") || j.contains("triangles"))
+    if (j.contains("min"))
+    {
+        r = make_shared<Cuboid>(Vec3f(j.at("min")[0].get<float>(), j.at("min")[1].get<float>(), j.at("min")[2].get<float>()),
+                                Vec3f(j.at("max")[0].get<float>(), j.at("max")[1].get<float>(), j.at("max")[2].get<float>()));
+    }
+    if (j.contains("itriangles") || j.contains("triangles"))
 	{
         std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
 		if (j.contains("points"))
